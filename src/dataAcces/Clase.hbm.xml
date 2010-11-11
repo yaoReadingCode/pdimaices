@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="objeto" default-access="property">
+  <class name="Clase" table="CLASE">
+  	<cache usage="read-write"/>
+	<id name="id" column="uid" type="long">
+		<generator class="increment"/>
+	</id>
+	<property name="nombre" type="string" column="nombre" not-null="true"/>
+	<property name="descripcion" type="string" column="descripcion" not-null="true"/>
+	<property name="colorRgb" type="integer" column="color_rgb"/>
+	<list name="rasgos" cascade="all-delete-orphan" lazy="false">
+		<key column="ID_CLASE" not-null="true" />
+		<list-index column="INDICE" />
+		<one-to-many class="objeto.RasgoClase" />
+	</list>
+
+  </class>
+</hibernate-mapping>
