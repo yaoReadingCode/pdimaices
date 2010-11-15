@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="objeto">
+	<class name="RasgoClase" table="RASGO_CLASE">
+		<id name="id" column="uid" type="long">
+			<generator class="increment" />
+		</id>
+		<property name="mediaDefault" type="double" column="media_default"/>
+		<property name="desvioEstandarDefault" type="double" column="dev_est_default"/>
+
+		<property name="media" type="double" 
+			formula="select sum(r.valor) / count(*)
+				 	 from rasgo_objeto r
+					 join objeto o on o.uid = r.id_objeto 
+					 join clase_objeto c on o.uid = c.id_objeto
+					 where c.id_clase = ID_CLASE
+					 and r.id_rasgo = ID_RASGO"/>
+		<property name="desvioEstandar" type="double"
+			formula="select sqrt(sum(power(r.valor,2) ) / count(*) - power(sum(r.valor) / count(*) ,2))
+					from rasgo_objeto r
+					join objeto o on o.uid = r.id_objeto 
+					join clase_objeto c on o.uid = c.id_objeto
+					where c.id_clase = ID_CLASE
+					and r.id_rasgo = ID_RASGO"/>
+		<property name="maximo" type="double" 
+			formula="select max(r.valor)
+					from rasgo_objeto r
+					join objeto o on o.uid = r.id_objeto 
+					join clase_objeto c on o.uid = c.id_objeto
+					where c.id_clase = ID_CLASE
+					and r.id_rasgo = ID_RASGO"/>
+		<property name="minimo" type="double" 
+			formula="select min(r.valor)
+					from rasgo_objeto r
+					join objeto o on o.uid = r.id_objeto 
+					join clase_objeto c on o.uid = c.id_objeto
+					where c.id_clase = ID_CLASE
+					and r.id_rasgo = ID_RASGO"/>
+		<many-to-one lazy="false" name="rasgo"
+			class="objeto.Rasgo" column="ID_RASGO" not-null="true" 
+			insert="false" update="false"/>
+		<many-to-one lazy="false" name="clase"
+			class="objeto.Clase" column="ID_CLASE" not-null="true" 
+			insert="false" update="false"/>
+			
+	</class>
+</hibernate-mapping>
