@@ -1,2 +1,0 @@
-1,MAIZ AMARILLO, Maiz amarillo,-16711936
-2,INDETERMINADO,Indeterminado,-65536

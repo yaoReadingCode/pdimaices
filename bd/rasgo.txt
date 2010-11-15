@@ -1,3 +1,0 @@
-1,AREA,Area del objeto,procesamiento.clasificacion.Area
-2,ASPECT RADIO, Aspect Radio,procesamiento.clasificacion.AspectRatio
-3,CIRCULARIDAD, Circularidad,procesamiento.clasificacion.Circularidad
