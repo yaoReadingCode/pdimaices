@@ -103,8 +103,10 @@ public class Clasificador {
 						er.setMaximo(r.getMaximo());
 					}
 					else{
-						er.setMinimo(r.getMediaDefault() - r.getDesvioEstandarDefault());
-						er.setMaximo(r.getMediaDefault() + r.getDesvioEstandarDefault());
+						if (r.getMediaDefault() != null && r.getDesvioEstandarDefault() != null){
+							er.setMinimo(r.getMediaDefault() - r.getDesvioEstandarDefault());
+							er.setMaximo(r.getMediaDefault() + r.getDesvioEstandarDefault());
+						}
 					}
 
 					rasgos.add(er);

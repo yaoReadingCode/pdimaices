@@ -81,8 +81,30 @@ public abstract class EvaluadorRasgo {
 		}
 		if (valor != null) {
 			//if (getValor() - getDesvioEstandar() <= valor && getValor() + getDesvioEstandar() >= valor)
-			if (getMinimo() <= valor && getMaximo() >= valor)
+			if (getMinimo() == null && getMaximo() == null)
 				return true;
+			
+			if (getMinimo() == null && getMaximo() != null){
+				if (getMaximo() >= valor)
+					return true;
+				else
+					return false;
+			}
+			
+			if (getMinimo() != null && getMaximo() == null){
+				if (getMinimo() <= valor)
+					return true;
+				else
+					return false;
+			}
+
+			if (getMinimo() != null && getMaximo() != null){
+				if (getMinimo() <= valor && getMaximo() >= valor)
+					return true;
+				else
+					return false;
+			}
+			
 		}
 		return false;
 	}
