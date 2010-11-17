@@ -41,3 +41,9 @@ and id_objeto = 7
 --and valor <= 0.8274407980705925 + 0.11452181768137916
 
 
+select * from objeto o 
+join clase_objeto c on o.uid = c.id_objeto
+join rasgo_objeto r on o.uid = r.id_objeto
+where id_clase  = 1 and id_rasgo  in (1,4)
+order by nombre,id_rasgo
+;
