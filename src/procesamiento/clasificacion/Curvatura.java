@@ -53,7 +53,6 @@ public class Curvatura extends EvaluadorRasgo {
 		//Para la ecuacion de la recta
 		
 		boolean parar = false;
-		int cantIteraciones = 0;
 		int i = posFinVentana;
 		int inicio = i;
 		while (!parar && contorno.size() > tamanioSegmento){
@@ -89,9 +88,6 @@ public class Curvatura extends EvaluadorRasgo {
 			
 			if (i == inicio)
 				parar = true;
-
-			cantIteraciones++;
-
 		}
 		
 		if (cantCambiosDireccion != 0)
