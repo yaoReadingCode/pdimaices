@@ -9,17 +9,45 @@ public class RasgoClase {
 	
 	private Clase clase;
 	
+	/**
+	 * Valor medio del rasgo para los objetos de la clase.
+	 */
 	private Double media;
  
+	/**
+	 * Desvío estándar del rasgo para los objetos de la clase.
+	 */
 	private Double desvioEstandar = 0.0;
 	
+	/**
+	 * Valor medio default utilizado inicialmente cuando no hay
+	 * datos previos de los objetos de una clase.
+	 */
 	private Double mediaDefault;
 
+	/**
+	 * Desvio estandar default utilizado inicialmente cuando no hay
+	 * datos previos de los objetos de una clase.
+	 */
 	private Double desvioEstandarDefault;
 	
+	/**
+	 * Valor máximo del rasgo para los objetos de la clase.
+	 */
 	private Double maximo;
-	
+
+	/**
+	 * Valor mínimo del rasgo para los objetos de la clase.
+	 */
 	private Double minimo;
+	
+	/**
+	 * Determina el peso de un rasgo para determinar la pertenencia o no de un objeto a una clase.<br>
+	 * Los rasgos seran evaluados en orden decreciente de peso. Primero los de mayor peso hasta llegar 
+	 * a los de menor peso.<br> 
+	 * Si el peso es 0 indica que el rasgo no es determinante para indicar la pertenencia del objeto a la clase.   
+	 */
+	private Double peso;
 	
 	public RasgoClase() {
 		// TODO Auto-generated constructor stub
@@ -95,6 +123,14 @@ public class RasgoClase {
 
 	public void setMinimo(Double minimo) {
 		this.minimo = minimo;
+	}
+
+	public Double getPeso() {
+		return peso;
+	}
+
+	public void setPeso(Double peso) {
+		this.peso = peso;
 	}
 
 	public boolean equals(Object o) {
