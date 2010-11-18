@@ -47,3 +47,7 @@ join rasgo_objeto r on o.uid = r.id_objeto
 where id_clase  = 1 and id_rasgo  in (1,4)
 order by nombre,id_rasgo
 ;
+
+delete from clase_objeto;
+delete from rasgo_objeto;
+delete from objeto;
