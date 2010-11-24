@@ -10,6 +10,7 @@ import objeto.Clase;
 import objeto.Objeto;
 import objeto.Pixel;
 import objeto.Rasgo;
+import objeto.RasgoClase;
 import procesamiento.clasificacion.AspectRatio;
 import procesamiento.clasificacion.Circularidad;
 import procesamiento.clasificacion.EvaluadorClase;
@@ -21,8 +22,14 @@ public class SepararObjetos extends AbstractImageCommand {
 	 * Cantidad de pixeles del contorno a utilizar para ver si un pixel se desvía 
 	 * demasiado del contorno. Lo que indicaría que pertenece a otro objeto
 	 */
-	private int ventanaPixeles = 10;
-	private static int anguloDesvio = 35; 
+	private int ventanaPixeles = 15;
+	private static int anguloDesvio = 70;
+	
+	/**
+	 * Porcentaje de la longitud del contorno de objeto con el cuál se define el tamaño del segmento
+	 */
+	private int porcTamanioSegmento = 1;
+
 	
 	List<Objeto> objetos = null;
 	
@@ -64,8 +71,14 @@ public class SepararObjetos extends AbstractImageCommand {
 
 	public PlanarImage execute() {
 		if (getObjetos() != null){
-			Circularidad circularidad = new Circularidad(new Rasgo("Circularidad"), 1.0, 0.2);
-			AspectRatio aspectRadio = new AspectRatio(new Rasgo("AspectRadio"), 1.0, 0.4);
+			RasgoClase rcCircularidad = new RasgoClase();
+			rcCircularidad.setRasgo(new Rasgo("Circularidad"));
+			
+			RasgoClase rcAspectRadio = new RasgoClase();
+			rcAspectRadio.setRasgo(new Rasgo("AspectRadio"));
+			
+			Circularidad circularidad = new Circularidad(rcCircularidad, 1.0, 0.2);
+			AspectRatio aspectRadio = new AspectRatio(rcAspectRadio, 1.0, 0.4);
 			//Area area = new Area("Area", 3000.0,2000.0);
 
 			List<EvaluadorRasgo> rasgos = new ArrayList<EvaluadorRasgo>();
@@ -93,6 +106,316 @@ public class SepararObjetos extends AbstractImageCommand {
 		}
 		return null;
 	}
+	
+	/**
+	 * Divide un contorno en dos utilizando los puntos pasados como parametro
+	 * @param contorno Contorno original
+	 * @param puntoConflicto1 Punto de division 1
+	 * @param puntoConflicto2 Puntov de division 2
+	 * @param contorno1 Contorno 1
+	 * @param contorno2 Contorno 2
+	 */
+	private void dividirContorno(List<Pixel> contorno, Pixel puntoConflicto1, Pixel puntoConflicto2, List<Pixel> contorno1, List<Pixel> contorno2){
+		
+		int indexP1 = contorno.indexOf(puntoConflicto1);
+		int indexP2 = contorno.indexOf(puntoConflicto2);
+		
+		if (indexP1 > indexP2){
+			int aux = indexP1;
+			indexP1 = indexP2;
+			indexP2 = aux;
+		}
+		
+		contorno1.clear();
+		contorno2.clear();
+		
+		if (indexP1 != -1 && indexP2 != -1){
+			List<Pixel> list1 = new ArrayList<Pixel>(contorno.subList(0, indexP1 + 1));
+			List<Pixel> list2 = new ArrayList<Pixel>(contorno.subList(indexP1, indexP2 + 1));
+			List<Pixel> list3 = new ArrayList<Pixel>(contorno.subList(indexP2, contorno.size()));
+			
+			//construimos el contorno 1
+			contorno1.addAll(list1);
+
+			List<Pixel> lineaPixeles = crearLinea(puntoConflicto1, puntoConflicto2);
+			//Linea de pixeles ordenada
+			List<Pixel> lineaPixelesOrd = new ArrayList<Pixel>();
+					
+			lineaPixeles.remove(puntoConflicto1);
+			Pixel proximo = puntoConflicto1;
+			while(lineaPixeles.size() > 0){
+				 proximo = proximo.getPixelMasCercano(lineaPixeles);
+				 if (!proximo.equals(puntoConflicto2))
+					 lineaPixelesOrd.add(proximo);
+				 lineaPixeles.remove(proximo);
+				 
+			}
+			
+			contorno1.addAll(lineaPixelesOrd);
+			contorno1.addAll(list3);
+			
+			//contruimos el contorno 2
+			contorno2.addAll(list2);
+			for(int j = lineaPixelesOrd.size() -1; j >= 0 ; j--)
+				contorno2.add(lineaPixelesOrd.get(j));
+
+		}
+	}
+	
+	/**
+	 * Recorre el contorno y retorna los puntos en los que la direccion del contorno cambia significativamente.
+	 * Con esos puntos se evalua si se puede dividir el objeto.  
+	 * @param contorno
+	 * @return
+	 */
+	private List<Pixel> obtenerPuntosDeConflicto(List<Pixel> contorno){
+		List<Integer> posPuntosConflicto = new ArrayList<Integer>();
+		List<Pixel> puntosConflicto = new ArrayList<Pixel>();
+		int posIniVentana = 0;
+		int posFinVentana = getVentanaPixeles() - 1;
+		Pixel iniVentana = contorno.get(posIniVentana);
+		Pixel finVentana = contorno.get(posFinVentana);
+		//Para la ecuacion de la recta
+		double pendiente1 = 0;
+		if (finVentana.getXDouble() - iniVentana.getXDouble() != 0)
+			pendiente1 = (finVentana.getYDouble() - iniVentana.getYDouble()) / (finVentana.getXDouble() - iniVentana.getXDouble());
+		
+		int countPixelsIzquierda = 0;
+		int posPuntoConflicto = 0;
+		int inicio = getVentanaPixeles()+ 1;
+		boolean parar = false;
+		int i = inicio;
+		Pixel puntoConflic = null;
+		while (!parar && contorno.size() > getVentanaPixeles()){
+			
+			Pixel p = contorno.get(i % contorno.size());
+			
+			double lado = Pixel.lado(iniVentana, finVentana, p);
+			if (lado < 0){
+				if (countPixelsIzquierda == 0)
+					countPixelsIzquierda++;
+				else{
+					if (countPixelsIzquierda > 3){
+						double pendiente2 = 0;
+						if (p.getXDouble() - puntoConflic.getXDouble() != 0){
+							pendiente2 = (p.getYDouble() - puntoConflic.getYDouble()) / (p.getXDouble() - puntoConflic.getXDouble());
+							double tgAngulo = Math.abs((pendiente2 - pendiente1) / (1 + pendiente2 * pendiente1));
+							double angulo = Math.toDegrees(Math.atan(tgAngulo));
+							if (angulo > anguloDesvio ){
+								countPixelsIzquierda++;
+							}
+							else
+								countPixelsIzquierda = 0;
+						}	
+					}
+					else 
+						countPixelsIzquierda++;
+					
+				}
+				
+			}
+			else
+				countPixelsIzquierda = 0;
+			
+			if (countPixelsIzquierda == 0){
+				posIniVentana = (Math.abs(i - getVentanaPixeles()) + 1) % contorno.size();
+				posFinVentana = i % contorno.size();
+				iniVentana = contorno.get(posIniVentana);
+				finVentana = contorno.get(posFinVentana);
+
+				if (finVentana.getXDouble() - iniVentana.getXDouble() != 0)
+					pendiente1 = (finVentana.getYDouble() - iniVentana.getYDouble()) / (finVentana.getXDouble() - iniVentana.getXDouble());
+			}
+
+			if (countPixelsIzquierda == 1){
+
+				posPuntoConflicto = i;
+				puntoConflic  = p;
+			}
+			
+			if (puntoConflic != null && countPixelsIzquierda > getVentanaPixeles()){
+				posPuntosConflicto.add(posPuntoConflicto);
+				countPixelsIzquierda = 0;
+				puntoConflic = null;
+				//Empiezo a recorrer desde el ultimo punto de conflicto
+				
+				posIniVentana = posPuntoConflicto% contorno.size();
+				posFinVentana = (posPuntoConflicto + getVentanaPixeles()) % contorno.size();
+				i = posFinVentana;
+
+				iniVentana = contorno.get(posIniVentana);
+				finVentana = contorno.get(posFinVentana);
+
+				if (finVentana.getXDouble() - iniVentana.getXDouble() != 0)
+					pendiente1 = (finVentana.getYDouble() - iniVentana.getYDouble()) / (finVentana.getXDouble() - iniVentana.getXDouble());
+			}
+
+							
+			i = i + 1;
+			//posIniVentana = (posIniVentana + 1) % contorno.size();
+			//posFinVentana = (posFinVentana + 1) % contorno.size();
+			if (i  % contorno.size() == inicio)
+				parar = true;
+		}
+		if (posPuntosConflicto.size() > 1){
+			for(i = 0; i < posPuntosConflicto.size(); i++)
+				puntosConflicto.add(contorno.get(posPuntosConflicto.get(i)));
+
+		}
+		return puntosConflicto;
+	}
+
+	/**
+	 * Recorre el contorno y retorna los puntos en los que la direccion del contorno cambia significativamente.
+	 * Con esos puntos se evalua si se puede dividir el objeto.  
+	 * @param contorno
+	 * @return
+	 */
+	private List<Pixel> obtenerPuntosDeConflicto2(List<Pixel> contorno){
+		List<Integer> posPuntosConflicto = new ArrayList<Integer>();
+		List<Pixel> puntosConflicto = new ArrayList<Pixel>();
+		int tamanioSegmento = getVentanaPixeles();
+		int posIniVentana = 0;
+		int posFinVentana = tamanioSegmento;
+		Pixel iniVentana = contorno.get(posIniVentana);
+		Pixel finVentana = contorno.get(posFinVentana);
+		//Para la ecuacion de la recta
+		
+		boolean parar = false;
+		int i = posFinVentana;
+		int inicio = i;
+		while (!parar && contorno.size() > tamanioSegmento){
+			
+			Pixel p = contorno.get(i % contorno.size());
+			Pixel finVentana2 = contorno.get((i + tamanioSegmento) % contorno.size());
+
+			double pendiente1 = 0;
+			if (finVentana.getXDouble() - iniVentana.getXDouble() != 0)
+				pendiente1 = (finVentana.getYDouble() - iniVentana.getYDouble()) / (finVentana.getXDouble() - iniVentana.getXDouble());
+			else 
+				pendiente1 = 1;
+			
+			double pendiente2 = 0;
+			if (finVentana2.getXDouble() - p.getXDouble() != 0)
+				pendiente2 = (finVentana2.getYDouble() - p.getYDouble()) / (finVentana2.getXDouble() - p.getXDouble());
+			else
+				pendiente2 = 1;
+			
+			double tgAngulo = Math.abs((pendiente2 - pendiente1) / (1 + pendiente2 * pendiente1));
+			double angulo = Math.toDegrees(Math.atan(tgAngulo));
+			double lado = Pixel.lado(iniVentana, finVentana, finVentana2);
+			
+			if (lado < 0 && Math.abs(angulo) > anguloDesvio ){
+				posPuntosConflicto.add(i % contorno.size());
+			}
+
+			posIniVentana = (posIniVentana + 1) % contorno.size();
+			posFinVentana = (posFinVentana + 1) % contorno.size();
+			
+			iniVentana = contorno.get(posIniVentana);
+			finVentana = contorno.get(posFinVentana);
+		
+			i = (i + 1) % contorno.size();
+			
+			if (i == inicio)
+				parar = true;
+		}
+		
+		/*
+		int posIniVentana = 0;
+		int posFinVentana = getVentanaPixeles() - 1;
+		Pixel iniVentana = contorno.get(posIniVentana);
+		Pixel finVentana = contorno.get(posFinVentana);
+		//Para la ecuacion de la recta
+		double pendiente1 = 0;
+		if (finVentana.getXDouble() - iniVentana.getXDouble() != 0)
+			pendiente1 = (finVentana.getYDouble() - iniVentana.getYDouble()) / (finVentana.getXDouble() - iniVentana.getXDouble());
+		
+		int countPixelsIzquierda = 0;
+		int posPuntoConflicto = 0;
+		int inicio = getVentanaPixeles()+ 1;
+		boolean parar = false;
+		int i = inicio;
+		Pixel puntoConflic = null;
+		while (!parar && contorno.size() > getVentanaPixeles()){
+			
+			Pixel p = contorno.get(i % contorno.size());
+			
+			double lado = Pixel.lado(iniVentana, finVentana, p);
+			if (lado < 0){
+				if (countPixelsIzquierda == 0)
+					countPixelsIzquierda++;
+				else{
+					if (countPixelsIzquierda > 3){
+						double pendiente2 = 0;
+						if (p.getXDouble() - puntoConflic.getXDouble() != 0){
+							pendiente2 = (p.getYDouble() - puntoConflic.getYDouble()) / (p.getXDouble() - puntoConflic.getXDouble());
+							double tgAngulo = Math.abs((pendiente2 - pendiente1) / (1 + pendiente2 * pendiente1));
+							double angulo = Math.toDegrees(Math.atan(tgAngulo));
+							if (angulo > anguloDesvio ){
+								countPixelsIzquierda++;
+							}
+							else
+								countPixelsIzquierda = 0;
+						}	
+					}
+					else 
+						countPixelsIzquierda++;
+					
+				}
+				
+			}
+			else
+				countPixelsIzquierda = 0;
+			
+			if (countPixelsIzquierda == 0){
+				posIniVentana = (Math.abs(i - getVentanaPixeles()) + 1) % contorno.size();
+				posFinVentana = i % contorno.size();
+				iniVentana = contorno.get(posIniVentana);
+				finVentana = contorno.get(posFinVentana);
+
+				if (finVentana.getXDouble() - iniVentana.getXDouble() != 0)
+					pendiente1 = (finVentana.getYDouble() - iniVentana.getYDouble()) / (finVentana.getXDouble() - iniVentana.getXDouble());
+			}
+
+			if (countPixelsIzquierda == 1){
+
+				posPuntoConflicto = i;
+				puntoConflic  = p;
+			}
+			
+			if (puntoConflic != null && countPixelsIzquierda > getVentanaPixeles()){
+				posPuntosConflicto.add(posPuntoConflicto);
+				countPixelsIzquierda = 0;
+				puntoConflic = null;
+				//Empiezo a recorrer desde el ultimo punto de conflicto
+				
+				posIniVentana = posPuntoConflicto% contorno.size();
+				posFinVentana = (posPuntoConflicto + getVentanaPixeles()) % contorno.size();
+				i = posFinVentana;
+
+				iniVentana = contorno.get(posIniVentana);
+				finVentana = contorno.get(posFinVentana);
+
+				if (finVentana.getXDouble() - iniVentana.getXDouble() != 0)
+					pendiente1 = (finVentana.getYDouble() - iniVentana.getYDouble()) / (finVentana.getXDouble() - iniVentana.getXDouble());
+			}
+
+							
+			i = i + 1;
+			//posIniVentana = (posIniVentana + 1) % contorno.size();
+			//posFinVentana = (posFinVentana + 1) % contorno.size();
+			if (i  % contorno.size() == inicio)
+				parar = true;
+		}*/
+		if (posPuntosConflicto.size() > 1){
+			for(i = 0; i < posPuntosConflicto.size(); i++)
+				puntosConflicto.add(contorno.get(posPuntosConflicto.get(i)));
+
+		}
+		return puntosConflicto;
+	}
+
 	/**
 	 * 
 	 * @param obj
@@ -101,100 +424,19 @@ public class SepararObjetos extends AbstractImageCommand {
 	 */
 	private List<Objeto> separarObjetos(Objeto obj, EvaluadorClase objetoCircular) {	
 		List<Pixel> contorno = obj.getContorno();
-		
+		/*
+		int tamanioSegmento = (int)((double) porcTamanioSegmento * contorno.size() / 100);
+		if (tamanioSegmento <= 10)
+			tamanioSegmento = 10;
+		setVentanaPixeles(tamanioSegmento);
+		*/
 		if (contorno.size() >= getVentanaPixeles()){
-			List<Integer> posPuntosConflicto = new ArrayList<Integer>();
-			int posIniVentana = 0;
-			int posFinVentana = getVentanaPixeles() - 1;
-			Pixel iniVentana = contorno.get(posIniVentana);
-			Pixel finVentana = contorno.get(posFinVentana);
-			//Para la ecuacion de la recta
-			double pendiente1 = 0;
-			if (finVentana.getXDouble() - iniVentana.getXDouble() != 0)
-				pendiente1 = (finVentana.getYDouble() - iniVentana.getYDouble()) / (finVentana.getXDouble() - iniVentana.getXDouble());
 			
-			int countPixelsIzquierda = 0;
-			int posPuntoConflicto = 0;
-			int inicio = getVentanaPixeles()+ 1;
-			boolean parar = false;
-			int i = inicio;
-			Pixel puntoConflic = null;
-			while (!parar && contorno.size() > getVentanaPixeles()){
-				
-				Pixel p = contorno.get(i % contorno.size());
-				
-				double lado = Pixel.lado(iniVentana, finVentana, p);
-				if (lado < 0){
-					if (countPixelsIzquierda == 0)
-						countPixelsIzquierda++;
-					else{
-						if (countPixelsIzquierda > 3){
-							double pendiente2 = 0;
-							if (p.getXDouble() - puntoConflic.getXDouble() != 0){
-								pendiente2 = (p.getYDouble() - puntoConflic.getYDouble()) / (p.getXDouble() - puntoConflic.getXDouble());
-								double tgAngulo = Math.abs((pendiente2 - pendiente1) / (1 + pendiente2 * pendiente1));
-								double angulo = Math.toDegrees(Math.atan(tgAngulo));
-								if (angulo > anguloDesvio ){
-									countPixelsIzquierda++;
-								}
-								else
-									countPixelsIzquierda = 0;
-							}	
-						}
-						else 
-							countPixelsIzquierda++;
-						
-					}
-					
-				}
-				else
-					countPixelsIzquierda = 0;
-				
-				if (countPixelsIzquierda == 0){
-					posIniVentana = (Math.abs(i - getVentanaPixeles()) + 1) % contorno.size();
-					posFinVentana = i % contorno.size();
-					iniVentana = contorno.get(posIniVentana);
-					finVentana = contorno.get(posFinVentana);
-
-					if (finVentana.getXDouble() - iniVentana.getXDouble() != 0)
-						pendiente1 = (finVentana.getYDouble() - iniVentana.getYDouble()) / (finVentana.getXDouble() - iniVentana.getXDouble());
-				}
-
-				if (countPixelsIzquierda == 1){
-
-					posPuntoConflicto = i;
-					puntoConflic  = p;
-				}
-				
-				if (puntoConflic != null && countPixelsIzquierda > getVentanaPixeles()){
-					posPuntosConflicto.add(posPuntoConflicto);
-					countPixelsIzquierda = 0;
-					puntoConflic = null;
-					//Empiezo a recorrer desde el ultimo punto de conflicto
-					
-					posIniVentana = posPuntoConflicto% contorno.size();
-					posFinVentana = (posPuntoConflicto + getVentanaPixeles()) % contorno.size();
-					i = posFinVentana;
-
-					iniVentana = contorno.get(posIniVentana);
-					finVentana = contorno.get(posFinVentana);
-
-					if (finVentana.getXDouble() - iniVentana.getXDouble() != 0)
-						pendiente1 = (finVentana.getYDouble() - iniVentana.getYDouble()) / (finVentana.getXDouble() - iniVentana.getXDouble());
-				}
-
-								
-				i = i + 1;
-				//posIniVentana = (posIniVentana + 1) % contorno.size();
-				//posFinVentana = (posFinVentana + 1) % contorno.size();
-				if (i  % contorno.size() == inicio)
-					parar = true;
-			}
-			if (posPuntosConflicto.size() > 1){
-				List<Pixel> puntosConflicto = new ArrayList<Pixel>();
-				for(i = 0; i < posPuntosConflicto.size(); i++)
-					puntosConflicto.add(contorno.get(posPuntosConflicto.get(i)));
-					
+			if (obj.getName().endsWith("76"))
+				System.out.println("");
+			List<Pixel> puntosConflicto = obtenerPuntosDeConflicto2(contorno);
+			if (puntosConflicto.size() > 1){
+		
 				List<Objeto> objetos = new ArrayList<Objeto>();
 				Objeto objetoActual = obj;
 				List<Pixel> nuevoContorno = new ArrayList<Pixel>();
@@ -203,73 +445,60 @@ public class SepararObjetos extends AbstractImageCommand {
 				
 				List<Pixel> puntosConflictoVisitados = new ArrayList<Pixel>();
 				for(Pixel puntoConflicto: puntosConflicto){
-					parar = false;
-					i = contorno.indexOf(puntoConflicto);
+					boolean parar = false;
+					int i = contorno.indexOf(puntoConflicto);
 					nuevoContorno.clear();
-					inicio = i;
+					int inicio = i;
 					puntosConflictoVisitados.add(puntoConflicto);
 					while (i != -1 && !parar && contorno.size() > getVentanaPixeles()){
 						
 						Pixel p = contorno.get(i % contorno.size());
 						
-						if (!puntosConflicto.contains(p) || puntosConflictoVisitados.contains(p))
+						if (!puntosConflicto.contains(p) || puntoConflicto.equals(p))
 							nuevoContorno.add(p);
 						else{
-							List<Pixel> contornoAux = new ArrayList<Pixel>(nuevoContorno);
 							
-							List<Pixel> lineaPixeles = crearLinea(p, contornoAux.get(0));
-							//Linea de pixeles ordenada
-							List<Pixel> lineaPixelesOrd = new ArrayList<Pixel>();
-							contornoAux.add(p);
+							List<Pixel> contorno1 = new ArrayList<Pixel>();
+							List<Pixel> contorno2 = new ArrayList<Pixel>();
 							
-							lineaPixeles.remove(p);
-							Pixel proximo = p;
-							while(lineaPixeles.size() > 0){
-								 proximo = proximo.getPixelMasCercano(lineaPixeles);
-								 if (!proximo.equals(contornoAux.get(0)))
-									 lineaPixelesOrd.add(proximo);
-								 lineaPixeles.remove(proximo);
-								 
+							dividirContorno(contorno, puntoConflicto, p, contorno1, contorno2);
+							Objeto obj1 = new Objeto();
+							obj1.setContorno(contorno1);
+							Objeto obj2 = new Objeto();
+							obj2.setContorno(contorno2);
+							
+							Objeto nuevoObjeto = null;
+							Objeto objResto = null;
+							
+							if (obj2.validarContorno() && objetoCircular.pertenece(obj2, false)){
+								nuevoObjeto = obj2;
+								objResto = obj1;
 							}
 							
-							contornoAux.addAll(lineaPixelesOrd);
-
-							Objeto nuevoObj = new Objeto();
-							nuevoObj.setContorno(contornoAux);
-							if (nuevoObj.validarContorno()){
-								if (obj.getName().equals("64"))
-									System.out.println("");
+							else if (obj1.validarContorno() && objetoCircular.pertenece(obj1, false)){
+								nuevoObjeto = obj1;
+								objResto = obj2;
+							}
+							
+							if (nuevoObjeto != null){
 								
-								if (objetoCircular.pertenece(nuevoObj,false)){
-									detectarContorno.limpiarVisitados();
-									detectarContorno.completarObjeto(nuevoObj);
-									objetos.add(nuevoObj);
-									nuevoObj.setName(obj.getName()+"_"+objetos.size());
-									parar = true;
-									nuevoContorno.clear();
-									
-									//Elimino del contorno el objeto separado
-									int indexP1 = contorno.indexOf(puntoConflicto);
-									int indexP2 = i  % contorno.size();
-									List<Pixel> contorno1 = new ArrayList<Pixel>(contorno.subList(0, indexP1 + 1));
-									List<Pixel> contorno2 = new ArrayList<Pixel>(contorno.subList(indexP2, contorno.size()));
-									
-									contorno.clear();
-									contorno.addAll(contorno1);
-									for(int j = lineaPixelesOrd.size() -1; j >= 0 ; j--)
-										contorno.add(lineaPixelesOrd.get(j));
-									contorno.addAll(contorno2);
-									
-									puntosConflictoVisitados.add(p);
-								}
-								else 
-									nuevoContorno.add(p);
+								detectarContorno.limpiarVisitados();
+								detectarContorno.completarObjeto(nuevoObjeto);
+								objetos.add(nuevoObjeto);
+								nuevoObjeto.setName(obj.getName()+"_"+objetos.size());
+								parar = true;
+								nuevoContorno.clear();
+								
+								contorno = objResto.getContorno();
+								
+								puntosConflictoVisitados.add(p);
+
 							}
-							else 
+							else
 								nuevoContorno.add(p);
 						}
 						i = i + 1;
-						if (i  % contorno.size() == inicio)
+						if (contorno.size() == 0 || i  % contorno.size() == inicio)
 							parar = true;
 					}
 				}

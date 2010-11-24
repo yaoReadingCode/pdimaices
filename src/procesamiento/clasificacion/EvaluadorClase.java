@@ -2,6 +2,7 @@ package procesamiento.clasificacion;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import objeto.Clase;
@@ -68,6 +69,8 @@ public class EvaluadorClase {
 	}
 
 	public void setRasgos(List<EvaluadorRasgo> rasgos) {
+		if (rasgos != null)
+			Collections.sort(rasgos, new EvaluadorRasgoComparator());
 		this.rasgos = rasgos;
 	}
 

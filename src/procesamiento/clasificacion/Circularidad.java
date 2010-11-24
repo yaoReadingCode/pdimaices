@@ -1,7 +1,7 @@
 package procesamiento.clasificacion;
 
 import objeto.Objeto;
-import objeto.Rasgo;
+import objeto.RasgoClase;
 
 public class Circularidad extends EvaluadorRasgo {
 
@@ -11,7 +11,7 @@ public class Circularidad extends EvaluadorRasgo {
 	}
 
 
-	public Circularidad(Rasgo rasgo, Double valor, Double desvioEstandar) {
+	public Circularidad(RasgoClase rasgo, Double valor, Double desvioEstandar) {
 		super(rasgo, valor, desvioEstandar);
 	}
 

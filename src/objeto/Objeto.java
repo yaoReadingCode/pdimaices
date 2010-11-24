@@ -203,8 +203,10 @@ public class Objeto {
 	public void setContorno(List<Pixel> contorno) {
 		this.contorno = contorno;
 		//validarContorno(contorno);
-		calcularMedioYBoundingBox();
-		calcularTriangulosContenedores();
+		if (contorno != null){
+			calcularMedioYBoundingBox();
+			calcularTriangulosContenedores();
+		}
 	}
 
 	/**

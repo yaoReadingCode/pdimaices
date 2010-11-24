@@ -1,7 +1,7 @@
 package procesamiento.clasificacion;
 
 import objeto.Objeto;
-import objeto.Rasgo;
+import objeto.RasgoClase;
 
 public class Area extends EvaluadorRasgo {
 	
@@ -10,7 +10,7 @@ public class Area extends EvaluadorRasgo {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Area(Rasgo rasgo, Double valor, Double desvioEstandar) {
+	public Area(RasgoClase rasgo, Double valor, Double desvioEstandar) {
 		super(rasgo, valor, desvioEstandar);
 	}
 

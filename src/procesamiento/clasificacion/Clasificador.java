@@ -85,29 +85,7 @@ public class Clasificador {
 
 					evaluadorClass = Class.forName(r.getRasgo().getNombreEvaluadorRasgo());
 					EvaluadorRasgo er = (EvaluadorRasgo) evaluadorClass.newInstance();
-					er.setRasgo(r.getRasgo());
-					if (r.getMedia() != null){
-						er.setValor(r.getMedia());
-					}
-					else{
-						er.setValor(r.getMediaDefault());
-					}
-					if (r.getDesvioEstandar() != null){
-						er.setDesvioEstandar(r.getDesvioEstandar());
-					}
-					else{
-						er.setDesvioEstandar(r.getDesvioEstandarDefault());
-					}
-					if (r.getMedia() != null){
-						er.setMinimo(r.getMinimo());
-						er.setMaximo(r.getMaximo());
-					}
-					else{
-						if (r.getMediaDefault() != null && r.getDesvioEstandarDefault() != null){
-							er.setMinimo(r.getMediaDefault() - r.getDesvioEstandarDefault());
-							er.setMaximo(r.getMediaDefault() + r.getDesvioEstandarDefault());
-						}
-					}
+					er.setRasgoClase(r);
 
 					rasgos.add(er);
 					System.out.println(r.getRasgo() + ", valor: " + er.getValor() + ", devEst: " + er.getDesvioEstandar());

@@ -6,6 +6,7 @@ import java.util.List;
 import objeto.Objeto;
 import objeto.Pixel;
 import objeto.Rasgo;
+import objeto.RasgoClase;
 
 public class AspectRatio extends EvaluadorRasgo {
 
@@ -15,7 +16,7 @@ public class AspectRatio extends EvaluadorRasgo {
 	}
 
 
-	public AspectRatio(Rasgo rasgo, Double valor, Double desvioEstandar) {
+	public AspectRatio(RasgoClase rasgo, Double valor, Double desvioEstandar) {
 		super(rasgo, valor, desvioEstandar);
 	}
 
@@ -59,7 +60,9 @@ public class AspectRatio extends EvaluadorRasgo {
 		
 		Rasgo r = new Rasgo();
 		r.setNombre("Aspect Ratio");
-		AspectRatio aspectRatio = new AspectRatio(r, 1.0, 0.2);
+		RasgoClase rc = new RasgoClase();
+		rc.setRasgo(r);
+		AspectRatio aspectRatio = new AspectRatio(rc, 1.0, 0.2);
 		Double valor = aspectRatio.calcularValor(obj);
 		System.out.println(valor);
 

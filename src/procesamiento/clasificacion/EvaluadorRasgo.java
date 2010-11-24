@@ -1,7 +1,7 @@
 package procesamiento.clasificacion;
 
 import objeto.Objeto;
-import objeto.Rasgo;
+import objeto.RasgoClase;
 import objeto.RasgoObjeto;
 
 /**
@@ -11,7 +11,7 @@ import objeto.RasgoObjeto;
  * 
  */
 public abstract class EvaluadorRasgo {
-	private Rasgo rasgo;
+	private RasgoClase rasgoClase;
 	private Double valor;
 	private Double desvioEstandar = 0.0;
 	private Double maximo;
@@ -22,21 +22,47 @@ public abstract class EvaluadorRasgo {
 		// TODO Auto-generated constructor stub
 	}
 
-	public EvaluadorRasgo(Rasgo rasgo, Double valor, Double desvioEstandar) {
+	public EvaluadorRasgo(RasgoClase rasgo, Double valor, Double desvioEstandar) {
 		super();
 		this.desvioEstandar = desvioEstandar;
-		this.rasgo = rasgo;
+		this.rasgoClase = rasgo;
 		this.valor = valor;
 		this.maximo = valor + desvioEstandar;
 		this.minimo = valor - desvioEstandar;
 	}
 
-	public Rasgo getRasgo() {
-		return rasgo;
+	public RasgoClase getRasgoClase() {
+		return rasgoClase;
 	}
 
-	public void setRasgo(Rasgo rasgo) {
-		this.rasgo = rasgo;
+	public void setRasgoClase(RasgoClase rasgo) {
+		this.rasgoClase = rasgo;
+		
+		if (rasgo != null){
+			if (rasgo.getMedia() != null){
+				this.setValor(rasgo.getMedia());
+			}
+			else{
+				this.setValor(rasgo.getMediaDefault());
+			}
+			if (rasgo.getDesvioEstandar() != null){
+				this.setDesvioEstandar(rasgo.getDesvioEstandar());
+			}
+			else{
+				this.setDesvioEstandar(rasgo.getDesvioEstandarDefault());
+			}
+			if (rasgo.getMedia() != null){
+				this.setMinimo(rasgo.getMinimo());
+				this.setMaximo(rasgo.getMaximo());
+			}
+			else{
+				if (rasgo.getMediaDefault() != null && rasgo.getDesvioEstandarDefault() != null){
+					this.setMinimo(rasgo.getMediaDefault() - rasgo.getDesvioEstandarDefault());
+					this.setMaximo(rasgo.getMediaDefault() + rasgo.getDesvioEstandarDefault());
+				}
+			}
+			
+		}
 	}
 
 	public Double getValor() {
@@ -76,7 +102,7 @@ public abstract class EvaluadorRasgo {
 	public boolean isEnRango(Objeto objeto, boolean addRasgoToObject) {
 		Double valor = calcularValor(objeto);
 		if (addRasgoToObject){
-			RasgoObjeto rasgoObjeto = new RasgoObjeto(this.getRasgo(),valor);
+			RasgoObjeto rasgoObjeto = new RasgoObjeto(this.getRasgoClase().getRasgo(),valor);
 			objeto.addRasgo(rasgoObjeto);
 		}
 		if (valor != null) {
@@ -117,10 +143,10 @@ public abstract class EvaluadorRasgo {
 		if (getClass() != obj.getClass())
 			return false;
 		EvaluadorRasgo other = (EvaluadorRasgo) obj;
-		if (rasgo == null) {
-			if (other.rasgo != null)
+		if (rasgoClase == null) {
+			if (other.rasgoClase != null)
 				return false;
-		} else if (!rasgo.equals(other.rasgo))
+		} else if (!rasgoClase.equals(other.rasgoClase))
 			return false;
 		return true;
 	}
