@@ -22,7 +22,7 @@ public class SepararObjetos extends AbstractImageCommand {
 	 * Cantidad de pixeles del contorno a utilizar para ver si un pixel se desvía 
 	 * demasiado del contorno. Lo que indicaría que pertenece a otro objeto
 	 */
-	private int ventanaPixeles = 15;
+	private int ventanaPixeles = 20;
 	private static int anguloDesvio = 70;
 	
 	/**
@@ -277,18 +277,31 @@ public class SepararObjetos extends AbstractImageCommand {
 		int tamanioSegmento = getVentanaPixeles();
 		int posIniVentana = 0;
 		int posFinVentana = tamanioSegmento;
+		int posFinVentana2 = tamanioSegmento * 2;
 		Pixel iniVentana = contorno.get(posIniVentana);
 		Pixel finVentana = contorno.get(posFinVentana);
+		Pixel finVentana2 = null;		
 		//Para la ecuacion de la recta
 		
 		boolean parar = false;
 		int i = posFinVentana;
+		Integer posPuntoConflicto = i;
 		int inicio = i;
+		int cantPixelsIzquierda = 0;
 		while (!parar && contorno.size() > tamanioSegmento){
 			
 			Pixel p = contorno.get(i % contorno.size());
-			Pixel finVentana2 = contorno.get((i + tamanioSegmento) % contorno.size());
-
+			
+			if (p.getX() == 47 && p.getY() == 79)
+				System.out.println("");
+			/*
+			if (posPuntoConflicto == null){
+				finVentana2 = contorno.get((i + tamanioSegmento) % contorno.size());	
+			}
+			else*/
+			posFinVentana2 = (posFinVentana + tamanioSegmento) % contorno.size();
+			finVentana2 = contorno.get(posFinVentana2);
+				
 			double pendiente1 = 0;
 			if (finVentana.getXDouble() - iniVentana.getXDouble() != 0)
 				pendiente1 = (finVentana.getYDouble() - iniVentana.getYDouble()) / (finVentana.getXDouble() - iniVentana.getXDouble());
@@ -296,118 +309,54 @@ public class SepararObjetos extends AbstractImageCommand {
 				pendiente1 = 1;
 			
 			double pendiente2 = 0;
-			if (finVentana2.getXDouble() - p.getXDouble() != 0)
-				pendiente2 = (finVentana2.getYDouble() - p.getYDouble()) / (finVentana2.getXDouble() - p.getXDouble());
+			if (finVentana2.getXDouble() - finVentana.getXDouble() != 0)
+				pendiente2 = (finVentana2.getYDouble() - finVentana.getYDouble()) / (finVentana2.getXDouble() - finVentana.getXDouble());
 			else
 				pendiente2 = 1;
 			
-			double tgAngulo = Math.abs((pendiente2 - pendiente1) / (1 + pendiente2 * pendiente1));
-			double angulo = Math.toDegrees(Math.atan(tgAngulo));
+			double tgAngulo = (pendiente2 - pendiente1) / (1 + pendiente2 * pendiente1);
+			double angulo = Math.abs(Math.toDegrees(Math.atan(tgAngulo)));
 			double lado = Pixel.lado(iniVentana, finVentana, finVentana2);
 			
 			if (lado < 0 && Math.abs(angulo) > anguloDesvio ){
-				posPuntosConflicto.add(i % contorno.size());
+				cantPixelsIzquierda++;
+				//posPuntosConflicto.add(i % contorno.size());
+			}
+			else{
+				cantPixelsIzquierda = 0;
+				posPuntoConflicto = null;
 			}
 
+			if (cantPixelsIzquierda == 1){
+				posPuntoConflicto = i;
+				
+			}
+			
+			if (cantPixelsIzquierda > 0){
+				posPuntosConflicto.add(posPuntoConflicto % contorno.size());
+				i = posPuntoConflicto + tamanioSegmento;
+				posIniVentana = (Math.abs(i - tamanioSegmento) + 1) % contorno.size();
+				posFinVentana = i % contorno.size();
+				cantPixelsIzquierda = 0;
+				posPuntoConflicto = null;
+			}
+			else{
+				posIniVentana = (posIniVentana + 1) % contorno.size();
+				posFinVentana = (posFinVentana + 1) % contorno.size();
+			}
+			/*
 			posIniVentana = (posIniVentana + 1) % contorno.size();
 			posFinVentana = (posFinVentana + 1) % contorno.size();
-			
+			*/
 			iniVentana = contorno.get(posIniVentana);
 			finVentana = contorno.get(posFinVentana);
-		
-			i = (i + 1) % contorno.size();
 			
-			if (i == inicio)
+			i++;
+			if (i > contorno.size())
 				parar = true;
+			//i = (i + 1) % contorno.size();
 		}
-		
-		/*
-		int posIniVentana = 0;
-		int posFinVentana = getVentanaPixeles() - 1;
-		Pixel iniVentana = contorno.get(posIniVentana);
-		Pixel finVentana = contorno.get(posFinVentana);
-		//Para la ecuacion de la recta
-		double pendiente1 = 0;
-		if (finVentana.getXDouble() - iniVentana.getXDouble() != 0)
-			pendiente1 = (finVentana.getYDouble() - iniVentana.getYDouble()) / (finVentana.getXDouble() - iniVentana.getXDouble());
-		
-		int countPixelsIzquierda = 0;
-		int posPuntoConflicto = 0;
-		int inicio = getVentanaPixeles()+ 1;
-		boolean parar = false;
-		int i = inicio;
-		Pixel puntoConflic = null;
-		while (!parar && contorno.size() > getVentanaPixeles()){
-			
-			Pixel p = contorno.get(i % contorno.size());
-			
-			double lado = Pixel.lado(iniVentana, finVentana, p);
-			if (lado < 0){
-				if (countPixelsIzquierda == 0)
-					countPixelsIzquierda++;
-				else{
-					if (countPixelsIzquierda > 3){
-						double pendiente2 = 0;
-						if (p.getXDouble() - puntoConflic.getXDouble() != 0){
-							pendiente2 = (p.getYDouble() - puntoConflic.getYDouble()) / (p.getXDouble() - puntoConflic.getXDouble());
-							double tgAngulo = Math.abs((pendiente2 - pendiente1) / (1 + pendiente2 * pendiente1));
-							double angulo = Math.toDegrees(Math.atan(tgAngulo));
-							if (angulo > anguloDesvio ){
-								countPixelsIzquierda++;
-							}
-							else
-								countPixelsIzquierda = 0;
-						}	
-					}
-					else 
-						countPixelsIzquierda++;
-					
-				}
-				
-			}
-			else
-				countPixelsIzquierda = 0;
-			
-			if (countPixelsIzquierda == 0){
-				posIniVentana = (Math.abs(i - getVentanaPixeles()) + 1) % contorno.size();
-				posFinVentana = i % contorno.size();
-				iniVentana = contorno.get(posIniVentana);
-				finVentana = contorno.get(posFinVentana);
 
-				if (finVentana.getXDouble() - iniVentana.getXDouble() != 0)
-					pendiente1 = (finVentana.getYDouble() - iniVentana.getYDouble()) / (finVentana.getXDouble() - iniVentana.getXDouble());
-			}
-
-			if (countPixelsIzquierda == 1){
-
-				posPuntoConflicto = i;
-				puntoConflic  = p;
-			}
-			
-			if (puntoConflic != null && countPixelsIzquierda > getVentanaPixeles()){
-				posPuntosConflicto.add(posPuntoConflicto);
-				countPixelsIzquierda = 0;
-				puntoConflic = null;
-				//Empiezo a recorrer desde el ultimo punto de conflicto
-				
-				posIniVentana = posPuntoConflicto% contorno.size();
-				posFinVentana = (posPuntoConflicto + getVentanaPixeles()) % contorno.size();
-				i = posFinVentana;
-
-				iniVentana = contorno.get(posIniVentana);
-				finVentana = contorno.get(posFinVentana);
-
-				if (finVentana.getXDouble() - iniVentana.getXDouble() != 0)
-					pendiente1 = (finVentana.getYDouble() - iniVentana.getYDouble()) / (finVentana.getXDouble() - iniVentana.getXDouble());
-			}
-
-							
-			i = i + 1;
-			//posIniVentana = (posIniVentana + 1) % contorno.size();
-			//posFinVentana = (posFinVentana + 1) % contorno.size();
-			if (i  % contorno.size() == inicio)
-				parar = true;
-		}*/
 		if (posPuntosConflicto.size() > 1){
 			for(i = 0; i < posPuntosConflicto.size(); i++)
 				puntosConflicto.add(contorno.get(posPuntosConflicto.get(i)));
