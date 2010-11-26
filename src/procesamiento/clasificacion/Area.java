@@ -16,7 +16,8 @@ public class Area extends EvaluadorRasgo {
 
 	 
 	public Double calcularValor(Objeto objeto) {
-		return new Double(objeto.getArea());
+		double relacionPixelCm = getObjetoReferencia().getRelacionPixelCm();
+		return new Double(objeto.getArea()*relacionPixelCm);
 	}
 
 }

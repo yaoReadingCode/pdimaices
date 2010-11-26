@@ -13,8 +13,10 @@ import objeto.Rasgo;
 import objeto.RasgoClase;
 import procesamiento.clasificacion.AspectRatio;
 import procesamiento.clasificacion.Circularidad;
+import procesamiento.clasificacion.Clasificador;
 import procesamiento.clasificacion.EvaluadorClase;
 import procesamiento.clasificacion.EvaluadorRasgo;
+import procesamiento.clasificacion.ObjetoReferencia;
 
 public class SepararObjetos extends AbstractImageCommand {
 
@@ -62,7 +64,7 @@ public class SepararObjetos extends AbstractImageCommand {
 
 
 	public int getVentanaPixeles() {
-		return ventanaPixeles;
+		return ventanaPixeles * getClasificador().getObjetoReferencia().getRelacionPixelCm().intValue();
 	}
 
 

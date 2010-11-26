@@ -14,7 +14,9 @@ import dataAcces.ObjectDao;
 public class Clasificador {
 	public static String CLASE_INDETERMINADO = "INDETERMINADO";
 
-	Map<EvaluadorClase, List<Objeto>> clasificacion = new HashMap<EvaluadorClase, List<Objeto>>();
+	private Map<EvaluadorClase, List<Objeto>> clasificacion = new HashMap<EvaluadorClase, List<Objeto>>();
+	
+	private ObjetoReferencia objetoReferencia= null; 
 
 	public Clasificador() {
 		super();
@@ -28,6 +30,14 @@ public class Clasificador {
 		this.clasificacion = clasificacion;
 	}
 	
+	public ObjetoReferencia getObjetoReferencia() {
+		return objetoReferencia;
+	}
+
+	public void setObjetoReferencia(ObjetoReferencia objetoReferencia) {
+		this.objetoReferencia = objetoReferencia;
+	}
+
 	/**
 	 * Guarda la clasificacion en la base de datos
 	 * @param objetos
@@ -48,6 +58,8 @@ public class Clasificador {
 	 * @throws Exception 
 	 */
 	public void inicializarClasificacion() throws Exception{
+		objetoReferencia = new ObjetoReferencia();
+		
 		ObjectDao dao = ObjectDao.getInstance();
 		List<Clase> clases = dao.qryAllClases(CLASE_INDETERMINADO);
 		clasificacion = new HashMap<EvaluadorClase, List<Objeto>>();
@@ -56,7 +68,6 @@ public class Clasificador {
 			EvaluadorClase ec = createEvaluadorClase(c);
 			getClasificacion().put(ec, new ArrayList<Objeto>());
 		}
-		
 		
 	}
 	/**
@@ -81,15 +92,23 @@ public class Clasificador {
 		for(RasgoClase r: c.getRasgos()){
 			try {
 				if (r != null){
-					Class evaluadorClass;
+					if (r.getRasgo().getNombreEvaluadorRasgo() != null){
+						Class evaluadorClass = Class.forName(r.getRasgo().getNombreEvaluadorRasgo());
+						EvaluadorRasgo er = (EvaluadorRasgo) evaluadorClass.newInstance();
+						er.setObjetoReferencia(getObjetoReferencia());
+						er.setRasgoClase(r);
 
-					evaluadorClass = Class.forName(r.getRasgo().getNombreEvaluadorRasgo());
-					EvaluadorRasgo er = (EvaluadorRasgo) evaluadorClass.newInstance();
-					er.setRasgoClase(r);
+						rasgos.add(er);
+						System.out.println(r.getRasgo() + ", valor: " + er.getValor() + ", devEst: " + er.getDesvioEstandar());
+					}
+					else{
+						EvaluadorRasgo er = new EvaluadorRasgo();
+						er.setObjetoReferencia(getObjetoReferencia());
+						er.setRasgoClase(r);
 
-					rasgos.add(er);
-					System.out.println(r.getRasgo() + ", valor: " + er.getValor() + ", devEst: " + er.getDesvioEstandar());
-
+						rasgos.add(er);
+						System.out.println(r.getRasgo() + ", valor: " + er.getValor() + ", devEst: " + er.getDesvioEstandar());
+					}
 				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block

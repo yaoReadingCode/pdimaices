@@ -10,12 +10,13 @@ import objeto.RasgoObjeto;
  * @author oscar
  * 
  */
-public abstract class EvaluadorRasgo {
+public class EvaluadorRasgo {
 	private RasgoClase rasgoClase;
 	private Double valor;
 	private Double desvioEstandar = 0.0;
 	private Double maximo;
 	private Double minimo;
+	private ObjetoReferencia objetoReferencia;
 	
 	public EvaluadorRasgo() {
 		super();
@@ -97,7 +98,17 @@ public abstract class EvaluadorRasgo {
 		this.minimo = minimo;
 	}
 
-	public abstract Double calcularValor(Objeto objeto);
+	public Double calcularValor(Objeto objeto){
+		return getValor();
+	}
+
+	public ObjetoReferencia getObjetoReferencia() {
+		return objetoReferencia;
+	}
+
+	public void setObjetoReferencia(ObjetoReferencia objetoReferencia) {
+		this.objetoReferencia = objetoReferencia;
+	}
 
 	public boolean isEnRango(Objeto objeto, boolean addRasgoToObject) {
 		Double valor = calcularValor(objeto);

@@ -31,8 +31,6 @@ public class DetectarObjetos extends AbstractImageCommand {
 	private static PlanarImage originalImage;
 	private HSVRange hsvRange;
 	private List<Objeto> objetos = new ArrayList<Objeto>();
-
-	private Clasificador clasificador;
 	
 
 	/**
@@ -47,7 +45,7 @@ public class DetectarObjetos extends AbstractImageCommand {
 		super(image);
 		this.originalImage = originalImage;
 		this.hsvRange = hsvRange;
-		this.clasificador = clasificador;
+		setClasificador(clasificador);
 		init();
 	}
 	
@@ -107,6 +105,7 @@ public class DetectarObjetos extends AbstractImageCommand {
 			
 			Visualizador.aumentarProgreso(20, "Detectando Contorno...");
 			DetectarContorno dc = new DetectarContorno(output, getOriginalImage(), new Color(100, 100, 100), Color.RED);
+			dc.setClasificador(getClasificador());
 			output = dc.execute();
 			setObjetos(dc.getObjetos());
 			
@@ -307,14 +306,5 @@ public class DetectarObjetos extends AbstractImageCommand {
 		}
 		return info;
 	}
-
-	public Clasificador getClasificador() {
-		return clasificador;
-	}
-
-	public void setClasificador(Clasificador clasificador) {
-		this.clasificador = clasificador;
-	}
-
 	
 }

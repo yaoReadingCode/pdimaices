@@ -734,8 +734,8 @@ public class DetectarContorno extends AbstractImageCommand {
 				setImage(ImageUtil.createTiledImage(getImage(),ImageUtil.tileWidth, ImageUtil.tileHeight));
 
 				List<Objeto> objetos = detectarObjetos();
-				SepararObjetos separarObjetos = new SepararObjetos(getImage(),
-						objetos, this);
+				SepararObjetos separarObjetos = new SepararObjetos(getImage(),objetos, this);
+				separarObjetos.setClasificador(getClasificador());
 				separarObjetos.execute();
 				objetos = separarObjetos.getObjetos();
 

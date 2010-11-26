@@ -2,6 +2,8 @@ package procesamiento;
 
 import javax.media.jai.PlanarImage;
 
+import procesamiento.clasificacion.Clasificador;
+
 /**
  * Clase abstracta que define el comportamiento común para implementar comandos
  * sobre una imagen
@@ -13,6 +15,8 @@ public abstract class AbstractImageCommand implements ImageComand {
 	 * Imagen a procesar
 	 */
 	private PlanarImage image;
+	
+	private Clasificador clasificador;
 
 	/**
 	 * Constructor
@@ -37,6 +41,14 @@ public abstract class AbstractImageCommand implements ImageComand {
 
 	public void setImage(PlanarImage image) {
 		this.image = image;
+	}
+
+	public Clasificador getClasificador() {
+		return clasificador;
+	}
+
+	public void setClasificador(Clasificador clasificador) {
+		this.clasificador = clasificador;
 	}
 
 	/*
