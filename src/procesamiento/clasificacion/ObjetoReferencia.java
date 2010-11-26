@@ -3,8 +3,6 @@ package procesamiento.clasificacion;
 import java.awt.Color;
 
 public class ObjetoReferencia {
-	private Long id;
-	
 	/**
 	 * Area en cm2 del objeto de referencia
 	 */
@@ -20,13 +18,6 @@ public class ObjetoReferencia {
 	 */
 	private Integer colorRgb;
 	
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 	public Double getAreaCm() {
 		return areaCm;
