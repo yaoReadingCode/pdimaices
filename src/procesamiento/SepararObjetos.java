@@ -22,8 +22,10 @@ public class SepararObjetos extends AbstractImageCommand {
 	 * Cantidad de pixeles del contorno a utilizar para ver si un pixel se desvía 
 	 * demasiado del contorno. Lo que indicaría que pertenece a otro objeto
 	 */
-	private int ventanaPixeles = 20;
-	private static int anguloDesvio = 70;
+	//private int ventanaPixeles = 20;
+	//private static int anguloDesvio = 70;
+	private int ventanaPixeles = 10;
+	private static int anguloDesvio = 35;
 	
 	/**
 	 * Porcentaje de la longitud del contorno de objeto con el cuál se define el tamaño del segmento
@@ -379,11 +381,10 @@ public class SepararObjetos extends AbstractImageCommand {
 			tamanioSegmento = 10;
 		setVentanaPixeles(tamanioSegmento);
 		*/
-		if (contorno.size() >= getVentanaPixeles()){
+		if (contorno.size() > getVentanaPixeles()){
 			
-			if (obj.getName().endsWith("76"))
-				System.out.println("");
-			List<Pixel> puntosConflicto = obtenerPuntosDeConflicto2(contorno);
+			boolean huboDivision = false;
+			List<Pixel> puntosConflicto = obtenerPuntosDeConflicto(contorno);
 			if (puntosConflicto.size() > 1){
 		
 				List<Objeto> objetos = new ArrayList<Objeto>();
@@ -440,6 +441,11 @@ public class SepararObjetos extends AbstractImageCommand {
 								
 								contorno = objResto.getContorno();
 								
+								List<Objeto> nuevosObjetos = separarObjetos(objResto, objetoCircular);
+								objetos.addAll(nuevosObjetos);
+								
+								huboDivision = true;
+								
 								puntosConflictoVisitados.add(p);
 
 							}
@@ -450,8 +456,11 @@ public class SepararObjetos extends AbstractImageCommand {
 						if (contorno.size() == 0 || i  % contorno.size() == inicio)
 							parar = true;
 					}
+					
+					if (huboDivision)
+						break;
 				}
-				if (contorno.size() > 0){
+				if (!huboDivision && contorno.size() > 0){
 					Objeto nuevoObj = new Objeto();
 					nuevoObj.setContorno(contorno);
 					if (nuevoObj.validarContorno()){
@@ -463,6 +472,11 @@ public class SepararObjetos extends AbstractImageCommand {
 				}
 				return objetos;
 			}
+		}
+		
+		if (obj.validarContorno()){
+			detectarContorno.limpiarVisitados();
+			detectarContorno.completarObjeto(obj);
 		}
 		List<Objeto> list = new ArrayList<Objeto>();
 		list.add(obj);
