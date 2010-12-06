@@ -24,9 +24,9 @@ public class Rasgo {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Rasgo(String descripcion) {
+	public Rasgo(String nombre) {
 		super();
-		this.descripcion = descripcion;
+		this.nombre = nombre;
 	}
 
 	public Long getId() {

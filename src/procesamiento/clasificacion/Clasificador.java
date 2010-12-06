@@ -17,9 +17,12 @@ public class Clasificador {
 	private Map<EvaluadorClase, List<Objeto>> clasificacion = new HashMap<EvaluadorClase, List<Objeto>>();
 	
 	private ObjetoReferencia objetoReferencia= null; 
+	
+	private Configuracion configuracion;
 
 	public Clasificador() {
 		super();
+		configuracion = ObjectDao.getInstance().findConfiguracion("MAICES");
 	}
 
 	public Map<EvaluadorClase, List<Objeto>> getClasificacion() {
@@ -38,6 +41,14 @@ public class Clasificador {
 		this.objetoReferencia = objetoReferencia;
 	}
 
+	public Configuracion getConfiguracion() {
+		return configuracion;
+	}
+
+	public void setConfiguracion(Configuracion configuracion) {
+		this.configuracion = configuracion;
+	}
+
 	/**
 	 * Guarda la clasificacion en la base de datos
 	 * @param objetos
@@ -51,6 +62,10 @@ public class Clasificador {
 				dao.save(obj);
 			}
 		}
+	}
+	
+	private void init(){
+		
 	}
 	
 	/**

@@ -44,6 +44,7 @@ import procesamiento.ObtenerRangoColorObjeto;
 import procesamiento.Opening;
 import procesamiento.Skeleton;
 import procesamiento.SobelFilter;
+import procesamiento.clasificacion.Configuracion;
 
 /**
  * @author User #3
@@ -58,9 +59,10 @@ public class OperacionesPanel extends JPanel {
 	}
 	public OperacionesPanel() {
 		initComponents();
+		/*
 		this.textFieldHMax.setText("340");
 		this.textFieldHMin.setText("60");
-		this.textFieldSMin.setText("8");
+		this.textFieldSMin.setText("8");*/
 	}
 
 	private void textFieldIntegerKeyTyped(KeyEvent e) {
@@ -172,6 +174,24 @@ public class OperacionesPanel extends JPanel {
 
 	public void setImageHolder(IImageProcessing imageHolder) {
 		this.imageHolder = imageHolder;
+		if(imageHolder != null){
+			Configuracion configuracion = imageHolder.getClasificador().getConfiguracion();
+			if(configuracion != null){
+				if (configuracion.getFondoHMin() != null)
+					textFieldHMin.setText(configuracion.getFondoHMin().toString());
+				if (configuracion.getFondoHMax() != null)
+					textFieldHMax.setText(configuracion.getFondoHMax().toString());
+				if (configuracion.getFondoSMin() != null)
+					textFieldSMin.setText(configuracion.getFondoSMin().toString());
+				if (configuracion.getFondoSMax() != null)
+					textFieldSMax.setText(configuracion.getFondoSMax().toString());
+				if (configuracion.getFondoVMin() != null)
+					textFieldVMin.setText(configuracion.getFondoVMin().toString());
+				if (configuracion.getFondoVMax() != null)
+					textFieldVMax.setText(configuracion.getFondoVMax().toString());
+
+			}
+		}
 	}
 	
 	private void buttonGradientMagnitudActionPerformed(ActionEvent e) {

@@ -10,6 +10,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.classic.Session;
 
+import procesamiento.clasificacion.Configuracion;
+
 public class ObjectDao {
 	private SessionFactory sessionFactory;
 	
@@ -110,6 +112,29 @@ public class ObjectDao {
 			//session.beginTransaction();
 
 			Clase result = (Clase) session.createQuery("from Clase where nombre = '" + nombreClase + "'").uniqueResult();
+
+			//session.getTransaction().commit();
+			session.connection().close();
+			session.close();
+
+			return result;
+		} 
+		catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
+	}
+
+	/**
+	 * Busca la configuracion para un sistema dado
+	 * @param nombreClase
+	 * @return
+	 */
+	public Configuracion findConfiguracion(String nombreSistema) {
+		try {
+			Session session = getSessionFactory().openSession();
+			//session.beginTransaction();
+
+			Configuracion result = (Configuracion) session.createQuery("from Configuracion where nombreSistema = '" + nombreSistema + "'").uniqueResult();
 
 			//session.getTransaction().commit();
 			session.connection().close();

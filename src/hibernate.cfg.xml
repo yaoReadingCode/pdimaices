@@ -28,6 +28,7 @@
 		<mapping resource="dataAcces/Objeto.hbm.xml" />
 		<mapping resource="dataAcces/RasgoObjeto.hbm.xml" />
 		<mapping resource="dataAcces/ClaseObjeto.hbm.xml" />
+		<mapping resource="dataAcces/Configuracion.hbm.xml" />
 
 	</session-factory>
 </hibernate-configuration>

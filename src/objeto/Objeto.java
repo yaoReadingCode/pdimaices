@@ -54,6 +54,11 @@ public class Objeto {
 	
 	private int yMax=0;
 	
+	/**
+	 * Path de la imagen en disco
+	 */
+	private String pathImage;
+	
 	public Long getId() {
 		return id;
 	}
@@ -140,6 +145,14 @@ public class Objeto {
 
 	public void setyMax(int yMax) {
 		this.yMax = yMax;
+	}
+	
+	public String getPathImage() {
+		return pathImage;
+	}
+
+	public void setPathImage(String pathImage) {
+		this.pathImage = pathImage;
 	}
 
 	/**

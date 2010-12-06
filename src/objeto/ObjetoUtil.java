@@ -57,8 +57,10 @@ public class ObjetoUtil {
 				pintarPunto(p, o, ti);
 			}
 		}
+		
+		o.setPathImage("image\\" + o.getName() + ".tif");
 
-		JAI.create("filestore", ti, "image\\" + o.getName() + ".tif", "TIFF");
+		JAI.create("filestore", ti, o.getPathImage(), "TIFF");
 	}
 	private static void pintarPunto(Pixel p, Objeto o, TiledImage ti){
 		Color interior = p.getCol();
