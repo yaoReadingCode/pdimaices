@@ -51,3 +51,4 @@ order by nombre,id_rasgo
 delete from clase_objeto;
 delete from rasgo_objeto;
 delete from objeto;
+
