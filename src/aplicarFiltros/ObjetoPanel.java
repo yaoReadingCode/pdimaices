@@ -32,11 +32,15 @@ public class ObjetoPanel extends JPanel {
 		
 		this.labelNombre.setText(objeto.getName());
 		
-		TableModel model = tableRasgos.getModel();
+		DefaultTableModel model = (DefaultTableModel) tableRasgos.getModel();
+		
 		for(int i=0;i<objeto.getRasgos().size();i++){
 			RasgoObjeto rasgo = objeto.getRasgos().get(i);
+			/*
 			model.setValueAt(rasgo.getRasgo().getNombre(), i, 0);
-			model.setValueAt(rasgo.getValor(), i, 1);
+			model.setValueAt(rasgo.getValor(), i, 1);*/
+			
+			model.addRow(new Object[]{rasgo.getRasgo().getNombre(),rasgo.getValor()});
 		}
 	}
 
@@ -44,6 +48,7 @@ public class ObjetoPanel extends JPanel {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
 		panel1 = new JPanel();
 		labelNombre = new JLabel();
+		txtNombre = new JTextField();
 		panelRasgos = new JPanel();
 		scrollPaneRasgos = new JScrollPane();
 		tableRasgos = new JTable();
@@ -54,10 +59,13 @@ public class ObjetoPanel extends JPanel {
 		//======== panel1 ========
 		{
 			panel1.setLayout(new FlowLayout(FlowLayout.LEFT));
+			panel1.setSize(200, 100);
 
 			//---- labelNombre ----
 			labelNombre.setText("Nombre");
+			labelNombre.setFont(new Font("Elvetica",Font.BOLD,12));
 			panel1.add(labelNombre);
+			//panel1.add(txtNombre);
 		}
 		add(panel1, BorderLayout.NORTH);
 
@@ -88,6 +96,7 @@ public class ObjetoPanel extends JPanel {
 	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
 	private JPanel panel1;
 	private JLabel labelNombre;
+	private JTextField txtNombre;
 	private JPanel panelRasgos;
 	private JScrollPane scrollPaneRasgos;
 	private JTable tableRasgos;

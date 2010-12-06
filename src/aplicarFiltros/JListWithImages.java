@@ -57,8 +57,10 @@ public class JListWithImages extends JList {
 	   if (ficheros[i].endsWith(".tif")){
 		   Objeto o = new Objeto();
 		   o.setPathImage(path+ficheros[i]);
+		   o.setName(ficheros[i]);
 		   List<RasgoObjeto> rasgos = new ArrayList<RasgoObjeto>();
 		   rasgos.add(new RasgoObjeto(new Rasgo("AREA"),1.0));
+		   o.setRasgos(rasgos);
 		   ObjetoPanel jp = new ObjetoPanel(o);
 		   vector.add(jp);
 	   }
