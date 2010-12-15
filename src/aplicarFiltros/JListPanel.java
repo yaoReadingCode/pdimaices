@@ -3,6 +3,7 @@ package aplicarFiltros;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Panel;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,10 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.LineBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import objeto.Objeto;
 import objeto.Rasgo;
@@ -23,6 +27,7 @@ public class JListPanel extends JList {
 
  public JListPanel() {
    setCellRenderer(new CustomCellRenderer());
+   addListSelectionListener(new CustomSelectionListener());
    }
 
  public static void main(String[] args) {
@@ -87,4 +92,32 @@ public class JListPanel extends JList {
      return component;
      }
    }
+ 
+ class CustomSelectionListener implements ListSelectionListener{
+
+	public void valueChanged(ListSelectionEvent listSelectionEvent) {
+		System.out.println("First index: " + listSelectionEvent.getFirstIndex());
+        System.out.println(", Last index: " + listSelectionEvent.getLastIndex());
+        boolean adjust = listSelectionEvent.getValueIsAdjusting();
+        System.out.println(", Adjusting? " + adjust);
+        if (!adjust) {
+          JList list = (JList) listSelectionEvent.getSource();
+          int selections[] = list.getSelectedIndices();
+          Object selectionValues[] = list.getSelectedValues();
+          for (int i = 0, n = selections.length; i < n; i++) {
+        	ObjetoPanel panel = (ObjetoPanel) selectionValues[i];
+        	
+        	ObjetoPanel panel2 = new ObjetoPanel(panel.getObjeto()); 
+        	JFrame frame = new JFrame();
+        	frame.getContentPane().add(new JScrollPane(panel2),BorderLayout.CENTER);
+        	frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        	frame.pack();
+        	frame.setLocationRelativeTo(null);
+        	frame.setVisible(true);
+
+          }
+        }	
+      }
+	 
+ }
 }

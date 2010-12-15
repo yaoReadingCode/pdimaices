@@ -26,8 +26,10 @@ import objeto.RasgoObjeto;
  * @author User #3
  */
 public class ObjetoPanel extends JPanel {
+	Objeto objeto = null;
 	public ObjetoPanel(Objeto objeto) {
 		initComponents();
+		this.objeto = objeto;
 		PlanarImage image = JAI.create("fileload", objeto.getPathImage());
 		
 		this.panelImagen.add(new DisplayJAI(image),BorderLayout.CENTER);
@@ -44,6 +46,14 @@ public class ObjetoPanel extends JPanel {
 			
 			model.addRow(new Object[]{rasgo.getRasgo().getNombre(),rasgo.getValor()});
 		}
+	}
+
+	public Objeto getObjeto() {
+		return objeto;
+	}
+
+	public void setObjeto(Objeto objeto) {
+		this.objeto = objeto;
 	}
 
 	private void initComponents() {
