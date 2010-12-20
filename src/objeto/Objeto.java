@@ -518,4 +518,9 @@ public class Objeto {
 		claseObjeto.setObjeto(null);
 	}
 
+	@Override
+	public String toString() {
+		return this.getName();
+	}
+
 }

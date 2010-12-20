@@ -376,6 +376,9 @@ public class SepararObjetos extends AbstractImageCommand {
 	 * @return
 	 */
 	private List<Objeto> separarObjetos(Objeto obj, EvaluadorClase objetoCircular) {	
+		if (obj.getName().equals(""))
+			System.out.println("");
+		
 		List<Pixel> contorno = obj.getContorno();
 		/*
 		int tamanioSegmento = (int)((double) porcTamanioSegmento * contorno.size() / 100);
@@ -442,7 +445,7 @@ public class SepararObjetos extends AbstractImageCommand {
 								nuevoContorno.clear();
 								
 								contorno = objResto.getContorno();
-								
+								objResto.setName(obj.getName()+"_"+(objetos.size() + 1));
 								List<Objeto> nuevosObjetos = separarObjetos(objResto, objetoCircular);
 								objetos.addAll(nuevosObjetos);
 								

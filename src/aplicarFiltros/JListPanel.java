@@ -19,6 +19,8 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import objeto.Clase;
+import objeto.ClaseObjeto;
 import objeto.Objeto;
 import objeto.Rasgo;
 import objeto.RasgoObjeto;
@@ -59,9 +61,11 @@ public class JListPanel extends JList {
 		   o.setName(ficheros[i]);
 		   List<RasgoObjeto> rasgos = new ArrayList<RasgoObjeto>();
 		   rasgos.add(new RasgoObjeto(new Rasgo("AREA"),1.0));
+		   ClaseObjeto clase = new ClaseObjeto(new Clase("INDETERMINADO"));
+		   o.addClase(clase);
 		   o.setRasgos(rasgos);
-		   ObjetoPanel jp = new ObjetoPanel(o);
-		   vector.add(jp);
+		   //ObjetoPanel jp = new ObjetoPanel(o);
+		   vector.add(o);
 	   }
    }
 
@@ -84,7 +88,8 @@ public class JListPanel extends JList {
    public Component getListCellRendererComponent
     (JList list, Object value, int index,
      boolean isSelected,boolean cellHasFocus) {
-     Component component = (Component)value;
+     Objeto objeto = (Objeto)value;
+     PreviewObjetoPanel component = new PreviewObjetoPanel(objeto);
      component.setBackground
       (isSelected ? Color.DARK_GRAY : Color.white);
      component.setForeground
@@ -100,14 +105,15 @@ public class JListPanel extends JList {
         System.out.println(", Last index: " + listSelectionEvent.getLastIndex());
         boolean adjust = listSelectionEvent.getValueIsAdjusting();
         System.out.println(", Adjusting? " + adjust);
+        /*
         if (!adjust) {
           JList list = (JList) listSelectionEvent.getSource();
           int selections[] = list.getSelectedIndices();
           Object selectionValues[] = list.getSelectedValues();
           for (int i = 0, n = selections.length; i < n; i++) {
-        	ObjetoPanel panel = (ObjetoPanel) selectionValues[i];
+        	Objeto objeto = (Objeto) selectionValues[i];
         	
-        	ObjetoPanel panel2 = new ObjetoPanel(panel.getObjeto()); 
+        	ObjetoPanel panel2 = new ObjetoPanel(objeto); 
         	JFrame frame = new JFrame();
         	frame.getContentPane().add(new JScrollPane(panel2),BorderLayout.CENTER);
         	frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -116,7 +122,7 @@ public class JListPanel extends JList {
         	frame.setVisible(true);
 
           }
-        }	
+        }*/	
       }
 	 
  }

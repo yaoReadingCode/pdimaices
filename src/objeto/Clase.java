@@ -1,6 +1,5 @@
 package objeto;
 
-import java.awt.Color;
 import java.util.List;
 
 public class Clase {
@@ -12,6 +11,12 @@ public class Clase {
 	 */
 	private String nombre;
 	
+	public Clase(String nombre) {
+		super();
+		this.nombre = nombre;
+	}
+
+
 	/**
 	 * Descripcion de la clase
 	 */
