@@ -11,7 +11,7 @@ import com.jgoodies.forms.factories.*;
 import com.jgoodies.forms.layout.*;
 
 /**
- * @author User #3
+ * @author User #3 oscar Gay
  */
 public class Ej3Frame extends JFrame {
 	public Ej3Frame() {
