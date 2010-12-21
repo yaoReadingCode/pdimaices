@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.*;
+import javax.swing.table.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
@@ -27,7 +28,7 @@ import objeto.RasgoObjeto;
  */
 public class ObjetoPanel extends JPanel {
 	Objeto objeto = null;
-	public ObjetoPanel(Objeto objeto) {
+	public ObjetoPanel(Objeto objeto, int nroPanel) {
 		initComponents();
 		this.objeto = objeto;
 		PlanarImage image = JAI.create("fileload", objeto.getPathImage());
@@ -35,6 +36,7 @@ public class ObjetoPanel extends JPanel {
 		this.panelImagen.add(new DisplayJAI(image),BorderLayout.CENTER);
 		
 		this.labelNombre.setText(objeto.getName());
+		this.labelNro.setText(Integer.toString(nroPanel));
 		
 		DefaultTableModel model = (DefaultTableModel) tableRasgos.getModel();
 		
@@ -60,6 +62,7 @@ public class ObjetoPanel extends JPanel {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
 		// Generated using JFormDesigner Evaluation license - Oscar Giorgetti
 		panel1 = new JPanel();
+		labelNro = new JLabel();
 		labelNombre = new JLabel();
 		panelRasgos = new JPanel();
 		scrollPaneRasgos = new JScrollPane();
@@ -71,13 +74,24 @@ public class ObjetoPanel extends JPanel {
 		buttonGuardar = new JButton();
 
 		//======== this ========
-		setBorder(new MatteBorder(0, 0, 2, 0, new Color(153, 204, 255)));
+		setBorder(new LineBorder(new Color(153, 204, 255)));
+
+		// JFormDesigner evaluation mark
+		setBorder(new javax.swing.border.CompoundBorder(
+			new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
+				"", javax.swing.border.TitledBorder.CENTER,
+				javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
+				java.awt.Color.red), getBorder())); addPropertyChangeListener(new java.beans.PropertyChangeListener(){public void propertyChange(java.beans.PropertyChangeEvent e){if("border".equals(e.getPropertyName()))throw new RuntimeException();}});
 
 		setLayout(new BorderLayout());
 
 		//======== panel1 ========
 		{
 			panel1.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+			//---- labelNro ----
+			labelNro.setText("1");
+			panel1.add(labelNro);
 
 			//---- labelNombre ----
 			labelNombre.setText("Nombre");
@@ -102,7 +116,7 @@ public class ObjetoPanel extends JPanel {
 						"Rasgo", "Valor"
 					}
 				) {
-					Class<?>[] columnTypes = new Class<?>[] {
+					Class[] columnTypes = new Class[] {
 						String.class, Double.class
 					};
 					@Override
@@ -110,7 +124,7 @@ public class ObjetoPanel extends JPanel {
 						return columnTypes[columnIndex];
 					}
 				});
-				tableRasgos.setPreferredScrollableViewportSize(new Dimension(150, 100));
+				tableRasgos.setPreferredScrollableViewportSize(new Dimension(200, 100));
 				tableRasgos.setBackground(UIManager.getColor("RadioButton.light"));
 				tableRasgos.setCellSelectionEnabled(true);
 				scrollPaneRasgos.setViewportView(tableRasgos);
@@ -132,6 +146,7 @@ public class ObjetoPanel extends JPanel {
 
 			//---- labelClase ----
 			labelClase.setText("Clase:");
+			labelClase.setFont(labelClase.getFont().deriveFont(labelClase.getFont().getStyle() | Font.BOLD));
 			panel2.add(labelClase);
 
 			//---- comboBoxClase ----
@@ -152,6 +167,7 @@ public class ObjetoPanel extends JPanel {
 	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
 	// Generated using JFormDesigner Evaluation license - Oscar Giorgetti
 	private JPanel panel1;
+	private JLabel labelNro;
 	private JLabel labelNombre;
 	private JPanel panelRasgos;
 	private JScrollPane scrollPaneRasgos;

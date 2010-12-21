@@ -27,6 +27,7 @@ import objeto.Rasgo;
 import objeto.RasgoObjeto;
 import procesamiento.clasificacion.Clasificador;
 import procesamiento.clasificacion.EvaluadorClase;
+import aplicarFiltros.ObjetoPanel;
 import aplicarFiltros.PreviewObjetoPanel;
 import aplicarFiltros.Visualizador;
 
@@ -156,13 +157,13 @@ public class DetectarObjetos extends AbstractImageCommand {
 			List<Objeto> objetosClase = getClasificador().getClasificacion().get(c);
 			for (Objeto obj: objetosClase) {
 				// ObjetoPanel jp = new ObjetoPanel(o);
-				PreviewObjetoPanel panel = new PreviewObjetoPanel(obj);
+				ObjetoPanel panel = new ObjetoPanel(obj,cant);
 				// JButton panel = new JButton("Boton");
 
 				// Place a component at cell location (1,1)
 				GridBagConstraints gbc = new GridBagConstraints();
-				gbc.gridy = cant / 3;// GridBagConstraints.RELATIVE;
-				gbc.gridx = cant % 3;// GridBagConstraints.RELATIVE;
+				gbc.gridy = cant / 2;// GridBagConstraints.RELATIVE;
+				gbc.gridx = cant % 2;// GridBagConstraints.RELATIVE;
 				gbc.gridheight = 1;
 				gbc.gridwidth = 1;
 				gbc.fill = GridBagConstraints.BOTH;

@@ -37,7 +37,7 @@ public class ClasePanel extends JPanel {
 			Vector<ObjetoPanel> data = new Vector<ObjetoPanel>();
 			DefaultTableModel tableModel = new DefaultTableModel();
 			for (Objeto obj: objetos) {
-				ObjetoPanel panel = new ObjetoPanel(obj); 
+				ObjetoPanel panel = new ObjetoPanel(obj,0); 
 				data.add(panel);
 				tableModel.addRow(new Object[]{panel});
 				//this.panelObjetos.add(panel);

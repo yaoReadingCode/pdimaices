@@ -14,19 +14,15 @@
       </object> 
       <void method="setProperty"> 
        <string>border</string> 
-       <object class="javax.swing.border.MatteBorder"> 
-        <object class="java.awt.Insets"> 
-         <int>0</int> 
-         <int>0</int> 
-         <int>2</int> 
-         <int>0</int> 
-        </object> 
+       <object class="javax.swing.border.LineBorder"> 
         <object class="java.awt.Color"> 
          <int>153</int> 
          <int>204</int> 
          <int>255</int> 
          <int>255</int> 
         </object> 
+        <int>1</int> 
+        <boolean>false</boolean> 
        </object> 
       </void> 
       <void property="name"> 
@@ -44,6 +40,18 @@
         </object> 
         <void property="name"> 
          <string>panel1</string> 
+        </void> 
+        <void method="add"> 
+         <object class="com.jformdesigner.model.FormComponent"> 
+          <string>javax.swing.JLabel</string> 
+          <void method="setProperty"> 
+           <string>text</string> 
+           <string>1</string> 
+          </void> 
+          <void property="name"> 
+           <string>labelNro</string> 
+          </void> 
+         </object> 
         </void> 
         <void method="add"> 
          <object class="com.jformdesigner.model.FormComponent"> 
@@ -151,7 +159,7 @@
             <void method="setProperty"> 
              <string>preferredScrollableViewportSize</string> 
              <object class="java.awt.Dimension"> 
-              <int>150</int> 
+              <int>200</int> 
               <int>100</int> 
              </object> 
             </void> 
@@ -228,6 +236,15 @@
           <void method="setProperty"> 
            <string>text</string> 
            <string>Clase:</string> 
+          </void> 
+          <void method="setProperty"> 
+           <string>font</string> 
+           <object class="com.jformdesigner.model.SwingDerivedFont"> 
+            <null/> 
+            <int>1</int> 
+            <int>0</int> 
+            <boolean>false</boolean> 
+           </object> 
           </void> 
           <void property="name"> 
            <string>labelClase</string> 
