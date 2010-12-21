@@ -19,6 +19,8 @@ public class Clasificador {
 	private ObjetoReferencia objetoReferencia= null; 
 	
 	private Configuracion configuracion;
+	
+	private List<Clase> clases = null;
 
 	public Clasificador() {
 		super();
@@ -134,6 +136,13 @@ public class Clasificador {
 		EvaluadorClase ec = new EvaluadorClase(c,rasgos);
 		return ec;
 		
+	}
+
+	public List<Clase> getClases() {
+		if (clases == null){
+			clases = ObjectDao.getInstance().qryAll(Clase.class.getName());
+		}
+		return clases;
 	}
 
 }

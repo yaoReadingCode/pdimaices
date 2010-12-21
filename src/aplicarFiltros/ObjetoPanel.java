@@ -5,32 +5,33 @@
 package aplicarFiltros;
 
 import java.awt.*;
-import java.awt.BorderLayout;
+import java.awt.event.*;
+import java.util.List;
 
 import javax.media.jai.JAI;
 import javax.media.jai.PlanarImage;
 import javax.swing.*;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.border.*;
 import javax.swing.table.*;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 
 import com.sun.media.jai.widget.DisplayJAI;
 
+import objeto.Clase;
+import objeto.ClaseObjeto;
 import objeto.Objeto;
 import objeto.RasgoObjeto;
+import procesamiento.clasificacion.Clasificador;
 
 /**
  * @author User #3
  */
 public class ObjetoPanel extends JPanel {
-	Objeto objeto = null;
-	public ObjetoPanel(Objeto objeto, int nroPanel) {
+	private Objeto objeto = null;
+	private Clasificador clasificador = null;
+	public ObjetoPanel(Objeto objeto, int nroPanel, Clasificador clasificador) {
 		initComponents();
 		this.objeto = objeto;
+		this.clasificador = clasificador;
 		PlanarImage image = JAI.create("fileload", objeto.getPathImage());
 		
 		this.panelImagen.add(new DisplayJAI(image),BorderLayout.CENTER);
@@ -48,6 +49,20 @@ public class ObjetoPanel extends JPanel {
 			
 			model.addRow(new Object[]{rasgo.getRasgo().getNombre(),rasgo.getValor()});
 		}
+		
+		//---- comboBoxClase ----
+		DefaultComboBoxModel claseModel = new DefaultComboBoxModel();  
+		if (clasificador != null){
+			List<Clase> clases = clasificador.getClases();
+			for(Clase c:clases){
+				claseModel.addElement(c);
+			}
+		}
+
+		comboBoxClase.setModel(claseModel);
+
+		ClaseObjeto clase = objeto.getClases().get(0);
+		this.comboBoxClase.setSelectedItem(clase.getClase());
 	}
 
 	public Objeto getObjeto() {
@@ -58,9 +73,23 @@ public class ObjetoPanel extends JPanel {
 		this.objeto = objeto;
 	}
 
+	public Clasificador getClasificador() {
+		return clasificador;
+	}
+
+	public void setClasificador(Clasificador clasificador) {
+		this.clasificador = clasificador;
+	}
+
+	private void buttonGuardarActionPerformed(ActionEvent e) {
+		Clase clase = (Clase) this.comboBoxClase.getSelectedItem();
+		ClaseObjeto claseObjeto = this.objeto.getClases().get(0);
+		claseObjeto.setClase(clase);
+	}
+
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-		// Generated using JFormDesigner Evaluation license - Oscar Giorgetti
+		// Generated using JFormDesigner Evaluation license - oscar giorgetti
 		panel1 = new JPanel();
 		labelNro = new JLabel();
 		labelNombre = new JLabel();
@@ -116,7 +145,7 @@ public class ObjetoPanel extends JPanel {
 						"Rasgo", "Valor"
 					}
 				) {
-					Class[] columnTypes = new Class[] {
+					Class<?>[] columnTypes = new Class<?>[] {
 						String.class, Double.class
 					};
 					@Override
@@ -148,16 +177,16 @@ public class ObjetoPanel extends JPanel {
 			labelClase.setText("Clase:");
 			labelClase.setFont(labelClase.getFont().deriveFont(labelClase.getFont().getStyle() | Font.BOLD));
 			panel2.add(labelClase);
-
-			//---- comboBoxClase ----
-			comboBoxClase.setModel(new DefaultComboBoxModel(new String[] {
-				"MAIZ AMARILLO",
-				"INDETERMINADO"
-			}));
 			panel2.add(comboBoxClase);
 
 			//---- buttonGuardar ----
 			buttonGuardar.setText("Guardar");
+			buttonGuardar.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					buttonGuardarActionPerformed(e);
+				}
+			});
 			panel2.add(buttonGuardar);
 		}
 		add(panel2, BorderLayout.SOUTH);
@@ -165,7 +194,7 @@ public class ObjetoPanel extends JPanel {
 	}
 
 	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
-	// Generated using JFormDesigner Evaluation license - Oscar Giorgetti
+	// Generated using JFormDesigner Evaluation license - oscar giorgetti
 	private JPanel panel1;
 	private JLabel labelNro;
 	private JLabel labelNombre;
