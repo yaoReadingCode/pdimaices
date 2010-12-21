@@ -157,7 +157,7 @@ public class DetectarObjetos extends AbstractImageCommand {
 			List<Objeto> objetosClase = getClasificador().getClasificacion().get(c);
 			for (Objeto obj: objetosClase) {
 				// ObjetoPanel jp = new ObjetoPanel(o);
-				ObjetoPanel panel = new ObjetoPanel(obj,cant);
+				ObjetoPanel panel = new ObjetoPanel(obj,cant + 1 );
 				// JButton panel = new JButton("Boton");
 
 				// Place a component at cell location (1,1)

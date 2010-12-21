@@ -18,6 +18,7 @@ import procesamiento.ImageUtil;
 public class ObjetoUtil {
 	//private static PlanarImage inputImage = JAI.create("fileload", "limpia.tif");
 	private static int desplazamiento = 50;
+
 	/*
 	public PlanarImage getInputImage() {
 		return inputImage;
@@ -51,10 +52,10 @@ public class ObjetoUtil {
 		if (o != null) {
 			o.calcularMaximosMinimos();
 			for (Pixel p : o.getPuntos()) {
-				pintarPunto(p, o, ti);
+				pintarPunto(p, o, ti, width, height);
 			}
 			for (Pixel p : o.getContorno()) {
-				pintarPunto(p, o, ti);
+				pintarPunto(p, o, ti, width, height);
 			}
 		}
 		
@@ -62,20 +63,26 @@ public class ObjetoUtil {
 
 		JAI.create("filestore", ti, o.getPathImage(), "TIFF");
 	}
-	private static void pintarPunto(Pixel p, Objeto o, TiledImage ti){
+	private static void pintarPunto(Pixel p, Objeto o, TiledImage ti, int width, int height){
 		Color interior = p.getCol();
 		if (interior != null) {
 			int pixel[] = { interior.getRed(), interior.getGreen(),
 					interior.getBlue() };
 
-			int x = (p.getX() - o.getxMin()) + desplazamiento;
-			int y = (p.getY() - o.getyMin()) + desplazamiento;
+			//int x = (p.getX() - o.getxMin()) + desplazamiento;
+			//int y = (p.getY() - o.getyMin()) + desplazamiento;
+			int x = (p.getX() - o.getPixelMedio().getX()) + (width / 2);
+			int y = (p.getY() - o.getPixelMedio().getY()) + (height / 2);
+
 			ImageUtil.writePixel(x, y, pixel, ti);
 		}else{
 			int pixel[] = {50, 50,	50};
 
-			int x = (p.getX() - o.getxMin()) + desplazamiento;
-			int y = (p.getY() - o.getyMin()) + desplazamiento;
+			//int x = (p.getX() - o.getxMin()) + desplazamiento;
+			//int y = (p.getY() - o.getyMin()) + desplazamiento;
+			int x = (p.getX() - o.getPixelMedio().getX()) + (width / 2);
+			int y = (p.getY() - o.getPixelMedio().getY()) + (height / 2);
+
 			ImageUtil.writePixel(x, y, pixel, ti);
 			
 		}
