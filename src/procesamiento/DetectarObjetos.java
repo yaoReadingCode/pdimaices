@@ -1,14 +1,24 @@
 package procesamiento;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Dialog.ModalExclusionType;
+import java.awt.Dialog.ModalityType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import javax.media.jai.PlanarImage;
 import javax.media.jai.TiledImage;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import objeto.ClaseObjeto;
 import objeto.Objeto;
@@ -17,6 +27,7 @@ import objeto.Rasgo;
 import objeto.RasgoObjeto;
 import procesamiento.clasificacion.Clasificador;
 import procesamiento.clasificacion.EvaluadorClase;
+import aplicarFiltros.PreviewObjetoPanel;
 import aplicarFiltros.Visualizador;
 
 
@@ -124,11 +135,62 @@ public class DetectarObjetos extends AbstractImageCommand {
 			dc.postExecute(); 
 			Visualizador.aumentarProgreso(10, "");
 			Visualizador.terminar();
+			
+			visualizarResultado();
 			return output; 
 		}
 		return null;
 	}
 	
+	private void visualizarResultado() {
+		JFrame frame = new JFrame();
+		GridBagLayout gbl = new GridBagLayout();
+
+		JPanel container = new JPanel();
+		container.setLayout(gbl);
+		frame.getContentPane().add(new JScrollPane(container),BorderLayout.CENTER);
+
+		Set<EvaluadorClase> clases = getClasificador().getClasificacion().keySet();
+		int cant = 0;
+		for(EvaluadorClase c: clases){
+			List<Objeto> objetosClase = getClasificador().getClasificacion().get(c);
+			for (Objeto obj: objetosClase) {
+				// ObjetoPanel jp = new ObjetoPanel(o);
+				PreviewObjetoPanel panel = new PreviewObjetoPanel(obj);
+				// JButton panel = new JButton("Boton");
+
+				// Place a component at cell location (1,1)
+				GridBagConstraints gbc = new GridBagConstraints();
+				gbc.gridy = cant / 3;// GridBagConstraints.RELATIVE;
+				gbc.gridx = cant % 3;// GridBagConstraints.RELATIVE;
+				gbc.gridheight = 1;
+				gbc.gridwidth = 1;
+				gbc.fill = GridBagConstraints.BOTH;
+
+				// Associate the gridbag constraints with the component
+				gbl.setConstraints(panel, gbc);
+
+				// Add the component to the container
+				container.add(panel);
+				cant++;
+			}
+		}		
+		
+		// Show the frame
+		//frame.pack();
+		frame.setTitle("Clasificación");
+		frame.setSize(1000, 500);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.setLocationRelativeTo(null);
+		//frame.setModal(true);
+		frame.setResizable(true);
+		frame.setVisible(true);
+		
+		//JOptionPane.showInputDialog(frame);
+		
+		
+	}
+
 	/**
 	 * Pinta el pixel (x,y) de la imagen con el color pasado como parámetro
 	 * 

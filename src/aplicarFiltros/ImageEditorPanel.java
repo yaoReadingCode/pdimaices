@@ -15,6 +15,7 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.SystemColor;
+import java.awt.Dialog.ModalExclusionType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -30,6 +31,7 @@ import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
 import javax.media.jai.PlanarImage;
 import javax.media.jai.TileCache;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -341,7 +343,7 @@ public class ImageEditorPanel extends JPanel implements IImageProcessing,
 		// Create and set up the window.
 		UIManager.put("swing.boldMetal", Boolean.FALSE);
 
-		JFrame frame = new JFrame("Image Editor");
+		JFrame frame = new JFrame("Clasicador de granos");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		ImageEditorPanel panel = new ImageEditorPanel();
