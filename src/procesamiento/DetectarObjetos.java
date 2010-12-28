@@ -27,6 +27,7 @@ import objeto.Rasgo;
 import objeto.RasgoObjeto;
 import procesamiento.clasificacion.Clasificador;
 import procesamiento.clasificacion.EvaluadorClase;
+import aplicarFiltros.FrameResultado;
 import aplicarFiltros.ObjetoPanel;
 import aplicarFiltros.PreviewObjetoPanel;
 import aplicarFiltros.Visualizador;
@@ -144,17 +145,18 @@ public class DetectarObjetos extends AbstractImageCommand {
 	}
 	
 	private void visualizarResultado() {
-		JFrame frame = new JFrame();
+		FrameResultado frame = new FrameResultado();
 		GridBagLayout gbl = new GridBagLayout();
 
-		JPanel container = new JPanel();
-		container.setLayout(gbl);
-		frame.getContentPane().add(new JScrollPane(container),BorderLayout.CENTER);
+		
 
 		Set<EvaluadorClase> clases = getClasificador().getClasificacion().keySet();
 		int cant = 0;
 		for(EvaluadorClase c: clases){
 			List<Objeto> objetosClase = getClasificador().getClasificacion().get(c);
+			JPanel container = new JPanel();
+			container.setLayout(gbl);
+			frame.getContentPane().add(new JScrollPane(container),BorderLayout.CENTER);
 			for (Objeto obj: objetosClase) {
 				// ObjetoPanel jp = new ObjetoPanel(o);
 				ObjetoPanel panel = new ObjetoPanel(obj,cant + 1, getClasificador() );
@@ -175,6 +177,7 @@ public class DetectarObjetos extends AbstractImageCommand {
 				container.add(panel);
 				cant++;
 			}
+			frame.addPanel(container, c.getClase().getNombre());
 		}		
 		
 		// Show the frame
