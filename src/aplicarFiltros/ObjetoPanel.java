@@ -182,7 +182,7 @@ public class ObjetoPanel extends JPanel {
 			//---- buttonGuardar ----
 			buttonGuardar.setText("Guardar");
 			buttonGuardar.addActionListener(new ActionListener() {
-				@Override
+
 				public void actionPerformed(ActionEvent e) {
 					buttonGuardarActionPerformed(e);
 				}
