@@ -11,6 +11,8 @@ import java.util.List;
 import javax.media.jai.PlanarImage;
 import javax.media.jai.TiledImage;
 
+import aplicarFiltros.Visualizador;
+
 import objeto.Objeto;
 import objeto.ObjetoUtil;
 import objeto.Pixel;
@@ -855,11 +857,14 @@ public class DetectarContorno extends AbstractImageCommand {
 												getPixelsInterior(pixel,pixelsContorno,interior, o, tiOriginal);
 												o.setPuntos(interior);
 												objetos.add(o);
-												System.out
-														.println("Objeto catalogado: "
-																+ o.getName()
-																+ " - Puntos detectados: "
-																+ interior.size());
+												
+												String info = "Objeto catalogado: "
+															+ o.getName()
+															+ " - Puntos detectados: "
+															+ interior.size();
+												
+												Visualizador.addLogInfo(info);
+												//System.out.println(info);
 											}
 										}
 									}

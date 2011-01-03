@@ -2,6 +2,8 @@ package procesamiento;
 
 import javax.media.jai.PlanarImage;
 
+import aplicarFiltros.Visualizador;
+
 import procesamiento.clasificacion.Clasificador;
 
 /**
@@ -17,6 +19,8 @@ public abstract class AbstractImageCommand implements ImageComand {
 	private PlanarImage image;
 	
 	private Clasificador clasificador;
+	
+	private Visualizador visualizador;
 
 	/**
 	 * Constructor

@@ -5,12 +5,16 @@
 package aplicarFiltros;
 
 import java.awt.*;
+import java.util.Date;
+
 import javax.swing.*;
 
 /**
  * @author seba
  */
 public class Progress extends JPanel {
+	static private String newline = "\n";
+	
 	public Progress() {
 		initComponents();
 	}
@@ -21,7 +25,7 @@ public class Progress extends JPanel {
 		}else{
 			progressBar1.setValue(v);
 			label1.setText("Tarea: " + texto);
-			
+			textAreaInfo.setText("");
 			progressBar1.invalidate();
 			progressBar1.repaint();
 
@@ -32,6 +36,7 @@ public class Progress extends JPanel {
 	public void inicializarProgressBar(){
 		progressBar1.setValue(0);
 		label1.setText("Tarea:");
+		textAreaInfo.setText("");
 	}
 	
 	public void dibujar(){
@@ -43,12 +48,24 @@ public class Progress extends JPanel {
 	public void finalizar(){
 		window1.setVisible(false);
 	}
+	
+	/**
+	 * Agrega un texto a visualizar en el log
+	 */
+	public void addLogInfo(String texto){
+		textAreaInfo.append(texto + newline);
+		textAreaInfo.setCaretPosition(textAreaInfo.getText().length());
+
+	}
 
 	public void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
+		// Generated using JFormDesigner Evaluation license - Oscar Giorgetti
 		window1 = new JWindow();
 		progressBar1 = new JProgressBar();
 		label1 = new JLabel();
+		scrollPane1 = new JScrollPane();
+		textAreaInfo = new JTextArea();
 
 		//======== window1 ========
 		{
@@ -67,7 +84,18 @@ public class Progress extends JPanel {
 			window1ContentPane.add(label1);
 			label1.setBounds(20, 55, 495, 25);
 
-			window1ContentPane.setPreferredSize(new Dimension(535, 95));
+			//======== scrollPane1 ========
+			{
+
+				//---- textAreaInfo ----
+				textAreaInfo.setRows(2);
+				textAreaInfo.setEditable(false);
+				scrollPane1.setViewportView(textAreaInfo);
+			}
+			window1ContentPane.add(scrollPane1);
+			scrollPane1.setBounds(20, 80, 495, scrollPane1.getPreferredSize().height);
+
+			window1ContentPane.setPreferredSize(new Dimension(535, 130));
 			window1.pack();
 			window1.setLocationRelativeTo(window1.getOwner());
 		}
@@ -75,8 +103,11 @@ public class Progress extends JPanel {
 	}
 
 	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
+	// Generated using JFormDesigner Evaluation license - Oscar Giorgetti
 	private JWindow window1;
 	private JProgressBar progressBar1;
 	private JLabel label1;
+	private JScrollPane scrollPane1;
+	private JTextArea textAreaInfo;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
 }

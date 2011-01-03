@@ -96,7 +96,7 @@ public class DetectarObjetos extends AbstractImageCommand {
 	 */
 	public PlanarImage execute() {
 		if (getOriginalImage() != null && getHsvRange() != null) {
-			Visualizador.iniciarProgreso();
+			//Visualizador.iniciarProgreso();
 
 			Visualizador.aumentarProgreso(0, "Binarizando...");
 			Binarizar ef = new Binarizar(getOriginalImage(), getHsvRange());
@@ -136,7 +136,7 @@ public class DetectarObjetos extends AbstractImageCommand {
 			//op.postExecute();
 			dc.postExecute(); 
 			Visualizador.aumentarProgreso(10, "");
-			Visualizador.terminar();
+			//Visualizador.terminar();
 			
 			visualizarResultado();
 			return output; 

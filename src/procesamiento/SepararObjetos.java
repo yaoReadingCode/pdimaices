@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.media.jai.PlanarImage;
 
+import aplicarFiltros.Visualizador;
+
 import objeto.Clase;
 import objeto.Objeto;
 import objeto.Pixel;
@@ -444,6 +446,14 @@ public class SepararObjetos extends AbstractImageCommand {
 								parar = true;
 								nuevoContorno.clear();
 								
+								String info = "Objeto catalogado: "
+									+ nuevoObjeto.getName()
+									+ " - Puntos detectados: "
+									+ nuevoObjeto.getPuntos().size();
+						
+								Visualizador.addLogInfo(info);
+								
+								
 								contorno = objResto.getContorno();
 								objResto.setName(obj.getName()+"_"+(objetos.size() + 1));
 								List<Objeto> nuevosObjetos = separarObjetos(objResto, objetoCircular);
@@ -452,6 +462,7 @@ public class SepararObjetos extends AbstractImageCommand {
 								huboDivision = true;
 								
 								puntosConflictoVisitados.add(p);
+								
 
 							}
 							else
@@ -473,6 +484,14 @@ public class SepararObjetos extends AbstractImageCommand {
 						detectarContorno.completarObjeto(nuevoObj);
 						objetos.add(nuevoObj);
 						nuevoObj.setName(obj.getName()+"_"+objetos.size());
+						
+						String info = "Objeto catalogado: "
+							+ obj.getName()
+							+ " - Puntos detectados: "
+							+ obj.getPuntos().size();
+				
+						Visualizador.addLogInfo(info);
+						
 					}
 				}
 				return objetos;

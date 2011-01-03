@@ -1,6 +1,8 @@
 package procesamiento;
 
 import javax.media.jai.PlanarImage;
+
+import aplicarFiltros.Visualizador;
 /**
  * Interfaz para ejecutar comandos sobre una imagen
  * @author oscar
@@ -35,4 +37,5 @@ public interface ImageComand {
 	 * @return
 	 */
 	public String getInfo();
+	
 }

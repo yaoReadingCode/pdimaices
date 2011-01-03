@@ -24,6 +24,14 @@ public class Visualizador  {
 		System.out.println("Aumentar " + valor );
 		
 	}
+
+	/**
+	 * Agrega un texto a visualizar en el log
+	 */
+	public static void addLogInfo(String texto){
+		progreso.addLogInfo(texto);
+	}
+
 	
 	public static void terminar(){
 		progreso.finalizar();

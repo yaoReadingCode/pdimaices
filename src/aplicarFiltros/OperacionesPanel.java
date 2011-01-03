@@ -74,7 +74,11 @@ public class OperacionesPanel extends JPanel {
 		
 		 Runnable runnable = new Runnable() {
 	            public void run() {
+	    			Visualizador.iniciarProgreso();
+	    			
 	            	getImageHolder().setImage(command.execute());
+	            	
+	            	Visualizador.terminar();
 	        		command.postExecute();
 	        		getImageHolder().addExecutedCommand(command, command.getInfo());
 	            }
