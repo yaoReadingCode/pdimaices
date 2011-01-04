@@ -49,6 +49,13 @@ public class RasgoClase {
 	 */
 	private Double peso;
 	
+	/**
+	 * Determina si se debe utilizar el valor medio y el desvio estandar para validar
+	 * si un objeto pertenece a una clase. De lo contrario se utilizan los valores maximos
+	 * y minimos para cada par <rasgo,clase>
+	 */
+	private Boolean calcularValorMedio;
+	
 	public RasgoClase() {
 		// TODO Auto-generated constructor stub
 	}
@@ -131,6 +138,14 @@ public class RasgoClase {
 
 	public void setPeso(Double peso) {
 		this.peso = peso;
+	}
+
+	public Boolean getCalcularValorMedio() {
+		return calcularValorMedio;
+	}
+
+	public void setCalcularValorMedio(Boolean calcularValorMedio) {
+		this.calcularValorMedio = calcularValorMedio;
 	}
 
 	public boolean equals(Object o) {

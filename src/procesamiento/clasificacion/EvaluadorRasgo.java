@@ -52,9 +52,16 @@ public class EvaluadorRasgo {
 			else{
 				this.setDesvioEstandar(rasgo.getDesvioEstandarDefault());
 			}
+
 			if (rasgo.getMedia() != null){
-				this.setMinimo(rasgo.getMinimo());
-				this.setMaximo(rasgo.getMaximo());
+				if (rasgo.getCalcularValorMedio()){
+					this.setMinimo(rasgo.getMedia() - rasgo.getDesvioEstandar());
+					this.setMaximo(rasgo.getMedia() + rasgo.getDesvioEstandar());
+				}
+				else{
+					this.setMinimo(rasgo.getMinimo());
+					this.setMaximo(rasgo.getMaximo());
+				}
 			}
 			else{
 				if (rasgo.getMediaDefault() != null && rasgo.getDesvioEstandarDefault() != null){
