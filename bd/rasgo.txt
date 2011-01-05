@@ -2,3 +2,5 @@
 2,ASPECT RADIO, Aspect Radio,procesamiento.clasificacion.AspectRatio
 3,CIRCULARIDAD, Circularidad,procesamiento.clasificacion.Circularidad
 4,CURVATURA, Curvatura,procesamiento.clasificacion.Curvatura
+5,ANCHO, Ancho,procesamiento.clasificacion.Ancho
+6,ALTO, Alto,procesamiento.clasificacion.Alto
