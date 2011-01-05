@@ -22,9 +22,10 @@ public class AspectRatio extends EvaluadorRasgo {
 
 	 
 	public Double calcularValor(Objeto objeto) {
-		Objeto objAux = objeto.clonar();
+		//Objeto objAux = objeto.clonar();
 		double altoMRC = objeto.getAlto();
 		double anchoMRC = objeto.getAncho();
+		/*
 		double areaMin = altoMRC * anchoMRC;
 		double anguloRot = 3;
 		for (double anguloTot = anguloRot; anguloTot < 360; anguloTot += anguloRot) {
@@ -37,7 +38,7 @@ public class AspectRatio extends EvaluadorRasgo {
 				altoMRC = alto;
 				areaMin = ancho * alto;
 			}
-		}
+		}*/
 		
 		double aspectRatio = 0;
 		if (anchoMRC < altoMRC)

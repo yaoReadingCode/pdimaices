@@ -101,11 +101,12 @@ public class SepararObjetos extends AbstractImageCommand {
 				if (!objetoCircular.pertenece(obj,false)){
 					//System.out.println("Separar objeto: " + obj.getPixelMedio());
 					List<Objeto> nuevosObjetos = separarObjetos(obj, objetoCircular);
-					
 					nuevos.addAll(nuevosObjetos);
 				}
-				else 
-					nuevos.add(obj);
+				else{
+					nuevos.add(obj);	
+				}
+					
 			}
 
 			setObjetos(nuevos);

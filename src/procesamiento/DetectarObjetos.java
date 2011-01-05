@@ -120,7 +120,12 @@ public class DetectarObjetos extends AbstractImageCommand {
 			DetectarContorno dc = new DetectarContorno(output, getOriginalImage(), new Color(100, 100, 100), Color.RED);
 			dc.setClasificador(getClasificador());
 			output = dc.execute();
-			setObjetos(dc.getObjetos());
+			
+			List<Objeto> objetos = dc.getObjetos();
+			for(Objeto o :objetos)
+				o.calcularMRC();
+
+			setObjetos(objetos);
 			
 			Visualizador.aumentarProgreso(30, "Clasificando objetos...");
 			clasificarObjetos(dc.getObjetos());

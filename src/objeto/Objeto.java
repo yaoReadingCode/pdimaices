@@ -221,6 +221,30 @@ public class Objeto {
 			calcularTriangulosContenedores();
 		}
 	}
+	
+	/**
+	 * calcula el minimo rectangulo contenedor y lo asigna como bounding box
+	 */
+	public void calcularMRC(){
+		Objeto objAux = this.clonar();
+		double altoMRC = this.getAlto();
+		double anchoMRC = this.getAncho();
+		double areaMin = altoMRC * anchoMRC;
+		double anguloRot = 3;
+		for (double anguloTot = anguloRot; anguloTot < 360; anguloTot += anguloRot) {
+			objAux.rotarContorno(anguloRot);
+			double alto = objAux.getAlto();
+			double ancho = objAux.getAncho();
+			double area = alto * ancho;
+			if (area < areaMin) {
+				anchoMRC = ancho;
+				altoMRC = alto;
+				areaMin = ancho * alto;
+			}
+		}
+		
+		this.boundingBox = objAux.getBoundingBox();
+	}
 
 	/**
 	 * Retorna si un pixel se encuentra dentro de un objeto (pertenece a un
