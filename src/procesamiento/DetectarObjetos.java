@@ -2,10 +2,13 @@ package procesamiento;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.Dialog.ModalExclusionType;
 import java.awt.Dialog.ModalityType;
 import java.util.ArrayList;
@@ -160,8 +163,8 @@ public class DetectarObjetos extends AbstractImageCommand {
 		for(EvaluadorClase c: clases){
 			List<Objeto> objetosClase = getClasificador().getClasificacion().get(c);
 			JPanel container = new JPanel();
-			container.setLayout(gbl);
-			frame.getContentPane().add(new JScrollPane(container),BorderLayout.CENTER);
+			//container.setLayout(gbl);
+			//frame.getContentPane().add(new JScrollPane(container),BorderLayout.CENTER);
 			for (Objeto obj: objetosClase) {
 				// ObjetoPanel jp = new ObjetoPanel(o);
 				ObjetoPanel panel = new ObjetoPanel(obj,cant + 1, getClasificador() );
@@ -176,12 +179,27 @@ public class DetectarObjetos extends AbstractImageCommand {
 				gbc.fill = GridBagConstraints.BOTH;
 
 				// Associate the gridbag constraints with the component
-				gbl.setConstraints(panel, gbc);
+				//gbl.setConstraints(panel, gbc);
 
 				// Add the component to the container
 				container.add(panel);
 				cant++;
 			}
+			
+			{ // compute preferred size
+				Dimension preferredSize = new Dimension();
+				for(int i = 0; i < container.getComponentCount(); i++) {
+					Rectangle bounds = container.getComponent(i).getBounds();
+					preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
+					preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
+				}
+				Insets insets = container.getInsets();
+				preferredSize.width += insets.right;
+				preferredSize.height += insets.bottom;
+				container.setMinimumSize(preferredSize);
+				container.setPreferredSize(preferredSize);
+			}
+			
 			frame.addPanel(container, c.getClase().getNombre());
 		}		
 		
