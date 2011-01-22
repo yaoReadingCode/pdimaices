@@ -41,12 +41,30 @@ public class TestCapa {
 		redNeuronal.backPropagate();
 		//Calculamos el valor de cada neurona
 		redNeuronal.feedForward();
-		System.out.println("***********Despues de aprender***************");
+		
+		
+		System.out.println("***********Despues de aprender0.9***************");
+		redNeuronal.setValorNeurona(0, 0.9);
+		redNeuronal.setValorNeurona(1, 0.7);
+		redNeuronal.setValorNeurona(2, 0.3);
+		//Calculamos el valor de cada neurona
+		redNeuronal.feedForward();
 		for(int i=0 ; i< cantidadNeuronaSalida;i++){
 			System.out.println("Neurona: " + i + " - Valor: " + redNeuronal.obtenerSalida(i));
 		}
 		System.out.println("Error aprendiendo:" + redNeuronal.calcularError());
 		
+		
+		System.out.println("***********Despues de aprender0.1***************");
+		redNeuronal.setValorNeurona(0, 0.1);
+		redNeuronal.setValorNeurona(1, 0.5);
+		redNeuronal.setValorNeurona(2, 0.2);
+		//Calculamos el valor de cada neurona
+		redNeuronal.feedForward();
+		for(int i=0 ; i< cantidadNeuronaSalida;i++){
+			System.out.println("Neurona: " + i + " - Valor: " + redNeuronal.obtenerSalida(i));
+		}
+		System.out.println("Error aprendiendo:" + redNeuronal.calcularError());
 		
 		
 		
