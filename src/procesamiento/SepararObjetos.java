@@ -83,6 +83,10 @@ public class SepararObjetos extends AbstractImageCommand {
 			RasgoClase rcAspectRadio = new RasgoClase();
 			rcAspectRadio.setRasgo(new Rasgo("AspectRadio"));
 			
+			/**
+			 * MENSAJE: Oscarrrrr Necesitaria saber como recuperar los datos de la base de datos
+			 */
+			
 			Circularidad circularidad = new Circularidad(rcCircularidad, 1.0, 0.2);
 			AspectRatio aspectRadio = new AspectRatio(rcAspectRadio, 1.0, 0.4);
 			//Area area = new Area("Area", 3000.0,2000.0);
