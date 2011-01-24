@@ -1,8 +1,11 @@
 package procesamiento;
 
 import java.awt.Color;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.image.DataBuffer;
 import java.awt.image.MultiPixelPackedSampleModel;
+import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -218,7 +221,7 @@ public class DetectarContorno extends AbstractImageCommand {
 		if (objeto.getContorno().size() > 0) {
 			List<Pixel> interior = new ArrayList<Pixel>();
 			getPixelsInterior(objeto.getContorno().get(0),
-					objeto.getContorno(), interior, objeto, visitados);
+					objeto.getContorno(), interior, objeto, getOriginalImage());
 			objeto.setPuntos(interior);
 		}
 	}
@@ -331,7 +334,12 @@ public class DetectarContorno extends AbstractImageCommand {
 	public void getPixelsInterior(Pixel pixel, List<Pixel> contorno,
 			List<Pixel> interior, Objeto o, PlanarImage ti) {
 		for (int dir = 0; dir < 8; dir++) {
+
 			Pixel actual = getAdyacenteNuevo(pixel, dir, getOriginalImage());
+			/*Para que complete los objetos cuando se divide un objeto en dos o mas*/
+			twGlobal = ti.XToTileX(actual.getX());
+			thGlobal = ti.YToTileY(actual.getY());
+			
 			if (actual != null)
 				if (!contorno.contains(actual))
 					if (!isVisitado(actual)) {
