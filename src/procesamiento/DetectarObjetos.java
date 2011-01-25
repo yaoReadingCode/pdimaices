@@ -154,20 +154,21 @@ public class DetectarObjetos extends AbstractImageCommand {
 	
 	private void visualizarResultado() {
 		FrameResultado frame = new FrameResultado();
-		GridBagLayout gbl = new GridBagLayout();
-
 		
-
 		Set<EvaluadorClase> clases = getClasificador().getClasificacion().keySet();
-		int cant = 0;
+		
 		for(EvaluadorClase c: clases){
 			List<Objeto> objetosClase = getClasificador().getClasificacion().get(c);
 			JPanel container = new JPanel();
-			//container.setLayout(gbl);
+			GridBagLayout gbl = new GridBagLayout();
+			int cant = 0;
+			
+			container.setLayout(gbl);
 			//frame.getContentPane().add(new JScrollPane(container),BorderLayout.CENTER);
 			for (Objeto obj: objetosClase) {
 				// ObjetoPanel jp = new ObjetoPanel(o);
 				ObjetoPanel panel = new ObjetoPanel(obj,cant + 1, getClasificador() );
+				//panel.setSize(200, 100);
 				// JButton panel = new JButton("Boton");
 
 				// Place a component at cell location (1,1)
@@ -179,13 +180,13 @@ public class DetectarObjetos extends AbstractImageCommand {
 				gbc.fill = GridBagConstraints.BOTH;
 
 				// Associate the gridbag constraints with the component
-				//gbl.setConstraints(panel, gbc);
+				gbl.setConstraints(panel, gbc);
 
 				// Add the component to the container
 				container.add(panel);
 				cant++;
 			}
-			
+			/*
 			{ // compute preferred size
 				Dimension preferredSize = new Dimension();
 				for(int i = 0; i < container.getComponentCount(); i++) {
@@ -198,7 +199,7 @@ public class DetectarObjetos extends AbstractImageCommand {
 				preferredSize.height += insets.bottom;
 				container.setMinimumSize(preferredSize);
 				container.setPreferredSize(preferredSize);
-			}
+			}*/
 			
 			frame.addPanel(container, c.getClase().getNombre());
 		}		
@@ -206,7 +207,7 @@ public class DetectarObjetos extends AbstractImageCommand {
 		// Show the frame
 		//frame.pack();
 		frame.setTitle("Clasificación");
-		frame.setSize(1000, 500);
+		frame.setSize(1100, 600);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
 		//frame.setModal(true);

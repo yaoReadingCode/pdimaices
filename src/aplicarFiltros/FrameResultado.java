@@ -10,7 +10,7 @@ public class FrameResultado extends JFrame {
 
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-		// Generated using JFormDesigner Evaluation license - seba cola
+		// Generated using JFormDesigner Evaluation license - Oscar Giorgetti
 		tabbedPane1 = new JTabbedPane();
 		panel1 = new JPanel();
 
@@ -72,17 +72,22 @@ public class FrameResultado extends JFrame {
 	}
 
 	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
-	// Generated using JFormDesigner Evaluation license - seba cola
+	// Generated using JFormDesigner Evaluation license - Oscar Giorgetti
 	private JTabbedPane tabbedPane1;
 	private JPanel panel1;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
 	private boolean tableIniciada=false;
 	public void addPanel(JPanel panel, String name){
-		if(tableIniciada)
-			tabbedPane1.addTab(name, panel);
+		if(tableIniciada){
+			JScrollPane scrollPanel = new JScrollPane(panel);
+			scrollPanel.setPreferredSize(new Dimension(512,512));
+			tabbedPane1.addTab(name, scrollPanel);
+		}
 		else{
 			tabbedPane1.removeAll();
-			tabbedPane1.addTab(name, panel);
+			JScrollPane scrollPanel = new JScrollPane(panel);
+			scrollPanel.setPreferredSize(new Dimension(512,512));
+			tabbedPane1.addTab(name, scrollPanel);
 			tableIniciada=true;
 			
 		}
