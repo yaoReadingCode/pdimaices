@@ -73,27 +73,63 @@ public class SepararObjetos extends AbstractImageCommand {
 	public void setVentanaPixeles(int ventanaPixeles) {
 		this.ventanaPixeles = ventanaPixeles;
 	}
-
+	/**
+	 * Metodo que devuelve un rasgo y los datos los obtiene de la base datos
+	 * 
+	 * @param nameRasgo
+	 * @return
+	 */
+	public EvaluadorRasgo getRasgo(String nameRasgo){
+		//Los datos los cargo desde la base
+		Double max = 100.0;
+		Double min = 10.0;
+		
+		
+		Double medio = (max + min)/2;
+		Double desvio = medio - min;  
+		RasgoClase rasgo = new RasgoClase();
+		rasgo.setRasgo(new Rasgo(nameRasgo));
+		EvaluadorRasgo eval = new EvaluadorRasgo(rasgo, medio, desvio);
+		return eval;
+	}
+	
+	public List<EvaluadorRasgo> getRasgosStored(){
+		List<EvaluadorRasgo> rasgos = new ArrayList<EvaluadorRasgo>();
+		
+		
+		RasgoClase rcCircularidad = new RasgoClase();
+		rcCircularidad.setRasgo(new Rasgo("Circularidad"));
+		
+		RasgoClase rcAspectRadio = new RasgoClase();
+		rcAspectRadio.setRasgo(new Rasgo("AspectRadio"));
+		Circularidad circularidad = new Circularidad(rcCircularidad, 1.0, 0.2);
+		AspectRatio aspectRadio = new AspectRatio(rcAspectRadio, 1.0, 0.4);
+		
+		rasgos.add(circularidad);
+		rasgos.add(aspectRadio);
+		
+		return rasgos;
+	}
 
 	public PlanarImage execute() {
 		if (getObjetos() != null){
-			RasgoClase rcCircularidad = new RasgoClase();
-			rcCircularidad.setRasgo(new Rasgo("Circularidad"));
-			
-			RasgoClase rcAspectRadio = new RasgoClase();
-			rcAspectRadio.setRasgo(new Rasgo("AspectRadio"));
-			
-			/**
-			 * MENSAJE: Oscarrrrr Necesitaria saber como recuperar los datos de la base de datos
-			 */
-			
-			Circularidad circularidad = new Circularidad(rcCircularidad, 1.0, 0.2);
-			AspectRatio aspectRadio = new AspectRatio(rcAspectRadio, 1.0, 0.4);
+//			RasgoClase rcCircularidad = new RasgoClase();
+//			rcCircularidad.setRasgo(new Rasgo("Circularidad"));
+//			
+//			RasgoClase rcAspectRadio = new RasgoClase();
+//			rcAspectRadio.setRasgo(new Rasgo("AspectRadio"));
+//			
+//			/**
+//			 * MENSAJE: Oscarrrrr Necesitaria saber como recuperar los datos de la base de datos
+//			 */
+//			
+//			Circularidad circularidad = new Circularidad(rcCircularidad, 1.0, 0.2);
+//			AspectRatio aspectRadio = new AspectRatio(rcAspectRadio, 1.0, 0.4);
 			//Area area = new Area("Area", 3000.0,2000.0);
 
-			List<EvaluadorRasgo> rasgos = new ArrayList<EvaluadorRasgo>();
-			rasgos.add(circularidad);
-			rasgos.add(aspectRadio);
+			List<EvaluadorRasgo> rasgos = this.getRasgosStored();
+//			rasgos.add(circularidad);
+//			rasgos.add(aspectRadio);
 			
 			Clase claseObjetoCircular = new Clase();
 			claseObjetoCircular.setNombre("Objeto circular");
