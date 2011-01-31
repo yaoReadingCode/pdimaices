@@ -25,7 +25,7 @@ public class Progress extends JPanel {
 		}else{
 			progressBar1.setValue(v);
 			label1.setText("Tarea: " + texto);
-			textAreaInfo.setText("");
+			//textAreaInfo.setText("");
 			progressBar1.invalidate();
 			progressBar1.repaint();
 
