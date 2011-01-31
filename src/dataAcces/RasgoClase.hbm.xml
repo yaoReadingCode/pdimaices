@@ -14,6 +14,8 @@
 		<property name="peso" type="double" column="peso"/>
 		
 		<property name="calcularValorMedio" type="boolean" column="calcular_valor_medio"/>
+		
+		<property name="determinante" type="boolean" column="determinante"/>
 
 		<property name="media" type="double" 
 			formula="select sum(r.valor) / count(*)

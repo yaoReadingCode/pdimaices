@@ -56,6 +56,11 @@ public class RasgoClase {
 	 */
 	private Boolean calcularValorMedio;
 	
+	/**
+	 * Indica si el rasgo es determinante para analizar la pertenecia de un objeto a la clase
+	 */
+	private Boolean determinante = true;
+
 	public RasgoClase() {
 		// TODO Auto-generated constructor stub
 	}
@@ -146,6 +151,14 @@ public class RasgoClase {
 
 	public void setCalcularValorMedio(Boolean calcularValorMedio) {
 		this.calcularValorMedio = calcularValorMedio;
+	}
+
+	public Boolean getDeterminante() {
+		return determinante;
+	}
+
+	public void setDeterminante(Boolean determinante) {
+		this.determinante = determinante;
 	}
 
 	public boolean equals(Object o) {
