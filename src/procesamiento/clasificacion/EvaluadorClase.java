@@ -50,9 +50,12 @@ public class EvaluadorClase {
 	 */
 	public boolean pertenece(Objeto objeto,boolean addRasgoToObject) {
 		boolean pertenece = true;
-		for (EvaluadorRasgo rasgo : getRasgos())
-			if (!rasgo.isEnRango(objeto,addRasgoToObject))
+		for (EvaluadorRasgo rasgo : getRasgos()){
+			boolean enRango = rasgo.isEnRango(objeto,addRasgoToObject); 
+			if (rasgo.getRasgoClase().getDeterminante()&& !enRango)
 				pertenece = false;
+			
+		}
 		return pertenece;
 	}
 
