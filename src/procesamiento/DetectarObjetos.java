@@ -154,55 +154,56 @@ public class DetectarObjetos extends AbstractImageCommand {
 	
 	private void visualizarResultado() {
 		FrameResultado frame = new FrameResultado();
-		
-		Set<EvaluadorClase> clases = getClasificador().getClasificacion().keySet();
-		
-		for(EvaluadorClase c: clases){
-			List<Objeto> objetosClase = getClasificador().getClasificacion().get(c);
-			JPanel container = new JPanel();
-			GridBagLayout gbl = new GridBagLayout();
-			int cant = 0;
-			
-			container.setLayout(gbl);
-			//frame.getContentPane().add(new JScrollPane(container),BorderLayout.CENTER);
-			for (Objeto obj: objetosClase) {
-				// ObjetoPanel jp = new ObjetoPanel(o);
-				ObjetoPanel panel = new ObjetoPanel(obj,cant + 1, getClasificador() );
-				//panel.setSize(200, 100);
-				// JButton panel = new JButton("Boton");
-
-				// Place a component at cell location (1,1)
-				GridBagConstraints gbc = new GridBagConstraints();
-				gbc.gridy = cant / 2;// GridBagConstraints.RELATIVE;
-				gbc.gridx = cant % 2;// GridBagConstraints.RELATIVE;
-				gbc.gridheight = 1;
-				gbc.gridwidth = 1;
-				gbc.fill = GridBagConstraints.BOTH;
-
-				// Associate the gridbag constraints with the component
-				gbl.setConstraints(panel, gbc);
-
-				// Add the component to the container
-				container.add(panel);
-				cant++;
-			}
-			/*
-			{ // compute preferred size
-				Dimension preferredSize = new Dimension();
-				for(int i = 0; i < container.getComponentCount(); i++) {
-					Rectangle bounds = container.getComponent(i).getBounds();
-					preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
-					preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
-				}
-				Insets insets = container.getInsets();
-				preferredSize.width += insets.right;
-				preferredSize.height += insets.bottom;
-				container.setMinimumSize(preferredSize);
-				container.setPreferredSize(preferredSize);
-			}*/
-			
-			frame.addPanel(container, c.getClase().getNombre());
-		}		
+		frame.setClasificador( getClasificador());
+		frame.setResultados();
+//		Set<EvaluadorClase> clases = getClasificador().getClasificacion().keySet();
+//		
+//		for(EvaluadorClase c: clases){
+//			List<Objeto> objetosClase = getClasificador().getClasificacion().get(c);
+//			JPanel container = new JPanel();
+//			GridBagLayout gbl = new GridBagLayout();
+//			int cant = 0;
+//			frame.setResultadosClase(c.getClase().getNombre(), objetosClase.size());
+//			container.setLayout(gbl);
+//			//frame.getContentPane().add(new JScrollPane(container),BorderLayout.CENTER);
+//			for (Objeto obj: objetosClase) {
+//				// ObjetoPanel jp = new ObjetoPanel(o);
+//				ObjetoPanel panel = new ObjetoPanel(obj,cant + 1, getClasificador(), frame );
+//				//panel.setSize(200, 100);
+//				// JButton panel = new JButton("Boton");
+//
+//				// Place a component at cell location (1,1)
+//				GridBagConstraints gbc = new GridBagConstraints();
+//				gbc.gridy = cant / 3;// GridBagConstraints.RELATIVE;
+//				gbc.gridx = cant % 3;// GridBagConstraints.RELATIVE;
+//				gbc.gridheight = 1;
+//				gbc.gridwidth = 1;
+//				gbc.fill = GridBagConstraints.BOTH;
+//
+//				// Associate the gridbag constraints with the component
+//				gbl.setConstraints(panel, gbc);
+//
+//				// Add the component to the container
+//				container.add(panel);
+//				cant++;
+//			}
+//			/*
+//			{ // compute preferred size
+//				Dimension preferredSize = new Dimension();
+//				for(int i = 0; i < container.getComponentCount(); i++) {
+//					Rectangle bounds = container.getComponent(i).getBounds();
+//					preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
+//					preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
+//				}
+//				Insets insets = container.getInsets();
+//				preferredSize.width += insets.right;
+//				preferredSize.height += insets.bottom;
+//				container.setMinimumSize(preferredSize);
+//				container.setPreferredSize(preferredSize);
+//			}*/
+//			
+//			frame.addPanel(container, c.getClase().getNombre());
+//		}		
 		
 		// Show the frame
 		//frame.pack();
