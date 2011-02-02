@@ -52,3 +52,5 @@ delete from clase_objeto;
 delete from rasgo_objeto;
 delete from objeto;
 
+select * from rasgo r
+join rasgo_clase rc on r.uid = rc.id_rasgo;
