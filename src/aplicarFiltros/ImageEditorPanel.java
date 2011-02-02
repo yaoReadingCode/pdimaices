@@ -72,7 +72,13 @@ public class ImageEditorPanel extends JPanel implements IImageProcessing,
 	
 
 	public ImageEditorPanel() {
-		clasificador = new Clasificador();
+		try{
+			clasificador = new Clasificador();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		initComponents();
 	}
 
