@@ -37,7 +37,10 @@ public class Curvatura extends EvaluadorRasgo {
 	public void setAnguloDesvio(int anguloDesvio) {
 		this.anguloDesvio = anguloDesvio;
 	}
-
+	
+	/**
+	 * Cociente entre la longitud del contorno y la cantidad de cambios de direccion del contorno
+	 */
 	public Double calcularValor(Objeto objeto) {
 		List<Pixel> contorno = objeto.getContorno();
 		int tamanioSegmento = (int)((double) getPorcTamanioSegmento() * contorno.size() / 100);
