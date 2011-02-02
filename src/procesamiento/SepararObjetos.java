@@ -19,6 +19,7 @@ import procesamiento.clasificacion.Clasificador;
 import procesamiento.clasificacion.EvaluadorClase;
 import procesamiento.clasificacion.EvaluadorRasgo;
 import procesamiento.clasificacion.ObjetoReferencia;
+import sun.security.action.GetLongAction;
 
 public class SepararObjetos extends AbstractImageCommand {
 
@@ -29,7 +30,8 @@ public class SepararObjetos extends AbstractImageCommand {
 	//private int ventanaPixeles = 20;
 	//private static int anguloDesvio = 70;
 	private int ventanaPixeles = 10;
-	private static int anguloDesvio = 35;
+	//private static int anguloDesvio = 35;
+	private static int anguloDesvio = 30;
 	
 	/**
 	 * Porcentaje de la longitud del contorno de objeto con el cuál se define el tamaño del segmento
@@ -101,7 +103,7 @@ public class SepararObjetos extends AbstractImageCommand {
 			for (Objeto obj : getObjetos()) {
 				if (!objetoCircular.pertenece(obj,false)){
 					//System.out.println("Separar objeto: " + obj.getPixelMedio());
-					List<Objeto> nuevosObjetos = separarObjetos(obj, objetoCircular);
+					List<Objeto> nuevosObjetos = separarObjetos(obj, objetoCircular, 0);
 					nuevos.addAll(nuevosObjetos);
 				}
 				else{
@@ -379,8 +381,8 @@ public class SepararObjetos extends AbstractImageCommand {
 	 * @param objetoCircular
 	 * @return
 	 */
-	private List<Objeto> separarObjetos(Objeto obj, EvaluadorClase objetoCircular) {	
-		if (obj.getName().equals(""))
+	private List<Objeto> separarObjetos(Objeto obj, EvaluadorClase objetoCircular, int nivel) {	
+		if (obj.getName().endsWith("52"))
 			System.out.println("");
 		
 		List<Pixel> contorno = obj.getContorno();
@@ -390,7 +392,7 @@ public class SepararObjetos extends AbstractImageCommand {
 			tamanioSegmento = 10;
 		setVentanaPixeles(tamanioSegmento);
 		*/
-		if (contorno.size() > getVentanaPixeles()){
+		if (contorno.size() > getVentanaPixeles() && nivel < 100){
 			
 			boolean huboDivision = false;
 			List<Pixel> puntosConflicto = obtenerPuntosDeConflicto(contorno);
@@ -398,83 +400,86 @@ public class SepararObjetos extends AbstractImageCommand {
 		
 				List<Objeto> objetos = new ArrayList<Objeto>();
 				Objeto objetoActual = obj;
-				List<Pixel> nuevoContorno = new ArrayList<Pixel>();
 				
 				contorno = objetoActual.getContorno();
 				
 				List<Pixel> puntosConflictoVisitados = new ArrayList<Pixel>();
 				for(Pixel puntoConflicto: puntosConflicto){
 					boolean parar = false;
-					int i = contorno.indexOf(puntoConflicto);
-					nuevoContorno.clear();
-					int inicio = i;
-					puntosConflictoVisitados.add(puntoConflicto);
-					while (i != -1 && !parar && contorno.size() > getVentanaPixeles()){
-						
-						Pixel p = contorno.get(i % contorno.size());
-						
-						if (!puntosConflicto.contains(p) || puntoConflicto.equals(p))
-							nuevoContorno.add(p);
-						else{
-							
-							List<Pixel> contorno1 = new ArrayList<Pixel>();
-							List<Pixel> contorno2 = new ArrayList<Pixel>();
-							
-							dividirContorno(contorno, puntoConflicto, p, contorno1, contorno2);
-							Objeto obj1 = new Objeto();
-							obj1.setContorno(contorno1);
-							Objeto obj2 = new Objeto();
-							obj2.setContorno(contorno2);
-							
-							Objeto nuevoObjeto = null;
-							Objeto objResto = null;
-							
-							if (obj2.validarContorno() && objetoCircular.pertenece(obj2, false)){
-								nuevoObjeto = obj2;
-								objResto = obj1;
-							}
-							
-							else if (obj1.validarContorno() && objetoCircular.pertenece(obj1, false)){
-								nuevoObjeto = obj1;
-								objResto = obj2;
-							}
-							
-							if (nuevoObjeto != null){
-								
-								detectarContorno.limpiarVisitados();
-								detectarContorno.completarObjeto(nuevoObjeto);
-								objetos.add(nuevoObjeto);
-								nuevoObjeto.setName(obj.getName()+"_"+objetos.size());
-								parar = true;
-								nuevoContorno.clear();
-								
-								String info = "Objeto catalogado: "
-									+ nuevoObjeto.getName()
-									+ " - Puntos detectados: "
-									+ nuevoObjeto.getPuntos().size();
-						
-								Visualizador.addLogInfo(info);
-								
-								
-								contorno = objResto.getContorno();
-								objResto.setName(obj.getName()+"_"+(objetos.size() + 1));
-								List<Objeto> nuevosObjetos = separarObjetos(objResto, objetoCircular);
-								objetos.addAll(nuevosObjetos);
-								
-								huboDivision = true;
-								
-								puntosConflictoVisitados.add(p);
-								
 
-							}
-							else
-								nuevoContorno.add(p);
-						}
-						i = i + 1;
-						if (contorno.size() == 0 || i  % contorno.size() == inicio)
-							parar = true;
-					}
+					puntosConflictoVisitados.add(puntoConflicto);
+					List<Pixel> puntosConflicAux = new ArrayList<Pixel>(puntosConflicto);
 					
+					while (!parar){
+						Pixel nextPuntoConflic = puntoConflicto.getPixelMasCercano(puntosConflicAux);
+						if (nextPuntoConflic == null)
+							parar = true;
+						else{
+							puntosConflicAux.remove(nextPuntoConflic);
+							boolean divisionValida = true;
+							List<Pixel> lineaDivision = crearLinea(puntoConflicto, nextPuntoConflic);
+							lineaDivision.remove(puntoConflicto);
+							lineaDivision.remove(nextPuntoConflic);
+							for(Pixel pContorno: contorno){
+								if(lineaDivision.contains(pContorno) && !nextPuntoConflic.isAdyacente(pContorno)){
+									divisionValida = false;
+									break;
+								}
+							}
+							
+							if (divisionValida){
+								List<Pixel> contorno1 = new ArrayList<Pixel>();
+								List<Pixel> contorno2 = new ArrayList<Pixel>();
+								
+								dividirContorno(contorno, puntoConflicto, nextPuntoConflic, contorno1, contorno2);
+								
+								Objeto obj1 = new Objeto();
+								obj1.setContorno(contorno1);
+								Objeto obj2 = new Objeto();
+								obj2.setContorno(contorno2);
+								
+								Objeto nuevoObjeto = null;
+								Objeto objResto = null;
+								
+								if (obj2.validarContorno() && objetoCircular.pertenece(obj2, false)){
+									nuevoObjeto = obj2;
+									objResto = obj1;
+								}
+								
+								else if (obj1.validarContorno() && objetoCircular.pertenece(obj1, false)){
+									nuevoObjeto = obj1;
+									objResto = obj2;
+								}
+								
+								if (nuevoObjeto != null && nuevoObjeto.getContorno().size() > 100){
+									
+									detectarContorno.limpiarVisitados();
+									detectarContorno.completarObjeto(nuevoObjeto);
+									nuevoObjeto.calcularMRC();
+									objetos.add(nuevoObjeto);
+									nuevoObjeto.setName(obj.getName()+"_"+objetos.size());
+									parar = true;
+									
+									String info = "Objeto catalogado: "
+										+ nuevoObjeto.getName()
+										+ " - Puntos detectados: "
+										+ nuevoObjeto.getPuntos().size();
+							
+									Visualizador.addLogInfo(info);
+									
+									
+									contorno = objResto.getContorno();
+									objResto.setName(obj.getName()+"_"+(objetos.size() + 1));
+									List<Objeto> nuevosObjetos = separarObjetos(objResto, objetoCircular, nivel + 1);
+									objetos.addAll(nuevosObjetos);
+									
+									huboDivision = true;
+									
+									puntosConflictoVisitados.add(nextPuntoConflic);
+								}								
+							}
+						}
+					}
 					if (huboDivision)
 						break;
 				}
@@ -484,6 +489,7 @@ public class SepararObjetos extends AbstractImageCommand {
 					if (nuevoObj.validarContorno()){
 						detectarContorno.limpiarVisitados();
 						detectarContorno.completarObjeto(nuevoObj);
+						nuevoObj.calcularMRC();
 						objetos.add(nuevoObj);
 						nuevoObj.setName(obj.getName()+"_"+objetos.size());
 						
@@ -505,6 +511,11 @@ public class SepararObjetos extends AbstractImageCommand {
 			detectarContorno.completarObjeto(obj);
 		}
 		List<Objeto> list = new ArrayList<Objeto>();
+		if (obj.getPuntos() == null || obj.getPuntos().size() == 0){
+			detectarContorno.limpiarVisitados();
+			detectarContorno.completarObjeto(obj);
+			obj.calcularMRC();
+		}
 		list.add(obj);
 		return list;
 	}

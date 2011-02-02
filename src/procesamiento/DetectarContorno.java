@@ -289,7 +289,22 @@ public class DetectarContorno extends AbstractImageCommand {
 		return new Color(r, g, b);
 
 	}
+	public Color getColorPunto(Pixel pixel) {
+		/**/
+		int[] pix = ImageUtil.readPixel(pixel.getX(), pixel.getY(), getImage());
 
+		int r = pix[0];
+		int g = pix[0];
+		int b = pix[0];
+		if (pix.length == 3) {
+			g = pix[1];
+			b = pix[2];
+		}
+		return new Color(r, g, b);
+
+	}
+
+	
 	/**
 	 * Retorna los pixels que forman el contorno a partir de un pixel blanco
 	 * dado
@@ -578,7 +593,7 @@ public class DetectarContorno extends AbstractImageCommand {
 	 * @param pixel
 	 * @return
 	 */
-	private boolean isFondo(Pixel pixel) {
+	public boolean isFondo(Pixel pixel) {
 		int umbralFondo = getColorUmbralFondo().getRed();
 		return pixel.getCol().getRed() < umbralFondo;
 	}
@@ -942,6 +957,8 @@ public class DetectarContorno extends AbstractImageCommand {
 														pixelsContorno,
 														interior, o, tiOriginal);
 												o.setPuntos(interior);
+												o.calcularMRC();
+
 												objetos.add(o);
 												String info = "Objeto catalogado: "
 													+ o.getName()

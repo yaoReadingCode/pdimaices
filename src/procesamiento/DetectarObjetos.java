@@ -125,8 +125,6 @@ public class DetectarObjetos extends AbstractImageCommand {
 			output = dc.execute();
 			
 			List<Objeto> objetos = dc.getObjetos();
-			for(Objeto o :objetos)
-				o.calcularMRC();
 
 			setObjetos(objetos);
 			
@@ -254,24 +252,17 @@ public class DetectarObjetos extends AbstractImageCommand {
 					Rasgo r = new Rasgo();
 					r.setNombre("AREA");
 					RasgoObjeto areaRasgo = obj.getRasgo(r);
-					/*
-					Rasgo r1 = new Rasgo();
-					r1.setNombre("CIRCULARIDAD");
-					RasgoObjeto circularidadRasgo = obj.getRasgo(r1);
 					
-					Rasgo r2 = new Rasgo();
-					r2.setNombre("ASPECT RADIO");
-					RasgoObjeto aspectRatioRasgo = obj.getRasgo(r2);*/
-					
-					Pixel medio = obj.getPixelMedio();
-					Font f = new Font("Helvetica",Font.PLAIN,12);
-					g.setColor(Color.white);
-					g.setFont(f);
-					g.drawString(obj.getName(),(int) medio.getX()-15,(int)medio.getY()-15);
-					g.drawString(areaRasgo.toString(),(int) medio.getX()-15,(int)medio.getY());
-					//g.drawString(circularidadRasgo.toString(),(int) medio.getX()-15,(int)medio.getY()+15);
-					//g.drawString(aspectRatioRasgo.toString(),(int) medio.getX()-15,(int)medio.getY()+30);
-					
+					if (areaRasgo != null){
+						Pixel medio = obj.getPixelMedio();
+						Font f = new Font("Helvetica",Font.PLAIN,12);
+						g.setColor(Color.white);
+						g.setFont(f);
+						g.drawString(obj.getName(),(int) medio.getX()-15,(int)medio.getY()-15);
+						g.drawString(areaRasgo.toString(),(int) medio.getX()-15,(int)medio.getY());
+						//g.drawString(circularidadRasgo.toString(),(int) medio.getX()-15,(int)medio.getY()+15);
+						//g.drawString(aspectRatioRasgo.toString(),(int) medio.getX()-15,(int)medio.getY()+30);
+					}
 				}
 			}
 			

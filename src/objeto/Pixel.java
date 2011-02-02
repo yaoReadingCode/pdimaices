@@ -186,6 +186,32 @@ public class Pixel implements Cloneable{
 		return -1;
 	}
 
+	/**
+	 * Devuelve la direccion al pixel dado como referencia
+	 * 
+	 * @param p
+	 * @return
+	 */
+	public int getDireccion(Pixel p) {
+		if (x == p.x && y < p.y)
+			return DIR_N;
+		if (x > p.x && y < p.y)
+			return DIR_NE;
+		if (x < p.x && y < p.y)
+			return DIR_NO;
+		if (x == p.x && y > p.y)
+			return DIR_S;
+		if (x > p.x && y > p.y)
+			return DIR_SE;
+		if (x < p.x && y > p.y)
+			return DIR_SO;
+		if (x > p.x && y == p.y)
+			return DIR_E;
+		if (x < p.x && y == p.y)
+			return DIR_O;
+		return -1;
+	}
+
 	public Pixel getAdyacente(int ady, int maxX, int maxY) {
 		Pixel adyacente = new Pixel();
 		if (ady == DIR_N && y - 1 >= 0) {
