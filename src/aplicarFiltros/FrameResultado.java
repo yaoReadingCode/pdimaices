@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
+import javax.swing.*;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -24,7 +25,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.UIManager;
+import javax.swing.border.*;
 import javax.swing.table.DefaultTableModel;
+import com.jgoodies.forms.factories.*;
 
 import objeto.Clase;
 import objeto.Objeto;
@@ -50,7 +53,8 @@ public class FrameResultado extends JFrame {
 			JPanel container = new JPanel();
 			GridBagLayout gbl = new GridBagLayout();
 			int cant = 0;
-			resultado.addFila(c.getClase().getNombre(), objetosClase.size());
+			float porcentaje = (objetosClase.size()*100)/getClasificador().countObject();
+			resultado.addFila(c.getClase().getNombre(), objetosClase.size(),porcentaje);
 			container.setLayout(gbl);
 			//frame.getContentPane().add(new JScrollPane(container),BorderLayout.CENTER);
 			for (Objeto obj: objetosClase) {
@@ -145,104 +149,147 @@ public class FrameResultado extends JFrame {
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
 		// Generated using JFormDesigner Evaluation license - seba cola
+		menuBar1 = new JMenuBar();
+		menu1 = new JMenu();
+		menuItem1 = new JMenuItem();
+		panel1 = new JPanel();
+		panel3 = new JPanel();
 		tabbedPane1 = new JTabbedPane();
 		panel2 = new JPanel();
 		scrollPaneRasgos = new JScrollPane();
 		tableRasgos = new JTable();
 		label1 = new JLabel();
-		panel3 = new JPanel();
 
 		//======== this ========
+		setBackground(new Color(5, 21, 64));
 		Container contentPane = getContentPane();
 		contentPane.setLayout(null);
-		contentPane.add(tabbedPane1);
-		tabbedPane1.setBounds(35, 25, 795, 520);
 
-		//======== panel2 ========
+		//======== menuBar1 ========
 		{
-			panel2.setBackground(Color.blue);
+
+			//======== menu1 ========
+			{
+				menu1.setText("Archivo");
+
+				//---- menuItem1 ----
+				menuItem1.setText("Salir");
+				menu1.add(menuItem1);
+			}
+			menuBar1.add(menu1);
+		}
+		setJMenuBar(menuBar1);
+
+		//======== panel1 ========
+		{
+			panel1.setBorder(new BevelBorder(BevelBorder.RAISED));
+			panel1.setBackground(new Color(204, 204, 255));
 
 			// JFormDesigner evaluation mark
-			panel2.setBorder(new javax.swing.border.CompoundBorder(
+			panel1.setBorder(new javax.swing.border.CompoundBorder(
 				new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
-					"", javax.swing.border.TitledBorder.CENTER,
+					"JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
 					javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
-					java.awt.Color.red), panel2.getBorder())); panel2.addPropertyChangeListener(new java.beans.PropertyChangeListener(){public void propertyChange(java.beans.PropertyChangeEvent e){if("border".equals(e.getPropertyName()))throw new RuntimeException();}});
+					java.awt.Color.red), panel1.getBorder())); panel1.addPropertyChangeListener(new java.beans.PropertyChangeListener(){public void propertyChange(java.beans.PropertyChangeEvent e){if("border".equals(e.getPropertyName()))throw new RuntimeException();}});
 
-			panel2.setLayout(null);
+			panel1.setLayout(null);
 
-			//======== scrollPaneRasgos ========
+			//======== panel3 ========
 			{
+				panel3.setBackground(Color.blue);
+				panel3.setLayout(null);
+				panel3.add(tabbedPane1);
+				tabbedPane1.setBounds(5, 15, 785, 605);
 
-				//---- tableRasgos ----
-				tableRasgos.setModel(new DefaultTableModel(
-					new Object[][] {
-					},
-					new String[] {
-						"Rasgo", "Valor"
+				{ // compute preferred size
+					Dimension preferredSize = new Dimension();
+					for(int i = 0; i < panel3.getComponentCount(); i++) {
+						Rectangle bounds = panel3.getComponent(i).getBounds();
+						preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
+						preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
 					}
-				) {
-					Class[] columnTypes = new Class[] {
-						String.class, Double.class
-					};
-					@Override
-					public Class<?> getColumnClass(int columnIndex) {
-						return columnTypes[columnIndex];
-					}
-				});
-				tableRasgos.setPreferredScrollableViewportSize(new Dimension(200, 100));
-				tableRasgos.setBackground(UIManager.getColor("RadioButton.light"));
-				tableRasgos.setCellSelectionEnabled(true);
-				scrollPaneRasgos.setViewportView(tableRasgos);
+					Insets insets = panel3.getInsets();
+					preferredSize.width += insets.right;
+					preferredSize.height += insets.bottom;
+					panel3.setMinimumSize(preferredSize);
+					panel3.setPreferredSize(preferredSize);
+				}
 			}
-			panel2.add(scrollPaneRasgos);
-			scrollPaneRasgos.setBounds(5, 35, 225, 235);
+			panel1.add(panel3);
+			panel3.setBounds(10, 30, 795, 625);
 
-			//---- label1 ----
-			label1.setText("Nombre: No se ha seleccionado maiz");
-			label1.setForeground(Color.white);
-			label1.setFont(new Font("Tahoma", Font.BOLD, 12));
-			panel2.add(label1);
-			label1.setBounds(8, 15, 220, label1.getPreferredSize().height);
+			//======== panel2 ========
+			{
+				panel2.setBackground(Color.blue);
+				panel2.setLayout(null);
+
+				//======== scrollPaneRasgos ========
+				{
+
+					//---- tableRasgos ----
+					tableRasgos.setModel(new DefaultTableModel(
+						new Object[][] {
+						},
+						new String[] {
+							"Rasgo", "Valor"
+						}
+					) {
+						Class[] columnTypes = new Class[] {
+							String.class, Double.class
+						};
+						@Override
+						public Class<?> getColumnClass(int columnIndex) {
+							return columnTypes[columnIndex];
+						}
+					});
+					tableRasgos.setPreferredScrollableViewportSize(new Dimension(200, 100));
+					tableRasgos.setBackground(UIManager.getColor("RadioButton.light"));
+					tableRasgos.setCellSelectionEnabled(true);
+					scrollPaneRasgos.setViewportView(tableRasgos);
+				}
+				panel2.add(scrollPaneRasgos);
+				scrollPaneRasgos.setBounds(5, 35, 225, 235);
+
+				//---- label1 ----
+				label1.setText("Nombre: No se ha seleccionado maiz");
+				label1.setForeground(Color.white);
+				label1.setFont(new Font("Tahoma", Font.BOLD, 12));
+				panel2.add(label1);
+				label1.setBounds(7, 15, 220, label1.getPreferredSize().height);
+
+				{ // compute preferred size
+					Dimension preferredSize = new Dimension();
+					for(int i = 0; i < panel2.getComponentCount(); i++) {
+						Rectangle bounds = panel2.getComponent(i).getBounds();
+						preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
+						preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
+					}
+					Insets insets = panel2.getInsets();
+					preferredSize.width += insets.right;
+					preferredSize.height += insets.bottom;
+					panel2.setMinimumSize(preferredSize);
+					panel2.setPreferredSize(preferredSize);
+				}
+			}
+			panel1.add(panel2);
+			panel2.setBounds(820, 30, 235, 275);
 
 			{ // compute preferred size
 				Dimension preferredSize = new Dimension();
-				for(int i = 0; i < panel2.getComponentCount(); i++) {
-					Rectangle bounds = panel2.getComponent(i).getBounds();
+				for(int i = 0; i < panel1.getComponentCount(); i++) {
+					Rectangle bounds = panel1.getComponent(i).getBounds();
 					preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
 					preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
 				}
-				Insets insets = panel2.getInsets();
+				Insets insets = panel1.getInsets();
 				preferredSize.width += insets.right;
 				preferredSize.height += insets.bottom;
-				panel2.setMinimumSize(preferredSize);
-				panel2.setPreferredSize(preferredSize);
+				panel1.setMinimumSize(preferredSize);
+				panel1.setPreferredSize(preferredSize);
 			}
 		}
-		contentPane.add(panel2);
-		panel2.setBounds(845, 20, 235, 275);
-
-		//======== panel3 ========
-		{
-			panel3.setBackground(Color.blue);
-			panel3.setLayout(null);
-
-			{ // compute preferred size
-				Dimension preferredSize = new Dimension();
-				for(int i = 0; i < panel3.getComponentCount(); i++) {
-					Rectangle bounds = panel3.getComponent(i).getBounds();
-					preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
-					preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
-				}
-				Insets insets = panel3.getInsets();
-				preferredSize.width += insets.right;
-				preferredSize.height += insets.bottom;
-				panel3.setMinimumSize(preferredSize);
-				panel3.setPreferredSize(preferredSize);
-			}
-		}
-		contentPane.add(panel3);
-		panel3.setBounds(20, 20, 820, 535);
+		contentPane.add(panel1);
+		panel1.setBounds(5, 10, 1080, 745);
 
 		{ // compute preferred size
 			Dimension preferredSize = new Dimension();
@@ -264,12 +311,16 @@ public class FrameResultado extends JFrame {
 	
 	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
 	// Generated using JFormDesigner Evaluation license - seba cola
+	private JMenuBar menuBar1;
+	private JMenu menu1;
+	private JMenuItem menuItem1;
+	private JPanel panel1;
+	private JPanel panel3;
 	private JTabbedPane tabbedPane1;
 	private JPanel panel2;
 	private JScrollPane scrollPaneRasgos;
 	private JTable tableRasgos;
 	private JLabel label1;
-	private JPanel panel3;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
 	private boolean tableIniciada=false;
 	public void addPanel(JPanel panel, String name){

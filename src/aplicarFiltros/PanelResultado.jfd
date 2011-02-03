@@ -33,10 +33,13 @@
             <object class="java.util.Vector"/> 
             <object class="java.util.Vector"> 
              <void method="add"> 
-              <string>Rasgo</string> 
+              <string>Clasificaciones</string> 
              </void> 
              <void method="add"> 
-              <string>Valor</string> 
+              <string>Cantidad de Objetos</string> 
+             </void> 
+             <void method="add"> 
+              <string>Porcentaje</string> 
              </void> 
             </object> 
             <object class="java.util.Vector"> 
@@ -44,7 +47,10 @@
               <class>java.lang.String</class> 
              </void> 
              <void method="add"> 
-              <class>java.lang.Double</class> 
+              <class>java.lang.String</class> 
+             </void> 
+             <void method="add"> 
+              <null/> 
              </void> 
             </object> 
             <object class="java.util.Vector"> 
@@ -54,8 +60,14 @@
              <void method="add"> 
               <null/> 
              </void> 
+             <void method="add"> 
+              <null/> 
+             </void> 
             </object> 
             <object class="java.util.Vector"> 
+             <void method="add"> 
+              <null/> 
+             </void> 
              <void method="add"> 
               <null/> 
              </void> 
@@ -96,7 +108,7 @@
         </void> 
         <void method="setProperty"> 
          <string>height</string> 
-         <int>270</int> 
+         <int>160</int> 
         </void> 
         <void method="setProperty"> 
          <string>x</string> 
@@ -104,7 +116,7 @@
         </void> 
         <void method="setProperty"> 
          <string>y</string> 
-         <int>15</int> 
+         <int>145</int> 
         </void> 
        </object> 
       </void> 
@@ -122,7 +134,7 @@
        <string>size</string> 
        <object class="java.awt.Dimension"> 
         <int>690</int> 
-        <int>330</int> 
+        <int>440</int> 
        </object> 
       </void> 
      </object> 

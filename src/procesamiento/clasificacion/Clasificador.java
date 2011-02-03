@@ -144,5 +144,15 @@ public class Clasificador {
 		}
 		return clases;
 	}
+	
+	public int countObject(){
+		int count = 0;
+		Set<EvaluadorClase> clases = getClasificacion().keySet();
+		for(EvaluadorClase c: clases){
+			List<Objeto> objetosClase = getClasificacion().get(c);
+			count = count + objetosClase.size();
+		}	
+		return count;
+	}
 
 }
