@@ -46,6 +46,7 @@ public class FrameResultado extends JFrame {
 		Set<EvaluadorClase> clases = getClasificador().getClasificacion().keySet();
 		
 		PanelResultado resultado = new PanelResultado();
+		resultado.setContenedor(this);
 		this.addPanel(resultado,"Resultado");
 		
 		for(EvaluadorClase c: clases){
@@ -78,7 +79,7 @@ public class FrameResultado extends JFrame {
 				container.add(panel);
 				cant++;
 			}
-			
+			resultado.graficar();
 			
 			this.addPanel(container, c.getClase().getNombre());
 		}	

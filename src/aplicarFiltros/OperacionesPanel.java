@@ -4,6 +4,7 @@
 
 package aplicarFiltros;
 
+import java.awt.*;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -16,12 +17,14 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import javax.media.jai.PlanarImage;
+import javax.swing.*;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.border.*;
 import javax.swing.border.TitledBorder;
 
 import org.hibernate.exception.JDBCConnectionException;
@@ -298,10 +301,14 @@ public class OperacionesPanel extends JPanel {
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY
 		// //GEN-BEGIN:initComponents
+		// Generated using JFormDesigner Evaluation license - seba cola
 		tabbedPane1 = new JTabbedPane();
 		panel1 = new JPanel();
-		buttonContorno = new JButton();
+		panel3 = new JPanel();
 		buttonGuardarClasificacion = new JButton();
+		buttonContorno = new JButton();
+		button1 = new JButton();
+		button2 = new JButton();
 		panel2 = new JPanel();
 		fondoPanel = new JPanel();
 		panelH = new JPanel();
@@ -352,34 +359,80 @@ public class OperacionesPanel extends JPanel {
 		buttonRangoObjeto = new JButton();
 
 		//======== this ========
+
+		// JFormDesigner evaluation mark
+		setBorder(new javax.swing.border.CompoundBorder(
+			new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
+				"JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
+				javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
+				java.awt.Color.red), getBorder())); addPropertyChangeListener(new java.beans.PropertyChangeListener(){public void propertyChange(java.beans.PropertyChangeEvent e){if("border".equals(e.getPropertyName()))throw new RuntimeException();}});
+
 		setLayout(null);
 
 		//======== tabbedPane1 ========
 		{
+			tabbedPane1.setBackground(UIManager.getColor("Button.background"));
 
 			//======== panel1 ========
 			{
 				panel1.setLayout(null);
 
-				//---- buttonContorno ----
-				buttonContorno.setText("Clasificar");
-				buttonContorno.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						buttonContornoActionPerformed(e);
-					}
-				});
-				panel1.add(buttonContorno);
-				buttonContorno.setBounds(25, 75, 270, buttonContorno.getPreferredSize().height);
+				//======== panel3 ========
+				{
+					panel3.setBorder(new BevelBorder(BevelBorder.RAISED, new Color(0, 0, 153), null, null, new Color(0, 0, 102)));
+					panel3.setLayout(null);
 
-				//---- buttonGuardarClasificacion ----
-				buttonGuardarClasificacion.setText("Guardar clasificacion");
-				buttonGuardarClasificacion.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						buttonGuardarClasificacionActionPerformed(e);
+					//---- buttonGuardarClasificacion ----
+					buttonGuardarClasificacion.setText("Guardar clasificacion");
+					buttonGuardarClasificacion.setFont(new Font("Tahoma", Font.PLAIN, 12));
+					buttonGuardarClasificacion.setForeground(new Color(0, 0, 102));
+					buttonGuardarClasificacion.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							buttonGuardarClasificacionActionPerformed(e);
+						}
+					});
+					panel3.add(buttonGuardarClasificacion);
+					buttonGuardarClasificacion.setBounds(35, 85, 190, buttonGuardarClasificacion.getPreferredSize().height);
+
+					//---- buttonContorno ----
+					buttonContorno.setText("Clasificar");
+					buttonContorno.setBackground(UIManager.getColor("Button.background"));
+					buttonContorno.setFont(new Font("Tahoma", Font.PLAIN, 12));
+					buttonContorno.setForeground(new Color(0, 0, 102));
+					buttonContorno.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							buttonContornoActionPerformed(e);
+						}
+					});
+					panel3.add(buttonContorno);
+					buttonContorno.setBounds(35, 55, 190, buttonContorno.getPreferredSize().height);
+
+					//---- button1 ----
+					button1.setIcon(new ImageIcon("C:\\Users\\sebas\\Downloads\\c9.jpg"));
+					panel3.add(button1);
+					button1.setBounds(5, 115, 255, 40);
+
+					//---- button2 ----
+					button2.setIcon(new ImageIcon("C:\\Users\\sebas\\Downloads\\c9.jpg"));
+					panel3.add(button2);
+					button2.setBounds(5, 5, 255, 40);
+
+					{ // compute preferred size
+						Dimension preferredSize = new Dimension();
+						for(int i = 0; i < panel3.getComponentCount(); i++) {
+							Rectangle bounds = panel3.getComponent(i).getBounds();
+							preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
+							preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
+						}
+						Insets insets = panel3.getInsets();
+						preferredSize.width += insets.right;
+						preferredSize.height += insets.bottom;
+						panel3.setMinimumSize(preferredSize);
+						panel3.setPreferredSize(preferredSize);
 					}
-				});
-				panel1.add(buttonGuardarClasificacion);
-				buttonGuardarClasificacion.setBounds(25, 120, 270, buttonGuardarClasificacion.getPreferredSize().height);
+				}
+				panel1.add(panel3);
+				panel3.setBounds(30, 10, 265, 160);
 
 				{ // compute preferred size
 					Dimension preferredSize = new Dimension();
@@ -391,7 +444,8 @@ public class OperacionesPanel extends JPanel {
 					Insets insets = panel1.getInsets();
 					preferredSize.width += insets.right;
 					preferredSize.height += insets.bottom;
-					panel1.setPreferredSize( preferredSize );
+					panel1.setMinimumSize(preferredSize);
+					panel1.setPreferredSize(preferredSize);
 				}
 			}
 			tabbedPane1.addTab("Principal", panel1);
@@ -452,7 +506,8 @@ public class OperacionesPanel extends JPanel {
 							Insets insets = panelH.getInsets();
 							preferredSize.width += insets.right;
 							preferredSize.height += insets.bottom;
-							panelH.setPreferredSize( preferredSize );
+							panelH.setMinimumSize(preferredSize);
+							panelH.setPreferredSize(preferredSize);
 						}
 					}
 					fondoPanel.add(panelH);
@@ -505,7 +560,8 @@ public class OperacionesPanel extends JPanel {
 							Insets insets = panelS.getInsets();
 							preferredSize.width += insets.right;
 							preferredSize.height += insets.bottom;
-							panelS.setPreferredSize( preferredSize );
+							panelS.setMinimumSize(preferredSize);
+							panelS.setPreferredSize(preferredSize);
 						}
 					}
 					fondoPanel.add(panelS);
@@ -558,7 +614,8 @@ public class OperacionesPanel extends JPanel {
 							Insets insets = panelS2.getInsets();
 							preferredSize.width += insets.right;
 							preferredSize.height += insets.bottom;
-							panelS2.setPreferredSize( preferredSize );
+							panelS2.setMinimumSize(preferredSize);
+							panelS2.setPreferredSize(preferredSize);
 						}
 					}
 					fondoPanel.add(panelS2);
@@ -574,7 +631,8 @@ public class OperacionesPanel extends JPanel {
 						Insets insets = fondoPanel.getInsets();
 						preferredSize.width += insets.right;
 						preferredSize.height += insets.bottom;
-						fondoPanel.setPreferredSize( preferredSize );
+						fondoPanel.setMinimumSize(preferredSize);
+						fondoPanel.setPreferredSize(preferredSize);
 					}
 				}
 				panel2.add(fondoPanel);
@@ -631,7 +689,8 @@ public class OperacionesPanel extends JPanel {
 							Insets insets = panelH2.getInsets();
 							preferredSize.width += insets.right;
 							preferredSize.height += insets.bottom;
-							panelH2.setPreferredSize( preferredSize );
+							panelH2.setMinimumSize(preferredSize);
+							panelH2.setPreferredSize(preferredSize);
 						}
 					}
 					objetoPanel.add(panelH2);
@@ -684,7 +743,8 @@ public class OperacionesPanel extends JPanel {
 							Insets insets = panelS3.getInsets();
 							preferredSize.width += insets.right;
 							preferredSize.height += insets.bottom;
-							panelS3.setPreferredSize( preferredSize );
+							panelS3.setMinimumSize(preferredSize);
+							panelS3.setPreferredSize(preferredSize);
 						}
 					}
 					objetoPanel.add(panelS3);
@@ -737,7 +797,8 @@ public class OperacionesPanel extends JPanel {
 							Insets insets = panelS4.getInsets();
 							preferredSize.width += insets.right;
 							preferredSize.height += insets.bottom;
-							panelS4.setPreferredSize( preferredSize );
+							panelS4.setMinimumSize(preferredSize);
+							panelS4.setPreferredSize(preferredSize);
 						}
 					}
 					objetoPanel.add(panelS4);
@@ -753,7 +814,8 @@ public class OperacionesPanel extends JPanel {
 						Insets insets = objetoPanel.getInsets();
 						preferredSize.width += insets.right;
 						preferredSize.height += insets.bottom;
-						objetoPanel.setPreferredSize( preferredSize );
+						objetoPanel.setMinimumSize(preferredSize);
+						objetoPanel.setPreferredSize(preferredSize);
 					}
 				}
 				panel2.add(objetoPanel);
@@ -769,7 +831,8 @@ public class OperacionesPanel extends JPanel {
 					Insets insets = panel2.getInsets();
 					preferredSize.width += insets.right;
 					preferredSize.height += insets.bottom;
-					panel2.setPreferredSize( preferredSize );
+					panel2.setMinimumSize(preferredSize);
+					panel2.setPreferredSize(preferredSize);
 				}
 			}
 			tabbedPane1.addTab("Fonfo", panel2);
@@ -929,14 +992,15 @@ public class OperacionesPanel extends JPanel {
 					Insets insets = panel7.getInsets();
 					preferredSize.width += insets.right;
 					preferredSize.height += insets.bottom;
-					panel7.setPreferredSize( preferredSize );
+					panel7.setMinimumSize(preferredSize);
+					panel7.setPreferredSize(preferredSize);
 				}
 			}
 			tabbedPane1.addTab("Opciones", panel7);
 
 		}
 		add(tabbedPane1);
-		tabbedPane1.setBounds(20, 25, 340, 420);
+		tabbedPane1.setBounds(25, 25, 340, 345);
 
 		{ // compute preferred size
 			Dimension preferredSize = new Dimension();
@@ -948,7 +1012,8 @@ public class OperacionesPanel extends JPanel {
 			Insets insets = getInsets();
 			preferredSize.width += insets.right;
 			preferredSize.height += insets.bottom;
-			setPreferredSize( preferredSize );
+			setMinimumSize(preferredSize);
+			setPreferredSize(preferredSize);
 		}
 		// //GEN-END:initComponents
 		
@@ -958,10 +1023,14 @@ public class OperacionesPanel extends JPanel {
 
 	// JFormDesigner - Variables declaration - DO NOT MODIFY
 	// //GEN-BEGIN:variables
+	// Generated using JFormDesigner Evaluation license - seba cola
 	private JTabbedPane tabbedPane1;
 	private JPanel panel1;
-	private JButton buttonContorno;
+	private JPanel panel3;
 	private JButton buttonGuardarClasificacion;
+	private JButton buttonContorno;
+	private JButton button1;
+	private JButton button2;
 	private JPanel panel2;
 	private JPanel fondoPanel;
 	private JPanel panelH;
