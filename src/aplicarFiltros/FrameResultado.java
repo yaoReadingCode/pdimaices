@@ -79,10 +79,11 @@ public class FrameResultado extends JFrame {
 				container.add(panel);
 				cant++;
 			}
-			resultado.graficar();
+			
 			
 			this.addPanel(container, c.getClase().getNombre());
-		}	
+		}
+		resultado.graficar();
 	}
 	
 	public void changeObjeto(Objeto obj, Clase claseNew){

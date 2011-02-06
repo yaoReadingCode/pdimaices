@@ -160,6 +160,7 @@ public class DetectarObjetos extends AbstractImageCommand {
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
 		//frame.setModal(true);
+		frame.pack();
 		frame.setResizable(true);
 		frame.setVisible(true);
 		
