@@ -1,8 +1,6 @@
 package aplicarFiltros;
 
-import java.awt.*;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -10,24 +8,21 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Set;
-import javax.swing.*;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.UIManager;
-import javax.swing.border.*;
+import javax.swing.border.BevelBorder;
 import javax.swing.table.DefaultTableModel;
-import com.jgoodies.forms.factories.*;
 
 import objeto.Clase;
 import objeto.Objeto;
@@ -188,11 +183,11 @@ public class FrameResultado extends JFrame {
 			panel1.setBackground(new Color(204, 204, 255));
 
 			// JFormDesigner evaluation mark
-			panel1.setBorder(new javax.swing.border.CompoundBorder(
-				new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
-					"JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
-					javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
-					java.awt.Color.red), panel1.getBorder())); panel1.addPropertyChangeListener(new java.beans.PropertyChangeListener(){public void propertyChange(java.beans.PropertyChangeEvent e){if("border".equals(e.getPropertyName()))throw new RuntimeException();}});
+//			panel1.setBorder(new javax.swing.border.CompoundBorder(
+//				new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
+//					"JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
+//					javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
+//					java.awt.Color.red), panel1.getBorder())); panel1.addPropertyChangeListener(new java.beans.PropertyChangeListener(){public void propertyChange(java.beans.PropertyChangeEvent e){if("border".equals(e.getPropertyName()))throw new RuntimeException();}});
 
 			panel1.setLayout(null);
 

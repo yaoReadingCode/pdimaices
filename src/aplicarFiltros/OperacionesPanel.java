@@ -4,7 +4,6 @@
 
 package aplicarFiltros;
 
-import java.awt.*;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -17,14 +16,15 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import javax.media.jai.PlanarImage;
-import javax.swing.*;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-import javax.swing.border.*;
+import javax.swing.UIManager;
+import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
 
 import org.hibernate.exception.JDBCConnectionException;
@@ -54,6 +54,10 @@ import procesamiento.clasificacion.Configuracion;
  */
 public class OperacionesPanel extends JPanel {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private IImageProcessing imageHolder;
 	
 	public void dibujar(){
@@ -361,11 +365,11 @@ public class OperacionesPanel extends JPanel {
 		//======== this ========
 
 		// JFormDesigner evaluation mark
-		setBorder(new javax.swing.border.CompoundBorder(
-			new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
-				"JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
-				javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
-				java.awt.Color.red), getBorder())); addPropertyChangeListener(new java.beans.PropertyChangeListener(){public void propertyChange(java.beans.PropertyChangeEvent e){if("border".equals(e.getPropertyName()))throw new RuntimeException();}});
+//		setBorder(new javax.swing.border.CompoundBorder(
+//			new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
+//				"JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
+//				javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
+//				java.awt.Color.red), getBorder())); addPropertyChangeListener(new java.beans.PropertyChangeListener(){public void propertyChange(java.beans.PropertyChangeEvent e){if("border".equals(e.getPropertyName()))throw new RuntimeException();}});
 
 		setLayout(null);
 
@@ -408,12 +412,12 @@ public class OperacionesPanel extends JPanel {
 					buttonContorno.setBounds(35, 55, 190, buttonContorno.getPreferredSize().height);
 
 					//---- button1 ----
-					button1.setIcon(new ImageIcon("C:\\Users\\sebas\\Downloads\\c9.jpg"));
+					button1.setIcon(new ImageIcon("img\\c9.jpg"));
 					panel3.add(button1);
 					button1.setBounds(5, 115, 255, 40);
 
 					//---- button2 ----
-					button2.setIcon(new ImageIcon("C:\\Users\\sebas\\Downloads\\c9.jpg"));
+					button2.setIcon(new ImageIcon("img\\c9.jpg"));
 					panel3.add(button2);
 					button2.setBounds(5, 5, 255, 40);
 
