@@ -388,4 +388,8 @@ public class Pixel implements Cloneable{
 		return clonar();
 	}
 	
+	public double modulo(){
+		return Math.sqrt(Math.pow(this.getXDouble(), 2) + Math.pow(this.getYDouble(), 2));
+	}
+	
 }
