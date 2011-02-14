@@ -14,6 +14,12 @@ public class CantidadEsquinas extends EvaluadorRasgo {
 	private int ventanaPixeles = 10;
 
 	private static int anguloDesvio = 90;
+	
+	private class CoeficientesRecta {
+		public double a;
+		public double b;
+		public double c;
+	}
 
 	public CantidadEsquinas() {
 		super();
@@ -42,10 +48,10 @@ public class CantidadEsquinas extends EvaluadorRasgo {
 	 * @param b
 	 * @param c
 	 */
-	public void coeficientesRecta(Pixel vectorDirector, Pixel puntoRecta, Double a, Double b, Double c){
-		a = vectorDirector.getXDouble();
-		b = vectorDirector.getYDouble();
-		c = b * puntoRecta.getYDouble() - puntoRecta.getYDouble() * a;
+	public void coeficientesRecta(double pendiente, Pixel punto, CoeficientesRecta coeficientes){
+		coeficientes.a = -1 * pendiente;
+		coeficientes.b = 1;
+		coeficientes.c = pendiente * punto.getXDouble() - punto.getYDouble();
 	}
 	/**
 	 * Calcula el punto de intersección de dos rectas: <a * x + b * y + c = 0> y <d * x + e * y + f = 0> 
@@ -67,39 +73,36 @@ public class CantidadEsquinas extends EvaluadorRasgo {
 		if (c1 + b != 0)
 			y = (-c2 - c)/(c1 + b);
 		if (d != 0 && y != null)
-			x = (f - e * y)/ d;
-		return new Pixel(x,y,null);
+			x = (-f - e * y)/ d;
+		if (x != null && y != null)
+			return new Pixel(x,y,null);
+		return null;
 	}
 	
 	public Double calcularAngulo(Pixel pInicio, Pixel pMedio, Pixel pFin){
 		Double angulo = null;
-		Pixel vDirector1 = pMedio.clonar();
-		vDirector1.restar(pInicio);
+		Double pendiente1 = (pMedio.getYDouble() - pInicio.getYDouble()) / (pMedio.getXDouble() - pInicio.getXDouble()); 
+		Double pendiente2 = -1 / pendiente1;
+		CoeficientesRecta coefR1 = new CoeficientesRecta();
+		CoeficientesRecta coefR2 = new CoeficientesRecta();
+		coeficientesRecta(pendiente1, pInicio, coefR1);
+		coeficientesRecta(pendiente2, pFin, coefR2);
 		
-		/**
-		 * Vector perpendicular a vDirector1
-		 */
-		Pixel vDirector2 = new Pixel(-1 * vDirector1.getYDouble(), vDirector1.getXDouble(), null);
-		double a = 0, b = 0, c = 0, d = 0, e = 0, f = 0;
-		
-		coeficientesRecta(vDirector1, pInicio, a, b, c);
-		coeficientesRecta(vDirector2, pInicio, d, e, f);
-		
-		Pixel pInterseccion = calcularInterseccionRectas(a, b, c, d, e, f);
+		Pixel pInterseccion = calcularInterseccionRectas(coefR1.a, coefR1.b, coefR1.c, coefR2.a, coefR2.b, coefR2.c);
 		if (pInterseccion != null){
-			double ladoA = 0;
-			double ladoB = 0;
-			
 			if (!pInterseccion.equals(pMedio)){
-				ladoA = pFin.distancia(pMedio);
-				ladoB = pFin.distancia(pInterseccion);
-			}else{
-				ladoB = pFin.distancia(pMedio);
-				ladoA = pFin.distancia(pInterseccion);
-			}
-			
-			if (ladoA != 0)
-				angulo = Math.toDegrees(Math.asin(ladoB / ladoA));
+				double ladoA = pFin.distancia(pMedio);
+				double ladoB = pFin.distancia(pInterseccion);
+				if (ladoA != 0)
+					angulo = Math.toDegrees(Math.asin(ladoB / ladoA));
+
+				double ladoPuntoInterseccion = Pixel.lado2(pMedio, pFin, pInterseccion);
+				if (ladoPuntoInterseccion > 0)
+					angulo = 180 - angulo;
+
+			}else
+				angulo = 90.0;
+		
 		}
 		return angulo;
 	}
@@ -135,10 +138,10 @@ public class CantidadEsquinas extends EvaluadorRasgo {
 				Pixel p = contorno.get(i % contorno.size());
 				Pixel finVentana2 = contorno.get((i + tamanioSegmento) % contorno.size());
 
-				double angulo = calcularAngulo(iniVentana, finVentana, finVentana2);
+				Double angulo = calcularAngulo(iniVentana, finVentana, finVentana2);
 				double lado = Pixel.lado(iniVentana, finVentana2, p);
 
-				if (lado < 0 && angulo < anguloDesvio){
+				if (lado < 0 && angulo != null && angulo >= anguloDesvio){
 					posCandidato = i;
 					anguloCandidato = angulo;
 					
@@ -176,6 +179,15 @@ public class CantidadEsquinas extends EvaluadorRasgo {
 		}
 		
 		return cantEsquinas;
+	}
+	
+	public static void main(String[] args) {
+		CantidadEsquinas c = new CantidadEsquinas();
+		Pixel pInicio = new Pixel(-1,1,null);
+		Pixel pMedio = new Pixel(0,2,null);
+		Pixel pFin = new Pixel(1,0,null);
+		
+		Double angulo = c.calcularAngulo(pInicio, pMedio, pFin);
 	}
 
 }
