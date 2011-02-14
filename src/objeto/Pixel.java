@@ -287,8 +287,16 @@ public class Pixel implements Cloneable{
 			return prodV;
 		}
 		return 0;
-	};
+	}
 
+	public static double lado2(Pixel a, Pixel b, Pixel c){
+		Pixel ab = b.clonar();
+	    ab.restar(a);
+	    Pixel bc = c.clonar();
+	    c.restar(b);
+	    double pv = ab.productoVectorial(bc);
+	    return pv;
+	}
 	/**
 	 * Calcula el producto vectorial entre dos pixels
 	 * 
