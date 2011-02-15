@@ -79,6 +79,40 @@ public class CantidadEsquinas extends EvaluadorRasgo {
 		return null;
 	}
 	
+	public double distancia(Pixel p, CoeficientesRecta recta){
+		double distancia = (-1 * recta.a * p.getXDouble() - p.getYDouble() - recta.c) / Math.sqrt(Math.pow(recta.a,2) + 1);
+		return distancia;
+	}
+	/**
+	 * 
+	 * @param contorno
+	 * @param posInicio
+	 * @param posFin
+	 * @return
+	 */
+	public boolean isLineaRecta(List<Pixel> contorno, int posInicio, int posFin){
+		double umbral = 1;
+		double distanciaPromedio = 0;
+		Pixel inicio = contorno.get(posInicio % contorno.size());
+		Pixel fin = contorno.get(posFin % contorno.size());
+		Double pendiente = (fin.getYDouble() - inicio.getYDouble()) / (fin.getXDouble() - inicio.getXDouble()); 
+		CoeficientesRecta recta = new CoeficientesRecta();
+		coeficientesRecta(pendiente, inicio, recta);
+		
+		int i = 0;
+		int cantPixeles = Math.abs(posFin - posInicio);
+		while (i <= cantPixeles){
+			Pixel p = contorno.get((posInicio + i) % contorno.size());
+			distanciaPromedio =+ distancia(p, recta);
+			i++;
+		}
+		distanciaPromedio = distanciaPromedio / cantPixeles;
+		if (distanciaPromedio < umbral){
+			return true;
+		}
+		return false;
+	}
+	
 	public Double calcularAngulo(Pixel pInicio, Pixel pMedio, Pixel pFin){
 		Double angulo = null;
 		Double pendiente1 = (pMedio.getYDouble() - pInicio.getYDouble()) / (pMedio.getXDouble() - pInicio.getXDouble()); 
@@ -154,14 +188,18 @@ public class CantidadEsquinas extends EvaluadorRasgo {
 					if (posCandidato != null){
 						Pixel punto = contorno.get(posCandidato % contorno.size());
 						
-						posIniVentana = posCandidato;
-						i = posCandidato + tamanioSegmento;
-						posFinVentana = i;
-						posCandidato = null;
+						if (isLineaRecta(contorno, i - ventanaPixeles, i)||
+							isLineaRecta(contorno, i, i + ventanaPixeles)){
+							posIniVentana = posCandidato;
+							i = posCandidato + tamanioSegmento;
+							posFinVentana = i;
+							posCandidato = null;
+							
+							cantEsquinas++;
+							System.out.println(punto);
+							System.out.println(anguloCandidato);
+						}
 						
-						cantEsquinas++;
-						System.out.println(punto);
-						System.out.println(anguloCandidato);
 					}
 				}
 
@@ -188,6 +226,8 @@ public class CantidadEsquinas extends EvaluadorRasgo {
 		Pixel pFin = new Pixel(1,0,null);
 		
 		Double angulo = c.calcularAngulo(pInicio, pMedio, pFin);
+		
+		
 	}
 
 }
