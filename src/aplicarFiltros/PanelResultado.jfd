@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?> 
-<java version="1.6.0_22" class="java.beans.XMLDecoder"> 
+<java version="1.6.0_23" class="java.beans.XMLDecoder"> 
  <object class="com.jformdesigner.model.FormModel"> 
   <void property="contentType"> 
    <string>form/swing</string> 
@@ -164,7 +164,7 @@
              <string>icon</string> 
              <object class="com.jformdesigner.model.SwingIcon"> 
               <int>1</int> 
-              <string>C:\Users\sebas\Downloads\maiz_mon810_al.jpg</string> 
+              <string>/img/maiz_mon810_al.jpg</string> 
              </object> 
             </void> 
             <void property="name"> 
