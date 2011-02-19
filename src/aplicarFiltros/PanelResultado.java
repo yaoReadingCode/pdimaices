@@ -5,6 +5,7 @@
 package aplicarFiltros;
 
 import java.awt.*;
+
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.table.*;
@@ -47,18 +48,32 @@ public class PanelResultado extends JPanel {
 	    		   true, false);
 	    
 	    ChartPanel panel = new ChartPanel(chart);
-	    this.setPanelGrafico(panel);
+	    final JPanel content = new JPanel(new BorderLayout());
+	    content.add(panel);
+	    panel.setPreferredSize(new java.awt.Dimension(500, 180));
+	    this.setPanelGrafico(content);
 	}
 	public void setPanelGrafico(Component arg0){
+		this.panelGrafico.setLayout(new BorderLayout());
 		this.panelGrafico.add(arg0);
-		this.panelGrafico.updateUI();
-		this.panelGrafico.repaint();
-		this.contenedor.pack();
-		this.contenedor.setVisible(true);
+		arg0.setVisible(true);
+		this.panelGrafico.setVisible(true);
+		//this.panelGrafico.invalidate();
+		//this.panelGrafico.repaint();
+		//this.repaint();
+		
+		
+		//
+		//this.panelGrafico.add(new JButton("Prueba"));
+		//this.panelGrafico.updateUI();
+		//this.panelGrafico.repaint();
+		//this.contenedor.pack();
+		//this.contenedor.setVisible(true);
+		/*
 		JFrame ventana = new JFrame("Grafico");
         ventana.getContentPane().add(arg0);
         ventana.pack();
-        ventana.setVisible(true);
+        ventana.setVisible(true);*/
         //ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 	}
@@ -68,7 +83,7 @@ public class PanelResultado extends JPanel {
 
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-		// Generated using JFormDesigner Evaluation license - seba cola
+		// Generated using JFormDesigner Evaluation license - Oscar Giorgetti
 		DefaultComponentFactory compFactory = DefaultComponentFactory.getInstance();
 		panel2 = new JPanel();
 		panel1 = new JPanel();
@@ -83,11 +98,11 @@ public class PanelResultado extends JPanel {
 		//======== this ========
 
 		// JFormDesigner evaluation mark
-//		setBorder(new javax.swing.border.CompoundBorder(
-//			new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
-//				"JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
-//				javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
-//				java.awt.Color.red), getBorder())); addPropertyChangeListener(new java.beans.PropertyChangeListener(){public void propertyChange(java.beans.PropertyChangeEvent e){if("border".equals(e.getPropertyName()))throw new RuntimeException();}});
+		setBorder(new javax.swing.border.CompoundBorder(
+			new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
+				"JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
+				javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
+				java.awt.Color.red), getBorder())); addPropertyChangeListener(new java.beans.PropertyChangeListener(){public void propertyChange(java.beans.PropertyChangeEvent e){if("border".equals(e.getPropertyName()))throw new RuntimeException();}});
 
 		setLayout(null);
 
@@ -112,7 +127,7 @@ public class PanelResultado extends JPanel {
 							"Clasificaciones", "Cantidad de Objetos", "Porcentaje"
 						}
 					) {
-						Class[] columnTypes = new Class[] {
+						Class<?>[] columnTypes = new Class<?>[] {
 							String.class, String.class, Object.class
 						};
 						@Override
@@ -129,7 +144,7 @@ public class PanelResultado extends JPanel {
 				scrollPaneRasgos2.setBounds(10, 25, 375, 145);
 
 				//---- button1 ----
-				button1.setIcon(new ImageIcon("img\\maiz_mon810_al.jpg"));
+				button1.setIcon(new ImageIcon("/img/maiz_mon810_al.jpg"));
 				panel1.add(button1);
 				button1.setBounds(390, 25, 270, 145);
 				panel1.add(separator1);
@@ -228,10 +243,12 @@ public class PanelResultado extends JPanel {
 			setPreferredSize(preferredSize);
 		}
 		// JFormDesigner - End of component initialization  //GEN-END:initComponents
+		
+		button1.setIcon(new ImageIcon("img\\maiz_mon810_al.jpg"));
 	}
 
 	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
-	// Generated using JFormDesigner Evaluation license - seba cola
+	// Generated using JFormDesigner Evaluation license - Oscar Giorgetti
 	private JPanel panel2;
 	private JPanel panel1;
 	private JScrollPane scrollPaneRasgos2;
