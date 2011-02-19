@@ -164,7 +164,7 @@
              <string>icon</string> 
              <object class="com.jformdesigner.model.SwingIcon"> 
               <int>1</int> 
-              <string>/img/maiz_mon810_al.jpg</string> 
+              <string>\\img\\maiz_mon810_al.jpg</string> 
              </object> 
             </void> 
             <void property="name"> 
