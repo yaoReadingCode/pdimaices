@@ -4,3 +4,4 @@
 4,CURVATURA, Curvatura,procesamiento.clasificacion.Curvatura
 5,ANCHO, Ancho,procesamiento.clasificacion.Ancho
 6,ALTO, Alto,procesamiento.clasificacion.Alto
+7,ESQUINAS_RECTAS,Esquinas Rectas,procesamiento.clasificacion.EsquinasRectas

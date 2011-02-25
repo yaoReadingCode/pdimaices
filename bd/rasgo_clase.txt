@@ -10,3 +10,4 @@
 10,3,4,,,4,false,false,4
 11,3,5,,,5,false,false,5
 12,3,6,,,6,false,false,6
+13,3,7,2.0,1.0,7,false,true,7
