@@ -45,7 +45,7 @@ public class Skeleton extends AbstractImageCommand {
 			b = pixel[2];
 		}
 		Color colorPixel = new Color(r, g, b);
-		return new Pixel(x, y, colorPixel);
+		return new Pixel(x, y, colorPixel,getImage().getMaxX(),getImage().getMaxY());
 	}
 
 	/**

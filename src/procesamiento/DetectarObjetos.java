@@ -1,27 +1,15 @@
 package procesamiento;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Rectangle;
-import java.awt.Dialog.ModalExclusionType;
-import java.awt.Dialog.ModalityType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import javax.media.jai.PlanarImage;
 import javax.media.jai.TiledImage;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 import objeto.ClaseObjeto;
 import objeto.Objeto;
@@ -31,8 +19,6 @@ import objeto.RasgoObjeto;
 import procesamiento.clasificacion.Clasificador;
 import procesamiento.clasificacion.EvaluadorClase;
 import aplicarFiltros.FrameResultado;
-import aplicarFiltros.ObjetoPanel;
-import aplicarFiltros.PreviewObjetoPanel;
 import aplicarFiltros.Visualizador;
 
 

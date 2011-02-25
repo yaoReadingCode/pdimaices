@@ -15,7 +15,7 @@ public class Curvatura extends EvaluadorRasgo {
 	/**
 	 * Angulo de variación más allá del cuál se concidera que la dirección del contorno cambia
 	 */
-	private int anguloDesvio = 20;
+	private int anguloDesvio = 30;
 
 	public Curvatura() {
 		super();
@@ -77,7 +77,7 @@ public class Curvatura extends EvaluadorRasgo {
 			
 			double tgAngulo = Math.abs((pendiente2 - pendiente1) / (1 + pendiente2 * pendiente1));
 			double angulo = Math.toDegrees(Math.atan(tgAngulo));
-			if (Math.abs(angulo) > anguloDesvio ){
+			if (Math.abs(angulo) > 5 && Math.abs(angulo) < anguloDesvio ){
 				cantCambiosDireccion++;
 			}
 
@@ -94,7 +94,7 @@ public class Curvatura extends EvaluadorRasgo {
 		}
 		
 		if (cantCambiosDireccion != 0)
-			return (double) contorno.size() / cantCambiosDireccion;
+			return (double) cantCambiosDireccion / contorno.size();
 		
 		return 0.0;
 	}

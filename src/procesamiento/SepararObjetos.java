@@ -547,17 +547,17 @@ public class SepararObjetos extends AbstractImageCommand {
 			double b = fin.getYDouble() - a * fin.getXDouble();
 			for(int x = inicio.getX(); x <= fin.getX(); x++){
 				int y = (int) Math.round(a * x + b);
-				Pixel p = new Pixel(x, y, Color.WHITE);
+				Pixel p = new Pixel(x, y, Color.WHITE,getImage().getMaxX(),getImage().getMaxY());
 				if (!anterior.isAdyacente(p)){
 					
 					for(int y2 = anterior.getY() + 1; anterior.getY()< p.getY() && y2 < p.getY(); y2++){
-						Pixel pAux = new Pixel(p.getX(), y2, Color.WHITE);
+						Pixel pAux = new Pixel(p.getX(), y2, Color.WHITE,getImage().getMaxX(),getImage().getMaxY());
 						linea.add(pAux);
 						anterior = pAux;
 					}
 
 					for(int y2 = anterior.getY() - 1; p.getY() < anterior.getY() && y2 > p.getY(); y2--){
-						Pixel pAux = new Pixel(p.getX(), y2, Color.WHITE);
+						Pixel pAux = new Pixel(p.getX(), y2, Color.WHITE,getImage().getMaxX(),getImage().getMaxY());
 						linea.add(pAux);
 						anterior = pAux;
 					}
@@ -572,7 +572,7 @@ public class SepararObjetos extends AbstractImageCommand {
 		}
 		else{
 			for(int y = inicio.getY(); y <= fin.getY(); y++){
-				Pixel p = new Pixel(inicio.getX(), y, Color.WHITE);
+				Pixel p = new Pixel(inicio.getX(), y, Color.WHITE,getImage().getMaxX(),getImage().getMaxY());
 				if (!linea.contains(p))
 					linea.add(p);	
 			}

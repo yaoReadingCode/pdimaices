@@ -3,7 +3,7 @@ package objeto;
 import java.awt.Color;
 import java.util.List;
 
-public class Pixel implements Cloneable{
+public class Pixel implements Cloneable {
 	public static final int DIR_E = 2;
 	public static final int DIR_SE = 3;
 	public static final int DIR_S = 4;
@@ -23,8 +23,11 @@ public class Pixel implements Cloneable{
 	private double xDouble = 0;
 	private double yDouble = 0;
 
+	private Integer maxX = null;
+	private Integer maxY = null;
+
 	private Color col = null;
-	
+
 	/**
 	 * Atributo utilizado para ordenar pixeles
 	 */
@@ -59,6 +62,16 @@ public class Pixel implements Cloneable{
 		col = c;
 	}
 
+	public Pixel(double i, double j, Color c, Integer maxX, Integer maxY) {
+		x = (int) i;
+		y = (int) j;
+		xDouble = i;
+		yDouble = j;
+		col = c;
+		this.maxX = maxX;
+		this.maxY = maxY;
+	}
+
 	public Pixel(double i, double j, int R, int G, int B) {
 		x = (int) i;
 		y = (int) j;
@@ -66,6 +79,12 @@ public class Pixel implements Cloneable{
 		yDouble = j;
 		Color c = new Color(R, G, B);
 		col = c;
+	}
+
+	public Pixel(int x, int y, Color c, int maxX, int maxY) {
+		this(x, y, c);
+		this.maxX = maxX;
+		this.maxY = maxY;
 	}
 
 	public Color getCol() {
@@ -217,51 +236,66 @@ public class Pixel implements Cloneable{
 		if (ady == DIR_N && y - 1 >= 0) {
 			adyacente.setX(x);
 			adyacente.setY(y - 1);
+			adyacente.setMaxX(maxX);
+			adyacente.setMaxY(maxY);
 			return adyacente;
 		}
 		if (ady == DIR_NE && y - 1 >= 0 && x + 1 < maxX) {
 			adyacente.setX(x + 1);
 			adyacente.setY(y - 1);
+			adyacente.setMaxX(maxX);
+			adyacente.setMaxY(maxY);
 			return adyacente;
 		}
 
 		if (ady == DIR_E && x + 1 < maxX) {
 			adyacente.setX(x + 1);
 			adyacente.setY(y);
+			adyacente.setMaxX(maxX);
+			adyacente.setMaxY(maxY);
 			return adyacente;
 		}
 
 		if (ady == DIR_SE && x + 1 < maxX && y + 1 < maxY) {
 			adyacente.setX(x + 1);
 			adyacente.setY(y + 1);
+			adyacente.setMaxX(maxX);
+			adyacente.setMaxY(maxY);
 			return adyacente;
 		}
 
 		if (ady == DIR_S && y + 1 < maxY) {
 			adyacente.setX(x);
 			adyacente.setY(y + 1);
+			adyacente.setMaxX(maxX);
+			adyacente.setMaxY(maxY);
 			return adyacente;
 		}
 
 		if (ady == DIR_SO && y + 1 < maxY && x - 1 >= 0) {
 			adyacente.setX(x - 1);
 			adyacente.setY(y + 1);
+			adyacente.setMaxX(maxX);
+			adyacente.setMaxY(maxY);
 			return adyacente;
 		}
 		if (ady == DIR_O && x - 1 >= 0) {
 			adyacente.setX(x - 1);
 			adyacente.setY(y);
+			adyacente.setMaxX(maxX);
+			adyacente.setMaxY(maxY);
 			return adyacente;
 		}
 
 		if (ady == DIR_NO && x - 1 >= 0 && y - 1 >= 0) {
 			adyacente.setX(x - 1);
 			adyacente.setY(y - 1);
+			adyacente.setMaxX(maxX);
+			adyacente.setMaxY(maxY);
 			return adyacente;
 		}
 
 		return null;
-
 	}
 
 	/**
@@ -278,25 +312,36 @@ public class Pixel implements Cloneable{
 
 		if (a != null && b != null && c != null) {
 			/*
-			int d = (b.getY() - a.getY())* c.getX() + (a.getX() - b.getX())*c.getY() + b.getX()* a.getY() - b.getY()*a.getX(); 
-			return d;*/
-			
-			Pixel P21 = new Pixel(b.getX() - a.getX(), b.getY() - a.getY(), null);
-			Pixel P32 = new Pixel(c.getX() - a.getX(), c.getY() - a.getY(), null);
+			 * int d = (b.getY() - a.getY()) c.getX() + (a.getX() -
+			 * b.getX())c.getY() + b.getX() a.getY() - b.getY()a.getX(); return
+			 * d;
+			 */
+
+			Pixel P21 = new Pixel(b.getX() - a.getX(), b.getY() - a.getY(),
+					null, null, null);
+			Pixel P32 = new Pixel(c.getX() - a.getX(), c.getY() - a.getY(),
+					null, null, null);
 			double prodV = P21.productoVectorial(P32);
 			return prodV;
 		}
 		return 0;
 	}
 
-	public static double lado2(Pixel a, Pixel b, Pixel c){
-		Pixel ab = b.clonar();
-	    ab.restar(a);
-	    Pixel bc = c.clonar();
-	    c.restar(b);
-	    double pv = ab.productoVectorial(bc);
-	    return pv;
+	public static double lado2(Pixel a, Pixel b, Pixel c) {
+		Pixel a2 = a.clonar();
+		a2.setY(a2.maxY - a2.y);
+		Pixel b2 = b.clonar();
+		b2.setY(b2.maxY - b2.y);
+		Pixel c2 = c.clonar();
+		c2.setY(c2.maxY - c2.y);
+		Pixel ab = b2.clonar();
+		ab.restar(a2);
+		Pixel bc = c2.clonar();
+		bc.restar(b2);
+		double pv = ab.productoVectorial2(bc);
+		return pv;
 	}
+
 	/**
 	 * Calcula el producto vectorial entre dos pixels
 	 * 
@@ -304,7 +349,21 @@ public class Pixel implements Cloneable{
 	 * @return
 	 */
 	public double productoVectorial(Pixel pixel) {
-		return x * pixel.y - y * pixel.x;
+		return getXDouble() * pixel.getYDouble() - getYDouble() * pixel.getXDouble();
+		// return getXCartesiano() * pixel.getYCartesiano() - getYCartesiano() *
+		// pixel.getXCartesiano();
+	}
+
+	
+	/**
+	 * Calcula el producto vectorial entre dos pixels
+	 * 
+	 * @param pixel
+	 * @return
+	 */
+	public double productoVectorial2(Pixel pixel) {
+		return getX() * pixel.getY() - getY() * pixel.getX();
+		 //return getXCartesiano() * pixel.getYCartesiano() - getYCartesiano() * pixel.getXCartesiano();
 	}
 
 	/**
@@ -349,20 +408,21 @@ public class Pixel implements Cloneable{
 	};
 
 	/**
-	 * Retorna el pixel mas cercano de una lista de pixeles 
+	 * Retorna el pixel mas cercano de una lista de pixeles
+	 * 
 	 * @param lista
 	 * @return
 	 */
-	public Pixel getPixelMasCercano(List<Pixel> lista){
-		if (lista != null && lista.size() > 0){
-			
+	public Pixel getPixelMasCercano(List<Pixel> lista) {
+		if (lista != null && lista.size() > 0) {
+
 			Pixel masCercano = null;
 			double mejorDistancia = Double.MAX_VALUE;
-			for(int i = 0; i< lista.size(); i++){
+			for (int i = 0; i < lista.size(); i++) {
 				Pixel p = lista.get(i);
-				if (!this.equals(p)){
+				if (!this.equals(p)) {
 					double distancia = this.distancia(p);
-					if (mejorDistancia > distancia){
+					if (mejorDistancia > distancia) {
 						mejorDistancia = distancia;
 						masCercano = p;
 					}
@@ -370,10 +430,9 @@ public class Pixel implements Cloneable{
 			}
 			return masCercano;
 		}
-		return null;	
+		return null;
 	}
 
-	
 	public boolean equals(Object obj) {
 		if (obj == null)
 			return false;
@@ -383,21 +442,47 @@ public class Pixel implements Cloneable{
 		return x == p.x && y == p.y;
 	}
 
-	 
 	public String toString() {
 		return x + " - " + y;
 	}
 
 	public Pixel clonar() {
-		return new Pixel(xDouble, yDouble, col);
+		return new Pixel(xDouble, yDouble, col, maxX, maxY);
 	}
 
 	protected Object clone() throws CloneNotSupportedException {
 		return clonar();
 	}
-	
-	public double modulo(){
-		return Math.sqrt(Math.pow(this.getXDouble(), 2) + Math.pow(this.getYDouble(), 2));
+
+	public double modulo() {
+		return Math.sqrt(Math.pow(this.getXDouble(), 2)
+				+ Math.pow(this.getYDouble(), 2));
 	}
-	
+
+	public double getXCartesiano() {
+		return this.xDouble;
+	}
+
+	public double getYCartesiano() {
+		if (this.maxY != null)
+			return this.maxY - this.getYDouble();
+		return this.getYDouble();
+	}
+
+	public Integer getMaxX() {
+		return maxX;
+	}
+
+	public void setMaxX(Integer maxX) {
+		this.maxX = maxX;
+	}
+
+	public Integer getMaxY() {
+		return maxY;
+	}
+
+	public void setMaxY(Integer maxY) {
+		this.maxY = maxY;
+	}
+
 }

@@ -1,11 +1,6 @@
 package procesamiento;
 
 import java.awt.Color;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.image.DataBuffer;
-import java.awt.image.MultiPixelPackedSampleModel;
-import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,12 +9,11 @@ import java.util.List;
 import javax.media.jai.PlanarImage;
 import javax.media.jai.TiledImage;
 
-import aplicarFiltros.Visualizador;
-
 import objeto.Objeto;
 import objeto.ObjetoUtil;
 import objeto.Pixel;
 import objeto.PixelComparator;
+import aplicarFiltros.Visualizador;
 
 /**
  * Comando que detecta el contorno de 1 pixel exterior de los objetos de una
@@ -29,7 +23,7 @@ import objeto.PixelComparator;
  * 
  */
 public class DetectarContorno extends AbstractImageCommand {
-	private static final int maximoPuntos = 5000;
+	private static final int maximoPuntos = 10000;
 
 	/**
 	 * Imagen original
@@ -450,7 +444,7 @@ public class DetectarContorno extends AbstractImageCommand {
 	}
 	
 	private Pixel convertirPixel(Pixel p){
-		Pixel pixel = new Pixel((p.getX() - twGlobal * tWidth),(p.getY() - thGlobal * tHeight), p.getCol());
+		Pixel pixel = new Pixel((p.getX() - twGlobal * tWidth),(p.getY() - thGlobal * tHeight), p.getCol(), getImage().getMaxX(), getImage().getMaxTileY());
 		if ((pixel.getY() >= maxMatrixH) || (pixel.getX() >= maxMatrixW))
 			return null;
 		if ((pixel.getY() <= 0) || (pixel.getX() <= 0))
@@ -498,7 +492,7 @@ public class DetectarContorno extends AbstractImageCommand {
 			b = pixel[2];
 		}
 		Color colorPixel = new Color(r, g, b);
-		return new Pixel(x, y, colorPixel);
+		return new Pixel(x, y, colorPixel,getImage().getMaxX(),getImage().getMaxY());
 	}
 
 	/**
@@ -920,7 +914,7 @@ public class DetectarContorno extends AbstractImageCommand {
 							int y = th * tHeight + h;
 							if (x < width && y < height) {
 
-								Pixel pixelVerificar = new Pixel(x, y, nuevo);
+								Pixel pixelVerificar = new Pixel(x, y, nuevo, getImage().getMaxX(), getImage().getMaxY());
 								if (!isVisitado(pixelVerificar)) {
 									setVisitado(pixelVerificar);
 									int[] pixel2 = null;
@@ -935,7 +929,7 @@ public class DetectarContorno extends AbstractImageCommand {
 									}
 
 									Color colorPixel = new Color(r, g, b);
-									Pixel pixel = new Pixel(x, y, colorPixel);
+									Pixel pixel = new Pixel(x, y, colorPixel, getImage().getMaxX(), getImage().getMaxY());
 									if (!isFondo(pixel) /*&& !isVisitado(pixel)*/
 											&& isContorno(pixel)
 									// && !perteneceAAlgunObjeto(pixel,

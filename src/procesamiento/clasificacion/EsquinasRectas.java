@@ -1,32 +1,27 @@
 package procesamiento.clasificacion;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import objeto.Objeto;
 import objeto.Pixel;
 import objeto.RasgoClase;
 
-public class CantidadEsquinas extends EvaluadorRasgo {
+public class EsquinasRectas extends EvaluadorRasgo {
 	/**
 	 * Cantidad de pixeles del contorno a utilizar para ver si un pixel se desvía 
 	 * demasiado del contorno. Lo que indicaría que pertenece a otro objeto
 	 */
 	private int ventanaPixeles = 10;
-
+	
 	private static int anguloDesvio = 90;
 	
-	private class CoeficientesRecta {
-		public double a;
-		public double b;
-		public double c;
-	}
-
-	public CantidadEsquinas() {
+	public EsquinasRectas() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public CantidadEsquinas(RasgoClase rasgo, Double valor, Double desvioEstandar) {
+	public EsquinasRectas(RasgoClase rasgo, Double valor, Double desvioEstandar) {
 		super(rasgo, valor, desvioEstandar);
 		// TODO Auto-generated constructor stub
 	}
@@ -80,7 +75,7 @@ public class CantidadEsquinas extends EvaluadorRasgo {
 	}
 	
 	public double distancia(Pixel p, CoeficientesRecta recta){
-		double distancia = (-1 * recta.a * p.getXDouble() - p.getYDouble() - recta.c) / Math.sqrt(Math.pow(recta.a,2) + 1);
+		double distancia = Math.abs((-1 * recta.a * p.getXDouble() - p.getYDouble() - recta.c) / Math.sqrt(Math.pow(recta.a,2) + 1));
 		return distancia;
 	}
 	/**
@@ -93,6 +88,8 @@ public class CantidadEsquinas extends EvaluadorRasgo {
 	public boolean isLineaRecta(List<Pixel> contorno, int posInicio, int posFin){
 		double umbral = 1;
 		double distanciaPromedio = 0;
+		if (posInicio < 0)
+			posInicio = contorno.size() - posInicio;
 		Pixel inicio = contorno.get(posInicio % contorno.size());
 		Pixel fin = contorno.get(posFin % contorno.size());
 		Double pendiente = (fin.getYDouble() - inicio.getYDouble()) / (fin.getXDouble() - inicio.getXDouble()); 
@@ -103,7 +100,8 @@ public class CantidadEsquinas extends EvaluadorRasgo {
 		int cantPixeles = Math.abs(posFin - posInicio);
 		while (i <= cantPixeles){
 			Pixel p = contorno.get((posInicio + i) % contorno.size());
-			distanciaPromedio =+ distancia(p, recta);
+			double dist = distancia(p, recta);
+			distanciaPromedio += dist ;
 			i++;
 		}
 		distanciaPromedio = distanciaPromedio / cantPixeles;
@@ -121,17 +119,21 @@ public class CantidadEsquinas extends EvaluadorRasgo {
 		CoeficientesRecta coefR2 = new CoeficientesRecta();
 		coeficientesRecta(pendiente1, pInicio, coefR1);
 		coeficientesRecta(pendiente2, pFin, coefR2);
-		
+		if (pMedio.getX() == 67 && pMedio.getY() == 32)
+			System.out.println("");
 		Pixel pInterseccion = calcularInterseccionRectas(coefR1.a, coefR1.b, coefR1.c, coefR2.a, coefR2.b, coefR2.c);
 		if (pInterseccion != null){
+			pInterseccion.setMaxX(pInicio.getMaxX());
+			pInterseccion.setMaxY(pInicio.getMaxY());
 			if (!pInterseccion.equals(pMedio)){
 				double ladoA = pFin.distancia(pMedio);
 				double ladoB = pFin.distancia(pInterseccion);
 				if (ladoA != 0)
 					angulo = Math.toDegrees(Math.asin(ladoB / ladoA));
 
-				double ladoPuntoInterseccion = Pixel.lado2(pMedio, pFin, pInterseccion);
-				if (ladoPuntoInterseccion > 0)
+				double ladoPuntoMedio = Pixel.lado2(pInicio, pMedio, pFin);
+				double ladoPuntoInterseccion = Pixel.lado2(pMedio, pInterseccion, pFin);
+				if (ladoPuntoInterseccion > 0 && angulo != null && ladoPuntoMedio < 0)
 					angulo = 180 - angulo;
 
 			}else
@@ -142,13 +144,16 @@ public class CantidadEsquinas extends EvaluadorRasgo {
 	}
 
 	
-	@Override
+	/**
+	 * Retorna 1 si el Maiz esta quebrado, 0 si no lo está.
+	 */
 	public Double calcularValor(Objeto objeto) {
 		System.out.println("******");
 		System.out.println(objeto.getName());
 		List<Pixel> contorno = objeto.getContorno();
 		int tamanioSegmento = getVentanaPixeles();
 		double cantEsquinas = 0;
+		double cantRectas = 0;
 		
 		if (tamanioSegmento == 0)
 			tamanioSegmento = 1;
@@ -166,19 +171,19 @@ public class CantidadEsquinas extends EvaluadorRasgo {
 			
 			Integer posCandidato = null;
 			double anguloCandidato = 0;
-			
+			List<Pixel> esquinas = new ArrayList<Pixel>();
 			while (!parar && contorno.size() > tamanioSegmento){
 				
 				Pixel p = contorno.get(i % contorno.size());
+				if (p.getX() == 18 && p.getY() == 4)
+					System.out.println("");
 				Pixel finVentana2 = contorno.get((i + tamanioSegmento) % contorno.size());
 
 				Double angulo = calcularAngulo(iniVentana, finVentana, finVentana2);
-				double lado = Pixel.lado(iniVentana, finVentana2, p);
+				double lado = Pixel.lado2(iniVentana, p, finVentana2);
 
 				if (lado < 0 && angulo != null && angulo >= anguloDesvio){
-					posCandidato = i;
-					anguloCandidato = angulo;
-					
+
 					if (angulo > anguloCandidato){
 						anguloCandidato = angulo;
 						posCandidato = i;
@@ -187,18 +192,20 @@ public class CantidadEsquinas extends EvaluadorRasgo {
 				}else{
 					if (posCandidato != null){
 						Pixel punto = contorno.get(posCandidato % contorno.size());
-						
-						if (isLineaRecta(contorno, i - ventanaPixeles, i)||
-							isLineaRecta(contorno, i, i + ventanaPixeles)){
+						esquinas.add(punto);
+						/*
+						if (isLineaRecta(contorno, i - longitudRecta, i)||
+							isLineaRecta(contorno, i, i + longitudRecta)){*/
 							posIniVentana = posCandidato;
 							i = posCandidato + tamanioSegmento;
 							posFinVentana = i;
 							posCandidato = null;
+							angulo = null;
 							
 							cantEsquinas++;
 							System.out.println(punto);
 							System.out.println(anguloCandidato);
-						}
+						/*}*/
 						
 					}
 				}
@@ -214,17 +221,58 @@ public class CantidadEsquinas extends EvaluadorRasgo {
 				if (posFinVentana > contorno.size() && i > inicio)
 					parar = true;
 			}
+			
+			if (posCandidato != null){
+				Pixel punto = contorno.get(posCandidato % contorno.size());
+				esquinas.add(punto);
+				/*
+				if (isLineaRecta(contorno, i - longitudRecta, i)||
+					isLineaRecta(contorno, i, i + longitudRecta)){*/
+					cantEsquinas++;
+					System.out.println(punto);
+					System.out.println(anguloCandidato);
+				/*}*/
+			}
+			
+			if(esquinas.size() > 1){
+				i = 1;
+				while (i < esquinas.size()){
+					Pixel iniRecta = esquinas.get(i-1);
+					Pixel finRecta = esquinas.get(i);
+					int iniPos = contorno.indexOf(iniRecta);
+					int finPos = contorno.indexOf(finRecta);
+					if (isLineaRecta(contorno, iniPos, finPos)){
+						cantRectas++;
+					}
+					i++;
+				}
+				Pixel iniRecta = esquinas.get(esquinas.size()-1);
+				Pixel finRecta = esquinas.get(0);
+				int iniPos = contorno.indexOf(iniRecta);
+				int finPos = contorno.indexOf(finRecta);
+				if (isLineaRecta(contorno, iniPos, finPos)){
+					cantRectas++;
+				}
+
+			}
 		}
 		
-		return cantEsquinas;
+		return cantRectas;
 	}
 	
 	public static void main(String[] args) {
-		CantidadEsquinas c = new CantidadEsquinas();
-		Pixel pInicio = new Pixel(-1,1,null);
-		Pixel pMedio = new Pixel(0,2,null);
-		Pixel pFin = new Pixel(1,0,null);
+		EsquinasRectas c = new EsquinasRectas();
+		Pixel pInicio = new Pixel(77,25,null,84,68);
+		Pixel pMedio = new Pixel(67,32,null,84,68);
+		Pixel pFin = new Pixel(65,42,null,84,68);
 		
+		double lado = Pixel.lado2(pInicio, pMedio, pFin);
+		/*
+		CoeficientesRecta recta = new CoeficientesRecta();
+		double pendiente = (pFin.getYDouble() - pInicio.getYDouble()) / (pFin.getXDouble() - pInicio.getXDouble());
+		c.coeficientesRecta(pendiente, pInicio, recta);
+		double distancia = c.distancia(pMedio, recta);
+		System.out.println(distancia);*/
 		Double angulo = c.calcularAngulo(pInicio, pMedio, pFin);
 		
 		
