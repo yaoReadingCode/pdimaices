@@ -84,12 +84,16 @@ public class FrameResultado extends JFrame {
 	public void changeObjeto(Objeto obj, Clase claseNew){
 		Set<EvaluadorClase> clases = getClasificador().getClasificacion().keySet();
 		for(EvaluadorClase c: clases){
-			if(c.getClase().equals(obj.getClases().get(0).getClase()))
+			if(obj.getClases().size() > 0 && c.getClase().equals(obj.getClases().get(0).getClase())){
 				getClasificador().getClasificacion().get(c).remove(obj);
-			else if(c.getClase().equals(claseNew))
+				obj.removeClase(c.getClase());
+			}
+			else if(c.getClase().equals(claseNew)){
 				getClasificador().getClasificacion().get(c).add(obj);
-			
+				obj.addClase(c.getClase());
+			}
 		}
+
 		tabbedPane1.removeAll();
 		cantidadPaneles = 1;
 		this.setResultados();

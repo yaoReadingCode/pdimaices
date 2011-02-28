@@ -534,12 +534,34 @@ public class Objeto {
 	}
 	
 	/**
+	 * Agrega una clase al objeto.
+	 * @param  claseObjeto
+	 */
+	public void addClase(Clase clase){
+		ClaseObjeto c = new ClaseObjeto(clase);
+		addClase(c);
+	}
+
+	/**
 	 * Elimina una clase al objeto.
 	 * @param claseObjeto
 	 */
 	public void removeClase(ClaseObjeto claseObjeto){
 		getClases().remove(claseObjeto);
 		claseObjeto.setObjeto(null);
+	}
+
+	/**
+	 * Elimina una clase al objeto.
+	 * @param claseObjeto
+	 */
+	public void removeClase(Clase clase){
+		for(ClaseObjeto c: getClases()){
+			if (c.getClase().equals(clase)){
+				this.removeClase(c);
+				break;
+			}
+		}
 	}
 
 	@Override

@@ -146,5 +146,28 @@ public class ObjectDao {
 			throw new RuntimeException(e.getMessage());
 		}
 	}
+	
+	/**
+	 * Retorna la cantidad de objetos clasificados en la base de datos
+	 * @return
+	 */
+	public Integer getCantidadObjetos() {
+		try {
+			Session session = getSessionFactory().openSession();
+			//session.beginTransaction();
+
+			Integer result = (Integer) session.createQuery("select count(*) from Objeto").uniqueResult();
+
+			//session.getTransaction().commit();
+			session.connection().close();
+			session.close();
+
+			return result;
+		} 
+		catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
+	}
+	
 
 }

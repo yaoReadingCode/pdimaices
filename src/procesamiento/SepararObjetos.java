@@ -99,12 +99,16 @@ public class SepararObjetos extends AbstractImageCommand {
 			//rasgos.add(area);
 			EvaluadorClase objetoCircular = new EvaluadorClase(claseObjetoCircular, rasgos);
 			List<Objeto> nuevos = new ArrayList<Objeto>();
-
+			int cantObjetos = getObjetos().size();
 			for (Objeto obj : getObjetos()) {
+
 				if (!objetoCircular.pertenece(obj,false)){
+					
 					//System.out.println("Separar objeto: " + obj.getPixelMedio());
-					List<Objeto> nuevosObjetos = separarObjetos(obj, objetoCircular, 0);
+					List<Objeto> nuevosObjetos = separarObjetos(obj, objetoCircular, 0, cantObjetos);
 					nuevos.addAll(nuevosObjetos);
+					if (nuevosObjetos.size() > 1)
+						cantObjetos += nuevosObjetos.size() - 1;
 				}
 				else{
 					nuevos.add(obj);	
@@ -381,7 +385,7 @@ public class SepararObjetos extends AbstractImageCommand {
 	 * @param objetoCircular
 	 * @return
 	 */
-	private List<Objeto> separarObjetos(Objeto obj, EvaluadorClase objetoCircular, int nivel) {	
+	private List<Objeto> separarObjetos(Objeto obj, EvaluadorClase objetoCircular, int nivel, int cantObjetos) {	
 		if (obj.getName().endsWith("52"))
 			System.out.println("");
 		
@@ -457,7 +461,7 @@ public class SepararObjetos extends AbstractImageCommand {
 									detectarContorno.completarObjeto(nuevoObjeto);
 									nuevoObjeto.calcularMRC();
 									objetos.add(nuevoObjeto);
-									nuevoObjeto.setName(obj.getName()+"_"+objetos.size());
+									nuevoObjeto.setName(obj.getName());
 									parar = true;
 									
 									String info = "Objeto catalogado: "
@@ -469,8 +473,8 @@ public class SepararObjetos extends AbstractImageCommand {
 									
 									
 									contorno = objResto.getContorno();
-									objResto.setName(obj.getName()+"_"+(objetos.size() + 1));
-									List<Objeto> nuevosObjetos = separarObjetos(objResto, objetoCircular, nivel + 1);
+									objResto.setName("Maiz" + (cantObjetos + 1));
+									List<Objeto> nuevosObjetos = separarObjetos(objResto, objetoCircular, nivel + 1, cantObjetos + 1);
 									objetos.addAll(nuevosObjetos);
 									
 									huboDivision = true;
@@ -491,12 +495,12 @@ public class SepararObjetos extends AbstractImageCommand {
 						detectarContorno.completarObjeto(nuevoObj);
 						nuevoObj.calcularMRC();
 						objetos.add(nuevoObj);
-						nuevoObj.setName(obj.getName()+"_"+objetos.size());
+						nuevoObj.setName(obj.getName());
 						
 						String info = "Objeto catalogado: "
-							+ obj.getName()
+							+ nuevoObj.getName()
 							+ " - Puntos detectados: "
-							+ obj.getPuntos().size();
+							+ nuevoObj.getPuntos().size();
 				
 						Visualizador.addLogInfo(info);
 						

@@ -96,7 +96,7 @@ public class Curvatura extends EvaluadorRasgo {
 		if (cantCambiosDireccion != 0)
 			return (double) cantCambiosDireccion / contorno.size();
 		
-		return 0.0;
+		return -1.0;
 	}
 	public static void main(String[] args) {
 		Objeto o = new Objeto();

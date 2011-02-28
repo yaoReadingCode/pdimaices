@@ -9,6 +9,8 @@ import java.util.List;
 import javax.media.jai.PlanarImage;
 import javax.media.jai.TiledImage;
 
+import dataAcces.ObjectDao;
+
 import objeto.Objeto;
 import objeto.ObjetoUtil;
 import objeto.Pixel;
@@ -868,7 +870,7 @@ public class DetectarContorno extends AbstractImageCommand {
 	public List<Objeto> detectarObjetos() {
 		List<Objeto> objetos = new ArrayList<Objeto>();
 		// initVisitados();
-		int nombreObjeto = 1;
+		int nombreObjeto = ObjectDao.getInstance().getCantidadObjetos() + 1;
 		if (getImage() != null) {
 			// this.Matriz = new
 			// int[getImage().getHeight()][getImage().getWidth()];
@@ -942,9 +944,7 @@ public class DetectarContorno extends AbstractImageCommand {
 											Objeto o = new Objeto();
 											o.setContorno(pixelsContorno);
 											if (o.validarContorno()) {
-												o
-														.setName("Maiz"
-																+ nombreObjeto);
+												o.setName("Maiz"+ nombreObjeto);
 												nombreObjeto++;
 												List<Pixel> interior = new ArrayList<Pixel>();
 												getPixelsInterior(pixel,
