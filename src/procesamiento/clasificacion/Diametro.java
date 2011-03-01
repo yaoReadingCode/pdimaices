@@ -1,3 +1,4 @@
+
 package procesamiento.clasificacion;
 
 import objeto.Objeto;
@@ -6,16 +7,17 @@ import objeto.RasgoClase;
 /**
  * Evalua el alto de un objeto 
  */
-public class Alto extends EvaluadorRasgo {
-	public Alto() {
+public class Diametro extends EvaluadorRasgo {
+	public Diametro() {
 		super();
 	}
 
-	public Alto(RasgoClase rasgo, Double valor, Double desvioEstandar) {
+	public Diametro(RasgoClase rasgo, Double valor, Double desvioEstandar) {
 		super(rasgo, valor, desvioEstandar);
 	}
 
 	public Double calcularValor(Objeto objeto) {
-		return objeto.getAlto();
+		Double diametro = Math.max(objeto.getAlto(), objeto.getAncho());
+		return diametro;
 	}
 }
