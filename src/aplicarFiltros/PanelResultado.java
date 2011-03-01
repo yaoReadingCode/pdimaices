@@ -13,8 +13,10 @@ import javax.swing.table.*;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.general.DefaultPieDataset;
 
 import com.jgoodies.forms.factories.*;
 
@@ -26,7 +28,7 @@ public class PanelResultado extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+	private DefaultPieDataset dataset = new DefaultPieDataset();
 	public JFrame getContenedor() {
 		return contenedor;
 	}
@@ -39,13 +41,20 @@ public class PanelResultado extends JPanel {
 		DefaultTableModel model = (DefaultTableModel) tableRasgos2.getModel();
 		model.addRow(new Object[]{nombre, cantidad, (porcentaje+"%")});
 		//Grafico
-		dataset.setValue(cantidad, nombre, "Cantidad");
+		dataset.setValue( nombre,cantidad);
 		//dataset.setValue(porcentaje, nombre, "Porcentaje");
 	}
 	public void graficar(){
-		JFreeChart chart = ChartFactory.createBarChart3D("Clasificación", "Clasificación",
-	    		   "Cantidad de Maices", dataset, PlotOrientation.VERTICAL, true,
-	    		   true, false);
+		JFreeChart chart = ChartFactory.createPieChart("Clasificación", dataset, true,  true,
+	            false); 
+		chart.setBackgroundPaint(Color.ORANGE);
+	    PiePlot plot = (PiePlot)chart.getPlot();
+	    //Color de las etiquetas
+	    plot.setLabelBackgroundPaint(Color.ORANGE);
+	    //Color de el fondo del gráfico
+	    plot.setBackgroundPaint(Color.WHITE);
+	    plot.setNoDataMessage("No hay data");
+		
 	    
 	    ChartPanel panel = new ChartPanel(chart);
 	    final JPanel content = new JPanel(new BorderLayout());
