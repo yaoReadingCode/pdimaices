@@ -50,9 +50,10 @@ public class FrameResultado extends JFrame {
 			GridBagLayout gbl = new GridBagLayout();
 			int cant = 0;
 			float porcentaje = (objetosClase.size()*100)/getClasificador().countObject();
-			resultado.addFila(c.getClase().getNombre(), objetosClase.size(),porcentaje);
+			resultado.addValueCount(c.getClase().getNombre(), objetosClase.size(),porcentaje);
 			container.setLayout(gbl);
 			//frame.getContentPane().add(new JScrollPane(container),BorderLayout.CENTER);
+			long cantidadPixeles = 0;
 			for (Objeto obj: objetosClase) {
 				// ObjetoPanel jp = new ObjetoPanel(o);
 				ObjetoPanel panel = new ObjetoPanel(obj,cant + 1, getClasificador(), this );
@@ -73,8 +74,9 @@ public class FrameResultado extends JFrame {
 				// Add the component to the container
 				container.add(panel);
 				cant++;
+				cantidadPixeles = cantidadPixeles + (obj.getPuntos().size() + obj.getContorno().size()); 
 			}
-			
+			resultado.addValuePixel(c.getClase().getNombre(), cantidadPixeles);
 			
 			this.addPanel(container, c.getClase().getNombre());
 		}
@@ -200,7 +202,7 @@ public class FrameResultado extends JFrame {
 				panel3.setBackground(Color.blue);
 				panel3.setLayout(null);
 				panel3.add(tabbedPane1);
-				tabbedPane1.setBounds(5, 15, 785, 605);
+				tabbedPane1.setBounds(5, 15, 750, 745);
 
 				{ // compute preferred size
 					Dimension preferredSize = new Dimension();
@@ -217,7 +219,7 @@ public class FrameResultado extends JFrame {
 				}
 			}
 			panel1.add(panel3);
-			panel3.setBounds(10, 30, 795, 625);
+			panel3.setBounds(10, 30, 795, 780);
 
 			//======== panel2 ========
 			{
@@ -290,7 +292,7 @@ public class FrameResultado extends JFrame {
 			}
 		}
 		contentPane.add(panel1);
-		panel1.setBounds(5, 10, 1080, 745);
+		panel1.setBounds(5, 10, 1080, 800);
 
 		{ // compute preferred size
 			Dimension preferredSize = new Dimension();
@@ -325,20 +327,11 @@ public class FrameResultado extends JFrame {
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
 	private boolean tableIniciada=false;
 	public void addPanel(JPanel panel, String name){
-//		if(tableIniciada){
 			JScrollPane scrollPanel = new JScrollPane(panel);
-			scrollPanel.setPreferredSize(new Dimension(512,512));
+			scrollPanel.setPreferredSize(new Dimension(700,512));
 			tabbedPane1.addTab(name, scrollPanel);
 			cantidadPaneles++;
-//		}
-//		else{
-//			tabbedPane1.removeAll();
-//			JScrollPane scrollPanel = new JScrollPane(panel);
-//			scrollPanel.setPreferredSize(new Dimension(512,512));
-//			tabbedPane1.addTab(name, scrollPanel);
-//			tableIniciada=true;
-//			
-//		}
+
 	}
 
 	public void setTableIniciada(boolean tableIniciada) {

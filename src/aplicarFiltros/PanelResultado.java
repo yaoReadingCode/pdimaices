@@ -4,21 +4,31 @@
 
 package aplicarFiltros;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.Rectangle;
 
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.table.*;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.UIManager;
+import javax.swing.border.BevelBorder;
+import javax.swing.table.DefaultTableModel;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PiePlot;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
 
-import com.jgoodies.forms.factories.*;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
 
 /**
  * @author seba cola
@@ -28,7 +38,8 @@ public class PanelResultado extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private DefaultPieDataset dataset = new DefaultPieDataset();
+	private DefaultPieDataset datasetCount = new DefaultPieDataset();
+	private DefaultPieDataset datasetPixel = new DefaultPieDataset();
 	public JFrame getContenedor() {
 		return contenedor;
 	}
@@ -37,15 +48,22 @@ public class PanelResultado extends JPanel {
 	}
 
 	private JFrame contenedor;
-	public void addFila(String nombre, int cantidad, float porcentaje){
+	public void addValueCount(String nombre, int cantidad, float porcentaje){
 		DefaultTableModel model = (DefaultTableModel) tableRasgos2.getModel();
 		model.addRow(new Object[]{nombre, cantidad, (porcentaje+"%")});
 		//Grafico
-		dataset.setValue( nombre,cantidad);
-		//dataset.setValue(porcentaje, nombre, "Porcentaje");
+		datasetCount.setValue( nombre,cantidad);
 	}
+	
+	public void addValuePixel(String nombre, long cantidadPixeles){
+		//Grafico
+		datasetPixel.setValue( nombre,cantidadPixeles);
+	}
+	
+	
 	public void graficar(){
-		JFreeChart chart = ChartFactory.createPieChart("Clasificación", dataset, true,  true,
+		//Grafico de cantidad de semillas
+		JFreeChart chart = ChartFactory.createPieChart("Clasificación Cantidad de Semillas", datasetCount, true,  true,
 	            false); 
 		chart.setBackgroundPaint(Color.ORANGE);
 	    PiePlot plot = (PiePlot)chart.getPlot();
@@ -61,33 +79,41 @@ public class PanelResultado extends JPanel {
 	    content.add(panel);
 	    panel.setPreferredSize(new java.awt.Dimension(500, 180));
 	    this.setPanelGrafico(content);
+	    
+	    
+	  //Grafico de cantidad de Pixeles
+		JFreeChart chartPixel = ChartFactory.createPieChart("Clasificación por Volumen", datasetPixel, true,  true,
+	            false); 
+		chartPixel.setBackgroundPaint(Color.ORANGE);
+	    PiePlot plotPixel = (PiePlot)chartPixel.getPlot();
+	    //Color de las etiquetas
+	    plotPixel.setLabelBackgroundPaint(Color.ORANGE);
+	    //Color de el fondo del gráfico
+	    plotPixel.setBackgroundPaint(Color.WHITE);
+	    plotPixel.setNoDataMessage("No hay data");
+		
+	    
+	    ChartPanel panelPixel = new ChartPanel(chartPixel);
+	    final JPanel contentPixel = new JPanel(new BorderLayout());
+	    contentPixel.add(panelPixel);
+	    panelPixel.setPreferredSize(new java.awt.Dimension(500, 180));
+	   
+	    this.panelGraficoPixel.setLayout(new BorderLayout());
+		this.panelGraficoPixel.add(contentPixel);
+		contentPixel.setVisible(true);
+		this.panelGraficoPixel.setVisible(true);
 	}
 	public void setPanelGrafico(Component arg0){
 		this.panelGrafico.setLayout(new BorderLayout());
 		this.panelGrafico.add(arg0);
 		arg0.setVisible(true);
 		this.panelGrafico.setVisible(true);
-		//this.panelGrafico.invalidate();
-		//this.panelGrafico.repaint();
-		//this.repaint();
-		
-		
-		//
-		//this.panelGrafico.add(new JButton("Prueba"));
-		//this.panelGrafico.updateUI();
-		//this.panelGrafico.repaint();
-		//this.contenedor.pack();
-		//this.contenedor.setVisible(true);
-		/*
-		JFrame ventana = new JFrame("Grafico");
-        ventana.getContentPane().add(arg0);
-        ventana.pack();
-        ventana.setVisible(true);*/
-        //ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
 	}
+	
+	
 	public PanelResultado() {
 		initComponents();
+		
 	}
 
 	private void initComponents() {
@@ -220,6 +246,7 @@ public class PanelResultado extends JPanel {
 			}
 			panel2.add(panel3);
 			panel3.setBounds(5, 200, 670, 225);
+			this.agregarGrafico();
 
 			{ // compute preferred size
 				Dimension preferredSize = new Dimension();
@@ -236,7 +263,7 @@ public class PanelResultado extends JPanel {
 			}
 		}
 		add(panel2);
-		panel2.setBounds(5, 5, 680, 430);
+		panel2.setBounds(5, 5, 680, 685);
 
 		{ // compute preferred size
 			Dimension preferredSize = new Dimension();
@@ -268,4 +295,54 @@ public class PanelResultado extends JPanel {
 	private JComponent separator2;
 	private JPanel panelGrafico;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
+	
+	private JPanel panel = new JPanel();
+	private JPanel panelGraficoPixel = new JPanel();
+	
+	private void agregarGrafico(){
+		//======== panel3 ========
+			
+			panel.setLayout(null);
+			panel.add(separator2);
+			separator2.setBounds(10, 5, 650, separator2.getPreferredSize().height);
+
+			//======== panelGrafico ========
+			{
+				panelGraficoPixel.setBorder(new BevelBorder(BevelBorder.LOWERED));
+				panelGraficoPixel.setLayout(null);
+
+				{ // compute preferred size
+					Dimension preferredSize = new Dimension();
+					for(int i = 0; i < panelGraficoPixel.getComponentCount(); i++) {
+						Rectangle bounds = panelGraficoPixel.getComponent(i).getBounds();
+						preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
+						preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
+					}
+					Insets insets = panelGraficoPixel.getInsets();
+					preferredSize.width += insets.right;
+					preferredSize.height += insets.bottom;
+					panelGraficoPixel.setMinimumSize(preferredSize);
+					panelGraficoPixel.setPreferredSize(preferredSize);
+				}
+			}
+			panel.add(panelGraficoPixel);
+			panelGraficoPixel.setBounds(10, 25, 650, 180);
+
+			{ // compute preferred size
+				Dimension preferredSize = new Dimension();
+				for(int i = 0; i < panel.getComponentCount(); i++) {
+					Rectangle bounds = panel.getComponent(i).getBounds();
+					preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
+					preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
+				}
+				Insets insets = panel.getInsets();
+				preferredSize.width += insets.right;
+				preferredSize.height += insets.bottom;
+				panel.setMinimumSize(preferredSize);
+				panel.setPreferredSize(preferredSize);
+			}
+
+		panel2.add(panel);
+		panel.setBounds(5, 435, 670, 225);
+	}
 }
