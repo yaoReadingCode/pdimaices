@@ -346,6 +346,10 @@ public class DetectarContorno extends AbstractImageCommand {
 	 */
 	public void getPixelsInterior(Pixel pixel, List<Pixel> contorno,
 			List<Pixel> interior, Objeto o, PlanarImage ti) {
+		Pixel p = new Pixel(1552,622,null);
+		//limpiarVisitados();
+		if (contorno.contains(p))
+			System.out.println("");
 		for (int dir = 0; dir < 8; dir++) {
 
 			Pixel actual = getAdyacenteNuevo(pixel, dir, getOriginalImage());
@@ -355,8 +359,8 @@ public class DetectarContorno extends AbstractImageCommand {
 			
 			if (actual != null)
 				if (!contorno.contains(actual))
-					if (!isVisitado(actual)) {
-						setVisitado(actual);
+					/*if (!isVisitado(actual)) {
+						setVisitado(actual);*/
 						// if (o.isPerteneceTriangulo(actual)) {
 						/**/
 						actual.setCol(getColorPunto(pixel, getOriginalImage()));
@@ -367,7 +371,7 @@ public class DetectarContorno extends AbstractImageCommand {
 						cantidad++;
 						getPixelsAllInternal(all, cantidad, interior, o, ti);
 						// }
-					}
+					/*}*/
 		}
 
 	}
@@ -446,7 +450,7 @@ public class DetectarContorno extends AbstractImageCommand {
 	}
 	
 	private Pixel convertirPixel(Pixel p){
-		Pixel pixel = new Pixel((p.getX() - twGlobal * tWidth),(p.getY() - thGlobal * tHeight), p.getCol(), getImage().getMaxX(), getImage().getMaxTileY());
+		Pixel pixel = new Pixel((p.getX() - twGlobal * tWidth),(p.getY() - thGlobal * tHeight), p.getCol(), getImage().getMaxX(), getImage().getMaxY());
 		if ((pixel.getY() >= maxMatrixH) || (pixel.getX() >= maxMatrixW))
 			return null;
 		if ((pixel.getY() <= 0) || (pixel.getX() <= 0))
@@ -463,7 +467,15 @@ public class DetectarContorno extends AbstractImageCommand {
 	 * @param pixel
 	 */
 	private void setVisitado(Pixel p) {
+		Pixel p2 = new Pixel(511,510,null);
+
 		Pixel pixel =  convertirPixel(p);
+		if (pixel.equals(p2)){
+			System.out.println("");
+			System.out.println(isVisitado(pixel));
+		}
+			
+
 		if (pixel != null)
 			Matriz[pixel.getX()][pixel.getY()] = 1;
 		/*
@@ -918,7 +930,6 @@ public class DetectarContorno extends AbstractImageCommand {
 
 								Pixel pixelVerificar = new Pixel(x, y, nuevo, getImage().getMaxX(), getImage().getMaxY());
 								if (!isVisitado(pixelVerificar)) {
-									setVisitado(pixelVerificar);
 									int[] pixel2 = null;
 									int[] pix = wr.getPixel(x, y, pixel2);
 
@@ -964,6 +975,7 @@ public class DetectarContorno extends AbstractImageCommand {
 											}
 										}
 									}
+									setVisitado(pixelVerificar);
 								}
 							}
 						}

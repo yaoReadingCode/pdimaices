@@ -34,7 +34,7 @@ public class ObjetoPanel extends JPanel {
 	private Clasificador clasificador = null;
 	private FrameResultado contenedor = null;
 	private List<Clase> clases;
-	private Clase noSelect = new Clase("Modificar Clasificación");
+	private Clase noSelect = new Clase("Modificar Clasificación","Modificar Clasificación");
  	public ObjetoPanel(Objeto objeto, int nroPanel, Clasificador clasificador, FrameResultado contenedor) {
 		initComponents();
 		this.contenedor = contenedor;

@@ -8,6 +8,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -29,6 +31,7 @@ import objeto.Objeto;
 import objeto.RasgoObjeto;
 import procesamiento.clasificacion.Clasificador;
 import procesamiento.clasificacion.EvaluadorClase;
+import procesamiento.clasificacion.EvaluadorClaseComparator;
 
 public class FrameResultado extends JFrame {
 	/**
@@ -39,18 +42,20 @@ public class FrameResultado extends JFrame {
 	private int cantidadPaneles = 1;	
 	public void setResultados(){
 		Set<EvaluadorClase> clases = getClasificador().getClasificacion().keySet();
+		List<EvaluadorClase> lClases = new ArrayList<EvaluadorClase>(clases);
+		Collections.sort(lClases,new EvaluadorClaseComparator());
 		
 		PanelResultado resultado = new PanelResultado();
 		resultado.setContenedor(this);
 		this.addPanel(resultado,"Resultado");
 		
-		for(EvaluadorClase c: clases){
+		for(EvaluadorClase c: lClases){
 			List<Objeto> objetosClase = getClasificador().getClasificacion().get(c);
 			JPanel container = new JPanel();
 			GridBagLayout gbl = new GridBagLayout();
 			int cant = 0;
 			float porcentaje = (objetosClase.size()*100)/getClasificador().countObject();
-			resultado.addValueCount(c.getClase().getNombre(), objetosClase.size(),porcentaje);
+			resultado.addValueCount(c.getClase().getDescripcion(), objetosClase.size(),porcentaje);
 			container.setLayout(gbl);
 			//frame.getContentPane().add(new JScrollPane(container),BorderLayout.CENTER);
 			long cantidadPixeles = 0;
@@ -76,9 +81,9 @@ public class FrameResultado extends JFrame {
 				cant++;
 				cantidadPixeles = cantidadPixeles + (obj.getPuntos().size() + obj.getContorno().size()); 
 			}
-			resultado.addValuePixel(c.getClase().getNombre(), cantidadPixeles);
+			resultado.addValuePixel(c.getClase().getDescripcion(), cantidadPixeles);
 			
-			this.addPanel(container, c.getClase().getNombre());
+			this.addPanel(container, c.getClase().getDescripcion());
 		}
 		resultado.graficar();
 	}

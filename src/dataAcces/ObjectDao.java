@@ -87,7 +87,7 @@ public class ObjectDao {
 		if (excepClass != null){
 				Session session = getSessionFactory().openSession();
 				//session.beginTransaction();
-				String queryStr = "from Clase where nombre != '"+excepClass+"'";
+				String queryStr = "from Clase where nombre != '"+excepClass+"' order by ordenEvaluacion";
 				
 				List result = session.createQuery(queryStr).list();
 	

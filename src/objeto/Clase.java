@@ -16,6 +16,11 @@ public class Clase {
 		this.nombre = nombre;
 	}
 
+	public Clase(String nombre, String descripcion) {
+		super();
+		this.nombre = nombre;
+		this.descripcion = descripcion;
+	}
 
 	/**
 	 * Descripcion de la clase
@@ -26,6 +31,11 @@ public class Clase {
 	 * Color en formato int
 	 */
 	private Integer colorRgb;
+	
+	/**
+	 * Orden de evaluación entre las clases
+	 */
+	private Integer ordenEvaluacion;
 	
 	private List<RasgoClase> rasgos;
 
@@ -73,6 +83,14 @@ public class Clase {
 		this.colorRgb = colorRgb;
 	}
 
+	public Integer getOrdenEvaluacion() {
+		return ordenEvaluacion;
+	}
+
+	public void setOrdenEvaluacion(Integer ordenEvaluacion) {
+		this.ordenEvaluacion = ordenEvaluacion;
+	}
+
 	public boolean equals(Object o) {
 		if (o == null)
 			return false;
@@ -86,7 +104,7 @@ public class Clase {
 
 	 
 	public String toString() {
-		return getNombre();
+		return getDescripcion();
 	}
 
 }

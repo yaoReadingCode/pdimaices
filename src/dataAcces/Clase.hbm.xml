@@ -9,6 +9,7 @@
 	<property name="nombre" type="string" column="nombre" not-null="true"/>
 	<property name="descripcion" type="string" column="descripcion" not-null="true"/>
 	<property name="colorRgb" type="integer" column="color_rgb"/>
+	<property name="ordenEvaluacion" type="integer" column="orden_evaluacion"/>
 	<list name="rasgos" cascade="all-delete-orphan" lazy="false">
 		<key column="ID_CLASE" not-null="true" />
 		<list-index column="INDICE" />
