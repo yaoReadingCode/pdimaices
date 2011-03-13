@@ -1,5 +1,6 @@
 package aplicarFiltros;
 
+import java.awt.*;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -156,7 +157,7 @@ public class FrameResultado extends JFrame {
 
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-		// Generated using JFormDesigner Evaluation license - seba cola
+		// Generated using JFormDesigner Evaluation license - oscar giorgetti
 		menuBar1 = new JMenuBar();
 		menu1 = new JMenu();
 		menuItem1 = new JMenuItem();
@@ -194,11 +195,11 @@ public class FrameResultado extends JFrame {
 			panel1.setBackground(new Color(204, 204, 255));
 
 			// JFormDesigner evaluation mark
-//			panel1.setBorder(new javax.swing.border.CompoundBorder(
-//				new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
-//					"JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
-//					javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
-//					java.awt.Color.red), panel1.getBorder())); panel1.addPropertyChangeListener(new java.beans.PropertyChangeListener(){public void propertyChange(java.beans.PropertyChangeEvent e){if("border".equals(e.getPropertyName()))throw new RuntimeException();}});
+			panel1.setBorder(new javax.swing.border.CompoundBorder(
+				new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
+					"", javax.swing.border.TitledBorder.CENTER,
+					javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
+					java.awt.Color.red), panel1.getBorder())); panel1.addPropertyChangeListener(new java.beans.PropertyChangeListener(){public void propertyChange(java.beans.PropertyChangeEvent e){if("border".equals(e.getPropertyName()))throw new RuntimeException();}});
 
 			panel1.setLayout(null);
 
@@ -207,7 +208,7 @@ public class FrameResultado extends JFrame {
 				panel3.setBackground(Color.blue);
 				panel3.setLayout(null);
 				panel3.add(tabbedPane1);
-				tabbedPane1.setBounds(5, 15, 750, 745);
+				tabbedPane1.setBounds(5, 5, 785, 625);
 
 				{ // compute preferred size
 					Dimension preferredSize = new Dimension();
@@ -224,7 +225,7 @@ public class FrameResultado extends JFrame {
 				}
 			}
 			panel1.add(panel3);
-			panel3.setBounds(10, 30, 795, 780);
+			panel3.setBounds(5, 5, 795, 635);
 
 			//======== panel2 ========
 			{
@@ -242,7 +243,7 @@ public class FrameResultado extends JFrame {
 							"Rasgo", "Valor"
 						}
 					) {
-						Class[] columnTypes = new Class[] {
+						Class<?>[] columnTypes = new Class<?>[] {
 							String.class, Double.class
 						};
 						@Override
@@ -297,7 +298,7 @@ public class FrameResultado extends JFrame {
 			}
 		}
 		contentPane.add(panel1);
-		panel1.setBounds(5, 10, 1080, 800);
+		panel1.setBounds(5, 10, 1080, 645);
 
 		{ // compute preferred size
 			Dimension preferredSize = new Dimension();
@@ -318,7 +319,7 @@ public class FrameResultado extends JFrame {
 	}
 	
 	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
-	// Generated using JFormDesigner Evaluation license - seba cola
+	// Generated using JFormDesigner Evaluation license - oscar giorgetti
 	private JMenuBar menuBar1;
 	private JMenu menu1;
 	private JMenuItem menuItem1;

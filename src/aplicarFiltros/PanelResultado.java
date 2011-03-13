@@ -4,12 +4,14 @@
 
 package aplicarFiltros;
 
+import java.awt.*;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Rectangle;
+import javax.swing.*;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -19,6 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.UIManager;
+import javax.swing.border.*;
 import javax.swing.border.BevelBorder;
 import javax.swing.table.DefaultTableModel;
 
@@ -77,8 +80,10 @@ public class PanelResultado extends JPanel {
 	    ChartPanel panel = new ChartPanel(chart);
 	    final JPanel content = new JPanel(new BorderLayout());
 	    content.add(panel);
-	    panel.setPreferredSize(new java.awt.Dimension(500, 180));
+	    //panel.setPreferredSize(new java.awt.Dimension(500, 250));
+	    panel.setSize(new java.awt.Dimension(500, 250));
 	    this.setPanelGrafico(content);
+	    panelGrafico.setPreferredSize(new java.awt.Dimension(500, 180));
 	    
 	    
 	  //Grafico de cantidad de Pixeles
@@ -96,7 +101,8 @@ public class PanelResultado extends JPanel {
 	    ChartPanel panelPixel = new ChartPanel(chartPixel);
 	    final JPanel contentPixel = new JPanel(new BorderLayout());
 	    contentPixel.add(panelPixel);
-	    panelPixel.setPreferredSize(new java.awt.Dimension(500, 180));
+	    //panelPixel.setPreferredSize(new java.awt.Dimension(500, 250));
+	    panelGraficoPixel.setPreferredSize(new java.awt.Dimension(500, 180));
 	   
 	    this.panelGraficoPixel.setLayout(new BorderLayout());
 		this.panelGraficoPixel.add(contentPixel);
@@ -118,7 +124,7 @@ public class PanelResultado extends JPanel {
 
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-		// Generated using JFormDesigner Evaluation license - Oscar Giorgetti
+		// Generated using JFormDesigner Evaluation license - oscar giorgetti
 		DefaultComponentFactory compFactory = DefaultComponentFactory.getInstance();
 		panel2 = new JPanel();
 		panel1 = new JPanel();
@@ -127,18 +133,19 @@ public class PanelResultado extends JPanel {
 		button1 = new JButton();
 		separator1 = compFactory.createSeparator("Clasificaci\u00f3n");
 		panel3 = new JPanel();
-		separator2 = compFactory.createSeparator("Grafico");
 		panelGrafico = new JPanel();
+		separator2 = new JSeparator();
+		panelGraficoPixel = new JPanel();
 
 		//======== this ========
 
 		// JFormDesigner evaluation mark
-/*		setBorder(new javax.swing.border.CompoundBorder(
+		setBorder(new javax.swing.border.CompoundBorder(
 			new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
-				"JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
+				"", javax.swing.border.TitledBorder.CENTER,
 				javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
 				java.awt.Color.red), getBorder())); addPropertyChangeListener(new java.beans.PropertyChangeListener(){public void propertyChange(java.beans.PropertyChangeEvent e){if("border".equals(e.getPropertyName()))throw new RuntimeException();}});
-*/
+
 		setLayout(null);
 
 		//======== panel2 ========
@@ -200,17 +207,15 @@ public class PanelResultado extends JPanel {
 				}
 			}
 			panel2.add(panel1);
-			panel1.setBounds(5, 10, 670, 180);
+			panel1.setBounds(5, 5, 670, 180);
 
 			//======== panel3 ========
 			{
-				panel3.setLayout(null);
-				panel3.add(separator2);
-				separator2.setBounds(10, 5, 650, separator2.getPreferredSize().height);
+				panel3.setBorder(new TitledBorder("Gr\u00e1ficos"));
+				panel3.setLayout(new BoxLayout(panel3, BoxLayout.Y_AXIS));
 
 				//======== panelGrafico ========
 				{
-					panelGrafico.setBorder(new BevelBorder(BevelBorder.LOWERED));
 					panelGrafico.setLayout(null);
 
 					{ // compute preferred size
@@ -228,25 +233,30 @@ public class PanelResultado extends JPanel {
 					}
 				}
 				panel3.add(panelGrafico);
-				panelGrafico.setBounds(10, 25, 650, 180);
+				panel3.add(separator2);
 
-				{ // compute preferred size
-					Dimension preferredSize = new Dimension();
-					for(int i = 0; i < panel3.getComponentCount(); i++) {
-						Rectangle bounds = panel3.getComponent(i).getBounds();
-						preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
-						preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
+				//======== panelGraficoPixel ========
+				{
+					panelGraficoPixel.setLayout(null);
+
+					{ // compute preferred size
+						Dimension preferredSize = new Dimension();
+						for(int i = 0; i < panelGraficoPixel.getComponentCount(); i++) {
+							Rectangle bounds = panelGraficoPixel.getComponent(i).getBounds();
+							preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
+							preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
+						}
+						Insets insets = panelGraficoPixel.getInsets();
+						preferredSize.width += insets.right;
+						preferredSize.height += insets.bottom;
+						panelGraficoPixel.setMinimumSize(preferredSize);
+						panelGraficoPixel.setPreferredSize(preferredSize);
 					}
-					Insets insets = panel3.getInsets();
-					preferredSize.width += insets.right;
-					preferredSize.height += insets.bottom;
-					panel3.setMinimumSize(preferredSize);
-					panel3.setPreferredSize(preferredSize);
 				}
+				panel3.add(panelGraficoPixel);
 			}
 			panel2.add(panel3);
-			panel3.setBounds(5, 200, 670, 225);
-			this.agregarGrafico();
+			panel3.setBounds(5, 190, 670, 350);
 
 			{ // compute preferred size
 				Dimension preferredSize = new Dimension();
@@ -263,7 +273,7 @@ public class PanelResultado extends JPanel {
 			}
 		}
 		add(panel2);
-		panel2.setBounds(5, 5, 680, 685);
+		panel2.setBounds(5, 5, 680, 550);
 
 		{ // compute preferred size
 			Dimension preferredSize = new Dimension();
@@ -284,7 +294,7 @@ public class PanelResultado extends JPanel {
 	}
 
 	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
-	// Generated using JFormDesigner Evaluation license - Oscar Giorgetti
+	// Generated using JFormDesigner Evaluation license - oscar giorgetti
 	private JPanel panel2;
 	private JPanel panel1;
 	private JScrollPane scrollPaneRasgos2;
@@ -292,19 +302,20 @@ public class PanelResultado extends JPanel {
 	private JButton button1;
 	private JComponent separator1;
 	private JPanel panel3;
-	private JComponent separator2;
 	private JPanel panelGrafico;
+	private JSeparator separator2;
+	private JPanel panelGraficoPixel;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
 	
 	private JPanel panel = new JPanel();
-	private JPanel panelGraficoPixel = new JPanel();
+	//private JPanel panelGraficoPixel = new JPanel();
 	
 	private void agregarGrafico(){
 		//======== panel3 ========
 			
 			panel.setLayout(null);
-			panel.add(separator2);
-			separator2.setBounds(10, 5, 650, separator2.getPreferredSize().height);
+			//panel.add(separator2);
+			//separator2.setBounds(10, 5, 650, separator2.getPreferredSize().height);
 
 			//======== panelGrafico ========
 			{

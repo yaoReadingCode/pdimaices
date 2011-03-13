@@ -142,7 +142,7 @@ public class DetectarObjetos extends AbstractImageCommand {
 		frame.setResultados();
 
 		frame.setTitle("Clasificación");
-		frame.setSize(1130, 830);
+		frame.setSize(1130, 700);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
 		//frame.setModal(true);
