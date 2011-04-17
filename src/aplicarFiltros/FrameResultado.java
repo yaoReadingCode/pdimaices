@@ -25,6 +25,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
+import javax.swing.event.*;
 import javax.swing.table.DefaultTableModel;
 
 import objeto.Clase;
@@ -40,7 +41,8 @@ public class FrameResultado extends JFrame {
 	 */
 	private static final long serialVersionUID = 1L;
 	private Clasificador clasificador;
-	private int cantidadPaneles = 1;	
+	private int cantidadPaneles = 1;
+	//private int selectedPanel = 0;
 	public void setResultados(){
 		Set<EvaluadorClase> clases = getClasificador().getClasificacion().keySet();
 		List<EvaluadorClase> lClases = new ArrayList<EvaluadorClase>(clases);
@@ -101,10 +103,24 @@ public class FrameResultado extends JFrame {
 				obj.addClase(c.getClase());
 			}
 		}
+		
+		int selectedPanel = tabbedPane1.getSelectedIndex();
+		Component panel = tabbedPane1.getComponentAt(selectedPanel);
+		Point scrollPos = null;
 
+		if (panel instanceof JScrollPane){
+			scrollPos = ((JScrollPane)panel).getViewport().getViewPosition();
+		}
+		
 		tabbedPane1.removeAll();
 		cantidadPaneles = 1;
 		this.setResultados();
+		
+		tabbedPane1.setSelectedIndex(selectedPanel);
+		panel = tabbedPane1.getComponentAt(selectedPanel);
+		if (panel instanceof JScrollPane){
+			((JScrollPane)panel).getViewport().setViewPosition(scrollPos);
+		}
 	}
 	
 	public Clasificador getClasificador() {
@@ -152,6 +168,13 @@ public class FrameResultado extends JFrame {
 	
 	public FrameResultado() {
 		initComponents();
+	}
+
+	private void tabbedPane1StateChanged(ChangeEvent e) {
+		//JTabbedPane pane = (JTabbedPane)e.getSource();
+
+        // Get current tab
+        //selectedPanel = pane.getSelectedIndex();
 	}
 	
 
@@ -207,6 +230,16 @@ public class FrameResultado extends JFrame {
 			{
 				panel3.setBackground(Color.blue);
 				panel3.setLayout(null);
+
+				//======== tabbedPane1 ========
+				{
+					tabbedPane1.addChangeListener(new ChangeListener() {
+						@Override
+						public void stateChanged(ChangeEvent e) {
+							tabbedPane1StateChanged(e);
+						}
+					});
+				}
 				panel3.add(tabbedPane1);
 				tabbedPane1.setBounds(5, 5, 785, 625);
 
@@ -337,7 +370,6 @@ public class FrameResultado extends JFrame {
 			scrollPanel.setPreferredSize(new Dimension(700,512));
 			tabbedPane1.addTab(name, scrollPanel);
 			cantidadPaneles++;
-
 	}
 
 	public void setTableIniciada(boolean tableIniciada) {

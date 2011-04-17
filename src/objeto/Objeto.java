@@ -480,6 +480,19 @@ public class Objeto {
 		return null;
 		
 	}
+	/**
+	 * Recupera el rasgo de un nombre  dado
+	 * @param rasgo
+	 * @return
+	 */
+	public RasgoObjeto getRasgo(RasgoObjeto rasgo){
+		int index = getRasgos().indexOf(rasgo);
+		if (index != -1)
+			return getRasgos().get(index);
+		return null;
+		
+	}
+
 	
 	/**
 	 * Agrega un rasgo al objeto. Si ya existe un rasgo con el mismo nombre modifica el
@@ -487,7 +500,7 @@ public class Objeto {
 	 * @param rasgoObjeto
 	 */
 	public void addRasgo(RasgoObjeto rasgoObjeto){
-		RasgoObjeto r = getRasgo(rasgoObjeto.getRasgo());
+		RasgoObjeto r = getRasgo(rasgoObjeto);
 		if (r != null){
 			r.setValor(rasgoObjeto.getValor());
 		}

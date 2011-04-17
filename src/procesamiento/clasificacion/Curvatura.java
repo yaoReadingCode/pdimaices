@@ -5,6 +5,7 @@ import java.util.List;
 
 import objeto.Objeto;
 import objeto.Pixel;
+import objeto.RasgoObjeto;
 
 public class Curvatura extends EvaluadorRasgo {
 	/**
@@ -41,7 +42,7 @@ public class Curvatura extends EvaluadorRasgo {
 	/**
 	 * Cociente entre la longitud del contorno y la cantidad de cambios de direccion del contorno
 	 */
-	public Double calcularValor(Objeto objeto) {
+	public RasgoObjeto calcularValor(Objeto objeto) {
 		List<Pixel> contorno = objeto.getContorno();
 		int tamanioSegmento = (int)((double) getPorcTamanioSegmento() * contorno.size() / 100);
 		double cantCambiosDireccion = 0;
@@ -92,11 +93,11 @@ public class Curvatura extends EvaluadorRasgo {
 			if (i == inicio)
 				parar = true;
 		}
-		
+		Double valor = -1.0;
 		if (cantCambiosDireccion != 0)
-			return (double) cantCambiosDireccion / contorno.size();
+			valor = (double) cantCambiosDireccion / contorno.size();
 		
-		return -1.0;
+		return new RasgoObjeto(this.getRasgoClase().getRasgo(),valor);
 	}
 	public static void main(String[] args) {
 		Objeto o = new Objeto();
@@ -112,7 +113,7 @@ public class Curvatura extends EvaluadorRasgo {
 		o.setContorno(contorno);
 		
 		Curvatura c = new Curvatura();
-		double valor = c.calcularValor(o);
+		double valor = c.calcularValor(o).getValor();
 		System.out.println(valor);
 	}
 }

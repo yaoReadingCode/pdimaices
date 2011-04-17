@@ -9,6 +9,7 @@ import java.util.Set;
 import objeto.Clase;
 import objeto.Objeto;
 import objeto.RasgoClase;
+import objeto.RasgoObjeto;
 import dataAcces.ObjectDao;
 
 public class Clasificador {
@@ -63,11 +64,52 @@ public class Clasificador {
 			for(Objeto obj:objetosClase){
 				dao.save(obj);
 			}
+			
+			for(EvaluadorRasgo er: c.getRasgos())
+				actualizarRasgoClase(er.getRasgoClase(), objetosClase);
 		}
 	}
 	
-	private void init(){
+	/**
+	 * Actualiza los valores valor medio, desvio estandar, maximo y minimo del rasgo de una clase
+	 * @param rasgoClase RasgoClase
+	 * @param objetos Objetos pertenecientes a la clase
+	 */
+	private void actualizarRasgoClase(RasgoClase rasgoClase, List<Objeto> objetos){
+		Double sumValor = 0.0;
+		Double sumValorCuadrado = 0.0;
+		Double maximo = rasgoClase.getMaximo();
+		Double minimo = rasgoClase.getMinimo();
+		Integer cantValores = 0;
 		
+		if(rasgoClase.getSumValor() != null)
+			sumValor = rasgoClase.getSumValor();
+		if(rasgoClase.getSumValorCuadrado() != null)
+			sumValorCuadrado = rasgoClase.getSumValorCuadrado();
+		if(rasgoClase.getCantValores() != null)
+			cantValores = rasgoClase.getCantValores();
+
+		for(Objeto o: objetos){
+			RasgoObjeto ro = o.getRasgo(rasgoClase.getRasgo());
+			if(ro != null && ro.getValor() != null){
+				sumValor += ro.getValor();
+				Double valorCuadrado = Math.pow(ro.getValor(), 2); 
+				sumValorCuadrado += valorCuadrado;
+				if ((maximo != null &&  ro.getValor() > maximo) || maximo == null)
+					maximo = ro.getValor();
+				if ((minimo != null &&  ro.getValor() < minimo) || minimo == null)
+					minimo = ro.getValor();
+			}
+			cantValores++;
+		}
+		
+		rasgoClase.setSumValor(sumValor);
+		rasgoClase.setSumValorCuadrado(sumValorCuadrado);
+		rasgoClase.setCantValores(cantValores);
+		rasgoClase.setMinimo(minimo);
+		rasgoClase.setMaximo(maximo);
+		
+		ObjectDao.getInstance().save(rasgoClase);		
 	}
 	
 	/**

@@ -6,6 +6,7 @@ import java.util.List;
 import objeto.Objeto;
 import objeto.Pixel;
 import objeto.RasgoClase;
+import objeto.RasgoObjeto;
 
 public class SumaAngulos extends EvaluadorRasgo {
 	/**
@@ -147,7 +148,7 @@ public class SumaAngulos extends EvaluadorRasgo {
 	/**
 	 * Retorna 1 si el Maiz esta quebrado, 0 si no lo está.
 	 */
-	public Double calcularValor(Objeto objeto) {
+	public RasgoObjeto calcularValor(Objeto objeto) {
 		System.out.println("******");
 		System.out.println(objeto.getName());
 		List<Pixel> contorno = objeto.getContorno();
@@ -238,7 +239,7 @@ public class SumaAngulos extends EvaluadorRasgo {
 			}
 		}
 		
-		return sumaAngulos;
+		return new RasgoObjeto(this.getRasgoClase().getRasgo(),sumaAngulos);
 	}
 	
 	public static void main(String[] args) {

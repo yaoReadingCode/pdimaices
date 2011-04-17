@@ -55,8 +55,8 @@ public class EvaluadorRasgo {
 
 			if (rasgo.getMedia() != null){
 				if (rasgo.getCalcularValorMedio()){
-					this.setMinimo(rasgo.getMedia() - rasgo.getDesvioEstandar());
-					this.setMaximo(rasgo.getMedia() + rasgo.getDesvioEstandar());
+					this.setMinimo(rasgo.getMedia() - 2 * rasgo.getDesvioEstandar());
+					this.setMaximo(rasgo.getMedia() + 2 * rasgo.getDesvioEstandar());
 				}
 				else{
 					this.setMinimo(rasgo.getMinimo());
@@ -105,8 +105,8 @@ public class EvaluadorRasgo {
 		this.minimo = minimo;
 	}
 
-	public Double calcularValor(Objeto objeto){
-		return getValor();
+	public RasgoObjeto calcularValor(Objeto objeto){
+		return new RasgoObjeto(this.getRasgoClase().getRasgo(),getValor());
 	}
 
 	public ObjetoReferencia getObjetoReferencia() {
@@ -118,9 +118,9 @@ public class EvaluadorRasgo {
 	}
 
 	public boolean isEnRango(Objeto objeto, boolean addRasgoToObject) {
-		Double valor = calcularValor(objeto);
+		RasgoObjeto rasgoObjeto = calcularValor(objeto);
+		Double valor = rasgoObjeto.getValor();
 		if (addRasgoToObject){
-			RasgoObjeto rasgoObjeto = new RasgoObjeto(this.getRasgoClase().getRasgo(),valor);
 			objeto.addRasgo(rasgoObjeto);
 		}
 		if (valor != null) {

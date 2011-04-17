@@ -16,7 +16,24 @@
 		<property name="calcularValorMedio" type="boolean" column="calcular_valor_medio"/>
 		
 		<property name="determinante" type="boolean" column="determinante"/>
-
+		
+		<property name="media" type="double" 
+			formula="select r.sum_valor / r.cant_valores
+				 	 from rasgo_clase r
+					 where r.id_clase = ID_CLASE
+					 and r.id_rasgo = ID_RASGO
+					 and r.cant_valores is not null
+					 and r.cant_valores != 0"/>
+		
+		<property name="desvioEstandar" type="double"
+			formula="select sqrt(r.sum_valor_cuadrado / r.cant_valores - power(r.sum_valor / r.cant_valores ,2))
+					from rasgo_clase r
+					where r.id_clase = ID_CLASE
+					and r.id_rasgo = ID_RASGO
+					and r.cant_valores is not null
+					and r.cant_valores != 0"/>
+		
+		<!-- 
 		<property name="media" type="double" 
 			formula="select sum(r.valor) / count(*)
 				 	 from rasgo_objeto r
@@ -31,6 +48,8 @@
 					join clase_objeto c on o.uid = c.id_objeto
 					where c.id_clase = ID_CLASE
 					and r.id_rasgo = ID_RASGO"/>
+		 -->
+		<!-- 
 		<property name="maximo" type="double" 
 			formula="select max(r.valor)
 					from rasgo_objeto r
@@ -44,7 +63,18 @@
 					join objeto o on o.uid = r.id_objeto 
 					join clase_objeto c on o.uid = c.id_objeto
 					where c.id_clase = ID_CLASE
-					and r.id_rasgo = ID_RASGO"/>
+					and r.id_rasgo = ID_RASGO"/>  -->
+					
+		<property name="sumValor" type="double" column="sum_valor"/>
+		
+		<property name="sumValorCuadrado" type="double" column="sum_valor_cuadrado"/>
+		
+		<property name="cantValores" type="integer" column="cant_valores"/>
+		
+		<property name="maximo" type="double" column="maximo"/>
+		
+		<property name="minimo" type="double" column="minimo"/>
+							
 		<many-to-one lazy="false" name="rasgo"
 			class="objeto.Rasgo" column="ID_RASGO" not-null="true" 
 			insert="false" update="false"/>

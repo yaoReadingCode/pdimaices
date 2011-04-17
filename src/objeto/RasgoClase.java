@@ -32,6 +32,22 @@ public class RasgoClase {
 	private Double desvioEstandarDefault;
 	
 	/**
+	 * Sumatoria del valor del rasgo para todos los objetos que pertenecen a la clase
+	 */
+	private Double sumValor;
+
+	/**
+	 * Sumatoria del valor al cuadrado del rasgo para todos los objetos que pertenecen a la clase
+	 */
+	private Double sumValorCuadrado;
+	
+	/**
+	 * Cantidad de valores del rasgo para todos los objetos que pertenecen a la clase
+	 */
+	private Integer cantValores;
+
+
+	/**
 	 * Valor máximo del rasgo para los objetos de la clase.
 	 */
 	private Double maximo;
@@ -159,6 +175,30 @@ public class RasgoClase {
 
 	public void setDeterminante(Boolean determinante) {
 		this.determinante = determinante;
+	}
+
+	public Double getSumValor() {
+		return sumValor;
+	}
+
+	public void setSumValor(Double sumValor) {
+		this.sumValor = sumValor;
+	}
+
+	public Double getSumValorCuadrado() {
+		return sumValorCuadrado;
+	}
+
+	public void setSumValorCuadrado(Double sumValorCuadrado) {
+		this.sumValorCuadrado = sumValorCuadrado;
+	}
+
+	public Integer getCantValores() {
+		return cantValores;
+	}
+
+	public void setCantValores(Integer cantValores) {
+		this.cantValores = cantValores;
 	}
 
 	public boolean equals(Object o) {

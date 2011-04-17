@@ -4,6 +4,7 @@ import java.awt.Color;
 
 import objeto.Objeto;
 import objeto.RasgoClase;
+import objeto.RasgoObjeto;
 
 public class PorcentajeColorBlanco extends EvaluadorRasgo{
 
@@ -16,10 +17,10 @@ public class PorcentajeColorBlanco extends EvaluadorRasgo{
 	/**
 	 * 
 	 */
-	public Double calcularValor(Objeto objeto) {
+	public RasgoObjeto calcularValor(Objeto objeto) {
 		Color colorPromedio = objeto.colorPromedio();
 		Double colorAmarrillo = (double)( colorPromedio.getGreen() + colorPromedio.getRed() + colorPromedio.getBlue())/3; 
-		return colorAmarrillo;
+		return new RasgoObjeto(this.getRasgoClase().getRasgo(),colorAmarrillo);
 	}
 
 }

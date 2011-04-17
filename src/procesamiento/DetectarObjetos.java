@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -18,6 +19,7 @@ import objeto.Rasgo;
 import objeto.RasgoObjeto;
 import procesamiento.clasificacion.Clasificador;
 import procesamiento.clasificacion.EvaluadorClase;
+import procesamiento.clasificacion.EvaluadorClaseComparator;
 import aplicarFiltros.FrameResultado;
 import aplicarFiltros.Visualizador;
 
@@ -251,8 +253,10 @@ public class DetectarObjetos extends AbstractImageCommand {
 		for (Objeto obj : objetos) {
 			
 			Set<EvaluadorClase> clases = getClasificador().getClasificacion().keySet();
+			List<EvaluadorClase> clasesOrdenadas = new ArrayList<EvaluadorClase>(clases);
+			Collections.sort(clasesOrdenadas, new EvaluadorClaseComparator());
 			boolean sinclasificacion = true;
-			for(EvaluadorClase c: clases){
+			for(EvaluadorClase c: clasesOrdenadas){
 				if (c.pertenece(obj,true)){
 					List<Objeto> objetosClase = getClasificador().getClasificacion().get(c);
 					objetosClase.add(obj);

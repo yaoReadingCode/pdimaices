@@ -3,6 +3,7 @@ package procesamiento.clasificacion;
 
 import objeto.Objeto;
 import objeto.RasgoClase;
+import objeto.RasgoObjeto;
 
 /**
  * Evalua el alto de un objeto 
@@ -16,8 +17,8 @@ public class Diametro extends EvaluadorRasgo {
 		super(rasgo, valor, desvioEstandar);
 	}
 
-	public Double calcularValor(Objeto objeto) {
+	public RasgoObjeto calcularValor(Objeto objeto) {
 		Double diametro = Math.max(objeto.getAlto(), objeto.getAncho());
-		return diametro;
+		return new RasgoObjeto(this.getRasgoClase().getRasgo(),diametro);
 	}
 }

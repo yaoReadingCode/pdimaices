@@ -77,6 +77,14 @@
             <object class="com.jformdesigner.model.FormLayoutManager"> 
              <class>javax.swing.JTabbedPane</class> 
             </object> 
+            <void method="addEvent"> 
+             <object class="com.jformdesigner.model.FormEvent"> 
+              <string>javax.swing.event.ChangeListener</string> 
+              <string>stateChanged</string> 
+              <string>tabbedPane1StateChanged</string> 
+              <boolean>true</boolean> 
+             </object> 
+            </void> 
             <void property="name"> 
              <string>tabbedPane1</string> 
             </void> 

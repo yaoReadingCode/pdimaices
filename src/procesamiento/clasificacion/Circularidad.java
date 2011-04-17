@@ -2,6 +2,7 @@ package procesamiento.clasificacion;
 
 import objeto.Objeto;
 import objeto.RasgoClase;
+import objeto.RasgoObjeto;
 
 public class Circularidad extends EvaluadorRasgo {
 
@@ -16,7 +17,7 @@ public class Circularidad extends EvaluadorRasgo {
 	}
 
 	 
-	public Double calcularValor(Objeto objeto) {
+	public RasgoObjeto calcularValor(Objeto objeto) {
 		/*
 		double perimetro = objeto.getLongitudPerimetro();
 		double area = objeto.getArea();
@@ -28,9 +29,11 @@ public class Circularidad extends EvaluadorRasgo {
 
 		double perimetro = objeto.getLongitudPerimetro();
 		double radio = objeto.getRadio();
+		Double circularidad = null;
 		if (radio != 0)
-			return perimetro / (2 * Math.PI* radio);
-		return null;
+			circularidad = perimetro / (2 * Math.PI* radio);
+		
+		return new RasgoObjeto(this.getRasgoClase().getRasgo(),circularidad);
 	}
 
 }

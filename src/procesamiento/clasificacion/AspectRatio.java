@@ -7,6 +7,7 @@ import objeto.Objeto;
 import objeto.Pixel;
 import objeto.Rasgo;
 import objeto.RasgoClase;
+import objeto.RasgoObjeto;
 
 public class AspectRatio extends EvaluadorRasgo {
 
@@ -21,7 +22,7 @@ public class AspectRatio extends EvaluadorRasgo {
 	}
 
 	 
-	public Double calcularValor(Objeto objeto) {
+	public RasgoObjeto calcularValor(Objeto objeto) {
 		//Objeto objAux = objeto.clonar();
 		double altoMRC = objeto.getAlto();
 		double anchoMRC = objeto.getAncho();
@@ -46,7 +47,7 @@ public class AspectRatio extends EvaluadorRasgo {
 		else
 			aspectRatio = altoMRC / anchoMRC;
 		//System.out.println(objeto.getName() + " - Apect Radio: " + aspectRatio);
-		return aspectRatio;
+		return new RasgoObjeto(this.getRasgoClase().getRasgo(),aspectRatio);
 	}
 
 	public static void main(String[] args) {
@@ -64,7 +65,7 @@ public class AspectRatio extends EvaluadorRasgo {
 		RasgoClase rc = new RasgoClase();
 		rc.setRasgo(r);
 		AspectRatio aspectRatio = new AspectRatio(rc, 1.0, 0.2);
-		Double valor = aspectRatio.calcularValor(obj);
+		Double valor = aspectRatio.calcularValor(obj).getValor();
 		System.out.println(valor);
 
 	}

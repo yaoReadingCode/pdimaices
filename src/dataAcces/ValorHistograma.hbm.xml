@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="objeto">
+	<class name="ValorHistograma" table="VALOR_HISTOGRAMA">
+		<id name="id" column="uid" type="long">
+			<generator class="increment" />
+		</id>
+	
+		<many-to-one lazy="false" name="histograma"
+				class="objeto.Histograma" column="ID_HISTOGRAMA" not-null="true" 
+				insert="false" update="false"/>
+
+		<property name="valor" type="double" not-null="true"/>
+			
+	</class>
+</hibernate-mapping>

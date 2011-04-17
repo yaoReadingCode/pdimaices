@@ -2,6 +2,7 @@ package procesamiento.clasificacion;
 
 import objeto.Objeto;
 import objeto.RasgoClase;
+import objeto.RasgoObjeto;
 
 public class Area extends EvaluadorRasgo {
 	
@@ -15,9 +16,10 @@ public class Area extends EvaluadorRasgo {
 	}
 
 	 
-	public Double calcularValor(Objeto objeto) {
+	public RasgoObjeto calcularValor(Objeto objeto) {
 		double relacionPixelCm = getObjetoReferencia().getRelacionPixelCm();
-		return new Double(objeto.getArea()*relacionPixelCm);
+		double valor = new Double(objeto.getArea()*relacionPixelCm);
+		return new RasgoObjeto(this.getRasgoClase().getRasgo(),valor);
 	}
 
 }
