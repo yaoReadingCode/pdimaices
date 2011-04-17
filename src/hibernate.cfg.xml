@@ -29,6 +29,8 @@
 		<mapping resource="dataAcces/RasgoObjeto.hbm.xml" />
 		<mapping resource="dataAcces/ClaseObjeto.hbm.xml" />
 		<mapping resource="dataAcces/Configuracion.hbm.xml" />
+		<mapping resource="dataAcces/Histograma.hbm.xml" />
+		<mapping resource="dataAcces/ValorHistograma.hbm.xml" />
 
 	</session-factory>
 </hibernate-configuration>
