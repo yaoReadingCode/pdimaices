@@ -28,7 +28,7 @@ public class EvaluadorHistogramaRGB extends EvaluadorRasgo {
 	public List<Histograma> calcularHistogramas(Objeto objeto) {
 		List<Histograma> histogramas = new ArrayList<Histograma>();
 		
-		double[] acumuladorR = new double[256];
+		/*double[] acumuladorR = new double[256];
 		double[] acumuladorG = new double[256];
 		double[] acumuladorB = new double[256];
 		for(int i = 0; i < 256; i++){
@@ -45,7 +45,7 @@ public class EvaluadorHistogramaRGB extends EvaluadorRasgo {
 				acumuladorB[color.getBlue()]++;
 			}
 		}
-		
+		*/
 		Histograma histogramaR = new Histograma(this.getRasgoClase().getRasgo(),0.0);
 		histogramaR.setMaxValores(256);
 		histogramaR.setTipo("R");
@@ -60,9 +60,9 @@ public class EvaluadorHistogramaRGB extends EvaluadorRasgo {
 		
 		int cantPuntos = objeto.getPuntos().size();
 		for(int i = 0; i < 256; i++){
-			ValorHistograma valorR = new ValorHistograma(histogramaR, acumuladorR[i] / cantPuntos);
-			ValorHistograma valorG = new ValorHistograma(histogramaG, acumuladorG[i] / cantPuntos);
-			ValorHistograma valorB = new ValorHistograma(histogramaB, acumuladorB[i] / cantPuntos);
+			ValorHistograma valorR = new ValorHistograma(histogramaR, objeto.getAcumuladorR()[i] / cantPuntos);
+			ValorHistograma valorG = new ValorHistograma(histogramaG, objeto.getAcumuladorG()[i] / cantPuntos);
+			ValorHistograma valorB = new ValorHistograma(histogramaB, objeto.getAcumuladorB()[i] / cantPuntos);
 			histogramaR.getValores().add(valorR);
 			histogramaG.getValores().add(valorG);
 			histogramaB.getValores().add(valorB);

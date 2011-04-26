@@ -58,6 +58,28 @@ public class Objeto {
 	 * Path de la imagen en disco
 	 */
 	private String pathImage;
+
+	private double[] acumuladorR = null;
+
+	private double[] acumuladorG = null;
+
+	private double[] acumuladorB = null;
+	
+	
+	public double[] getAcumuladorR() {
+		if (acumuladorR == null) this.colorPromedio();
+		return acumuladorR;
+	}
+
+	public double[] getAcumuladorG() {
+		if (acumuladorR == null) this.colorPromedio();
+		return acumuladorG;
+	}
+
+	public double[] getAcumuladorB() {
+		if (acumuladorR == null) this.colorPromedio();
+		return acumuladorB;
+	}
 	
 	public Long getId() {
 		return id;
@@ -165,12 +187,21 @@ public class Objeto {
 			int R = 0;
 			int G = 0;
 			int B = 0;
+			/**Histograma*/
+			double[] acumuladorR = new double[256];
+			double[] acumuladorG = new double[256];
+			double[] acumuladorB = new double[256];
+			
 			Iterator<Pixel> i = puntos.iterator();
 			while (i.hasNext()) {
 				Pixel p = (Pixel) i.next();
 				R = R + p.getCol().getRed();
 				G = G + p.getCol().getGreen();
 				B = B + p.getCol().getBlue();
+				acumuladorR[p.getCol().getRed()]++;
+				acumuladorG[p.getCol().getGreen()]++;
+				acumuladorB[p.getCol().getBlue()]++;
+				
 			}
 			R = (R / puntos.size()) % 255;
 			G = (G / puntos.size()) % 255;

@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -88,7 +89,7 @@ public class DetectarObjetos extends AbstractImageCommand {
 	public PlanarImage execute() {
 		if (getOriginalImage() != null && getHsvRange() != null) {
 			//Visualizador.iniciarProgreso();
-
+			Date fechaInicio = new Date(System.currentTimeMillis()); 
 			Visualizador.aumentarProgreso(0, "Binarizando...");
 			Binarizar ef = new Binarizar(getOriginalImage(), getHsvRange());
 			PlanarImage output = ef.execute();
@@ -133,6 +134,8 @@ public class DetectarObjetos extends AbstractImageCommand {
 			//Visualizador.terminar();
 			
 			visualizarResultado();
+			System.out.println("Inicio: " + (new Date(System.currentTimeMillis())).toString() + " - FIN: " + fechaInicio.toString());
+			System.out.println("TIEMPO TOTAL DE CALCULO: " + ((System.currentTimeMillis() - fechaInicio.getTime())/1000));
 			return output; 
 		}
 		return null;
