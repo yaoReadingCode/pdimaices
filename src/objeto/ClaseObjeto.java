@@ -14,6 +14,11 @@ public class ClaseObjeto {
 	 */
 	private Objeto objeto;
 	
+	/**
+	 * Mide la distancia del objeto a la clase
+	 */
+	private Double distanciaPromedio;
+	
 	
 	public ClaseObjeto() {
 		super();
@@ -65,4 +70,12 @@ public class ClaseObjeto {
 		this.id = id;
 	}
 
+	public Double getDistanciaPromedio() {
+		return distanciaPromedio;
+	}
+
+	public void setDistanciaPromedio(Double distanciaPromedio) {
+		this.distanciaPromedio = distanciaPromedio;
+	}
+	
 }

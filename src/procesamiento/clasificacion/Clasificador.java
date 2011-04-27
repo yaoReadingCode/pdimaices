@@ -196,5 +196,18 @@ public class Clasificador {
 		}	
 		return count;
 	}
-
+	
+	/**
+	 * Retorna los objetos asignados a una clase dada
+	 * @param clase
+	 * @return
+	 */
+	public List<Objeto> getObjetosClase(Clase clase){
+		for(EvaluadorClase ec: getClasificacion().keySet()){
+			if (ec.getClase().equals(clase))
+				return getClasificacion().get(ec);
+		}
+		return null;
+	}
+	
 }

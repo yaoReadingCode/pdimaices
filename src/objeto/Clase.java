@@ -106,5 +106,45 @@ public class Clase {
 	public String toString() {
 		return getDescripcion();
 	}
+	
+	/**
+	 * Recupera el rasgo de un nombre  dado
+	 * @param rasgo
+	 * @return
+	 */
+	public RasgoClase getRasgo(Rasgo rasgo) {
+		RasgoClase aux = new RasgoClase();
+		aux.setRasgo(rasgo);
+		int index = getRasgos().indexOf(aux);
+		if (index != -1)
+			return getRasgos().get(index);
+		return null;
+	}
+	
+	/**
+	 * Calcula la distancia promedio de un objeto a una clase.
+	 * Promedio de las distancias de cada rasgo del objeto a la media de la clase.
+	 * @param objeto
+	 * @return
+	 */
+	public Double distanciaPromedio(Objeto objeto){
+		double acumulador = 0.0;
+		double cantidad = 0;
+		for(RasgoClase r:this.getRasgos()){
+			if (r != null){
+				RasgoObjeto ro = objeto.getRasgo(r.getRasgo());
+				if(ro != null){
+					double distancia = 0.0;
+					if (r.getMedia() != null)
+						distancia = Math.abs(r.getMedia()- ro.getValor());
+					acumulador += distancia;
+					cantidad++;
+				}
+			}
+		}
+		if (cantidad != 0)
+			return acumulador / cantidad;
+		return null;
+	}
 
 }

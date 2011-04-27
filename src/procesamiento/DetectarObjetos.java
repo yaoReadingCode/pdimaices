@@ -18,6 +18,7 @@ import objeto.Objeto;
 import objeto.Pixel;
 import objeto.Rasgo;
 import objeto.RasgoObjeto;
+import procesamiento.clasificacion.ClaseObjetoComparator;
 import procesamiento.clasificacion.Clasificador;
 import procesamiento.clasificacion.EvaluadorClase;
 import procesamiento.clasificacion.EvaluadorClaseComparator;
@@ -261,24 +262,51 @@ public class DetectarObjetos extends AbstractImageCommand {
 			boolean sinclasificacion = true;
 			for(EvaluadorClase c: clasesOrdenadas){
 				if (c.pertenece(obj,true)){
-					List<Objeto> objetosClase = getClasificador().getClasificacion().get(c);
-					objetosClase.add(obj);
 					ClaseObjeto claseObjeto = new ClaseObjeto(c.getClase());
 					obj.addClase(claseObjeto);
 					sinclasificacion = false;
-					break;
+					
+					claseObjeto.setDistanciaPromedio(c.getClase().distanciaPromedio(obj));
+					//break;
 				}
 			}
+			if (obj.getName().equals("Maiz210"))
+				System.out.println("");	
 			if (sinclasificacion){
 				objetosIndeterminados.add(obj);
 				ClaseObjeto claseObjeto = new ClaseObjeto(indeterminado.getClase());
 				obj.addClase(claseObjeto);
+			}
+			else{
+				if (obj.getClases().size() > 1){
+					asignarClaseMasCercana(obj);
+				}
+				List<Objeto> objetosClase = getClasificador().getObjetosClase(obj.getClases().get(0).getClase());
+				objetosClase.add(obj);
+
 			}
 		}
 		
 		getClasificador().getClasificacion().put(indeterminado, objetosIndeterminados);
 	}
 	
+	/**
+	 * Si un objeto está asignado a más de una clase se busca asignarlo a la clase
+	 * cuyos valores medios de rasgos están mas cerca de los rasgos del objeto 
+	 * @param obj
+	 */
+	private void asignarClaseMasCercana(Objeto obj) {
+		List<ClaseObjeto> clases = obj.getClases();
+		if (clases != null && clases.size() > 0){
+			Collections.sort(clases, new ClaseObjetoComparator());
+			ClaseObjeto claseMasCercana = clases.get(0); 
+			clases.clear();
+			clases.add(claseMasCercana);
+			obj.setClases(clases);
+		}
+				
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see procesamiento.ImageComand#getCommandName()
