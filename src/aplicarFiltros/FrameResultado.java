@@ -57,7 +57,9 @@ public class FrameResultado extends JFrame {
 			JPanel container = new JPanel();
 			GridBagLayout gbl = new GridBagLayout();
 			int cant = 0;
-			float porcentaje = (objetosClase.size()*100)/getClasificador().countObject();
+			float porcentaje = 0;
+			if (getClasificador().countObject() != 0)
+				porcentaje = (objetosClase.size()*100)/getClasificador().countObject();
 			resultado.addValueCount(c.getClase().getDescripcion(), objetosClase.size(),porcentaje);
 			container.setLayout(gbl);
 			//frame.getContentPane().add(new JScrollPane(container),BorderLayout.CENTER);

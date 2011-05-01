@@ -38,6 +38,11 @@ public class Clase {
 	private Integer ordenEvaluacion;
 	
 	private List<RasgoClase> rasgos;
+	
+	/**
+	 * Agrupador que agrupa varias clases
+	 */
+	private String agrupador;
 
 	public Clase() {
 		// TODO Auto-generated constructor stub
@@ -147,4 +152,12 @@ public class Clase {
 		return null;
 	}
 
+	public String getAgrupador() {
+		return agrupador;
+	}
+
+	public void setAgrupador(String agrupador) {
+		this.agrupador = agrupador;
+	}
+	
 }
