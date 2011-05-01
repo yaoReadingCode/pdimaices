@@ -16,8 +16,6 @@ public class ValorHistograma {
 		super();
 		this.histograma = histograma;
 		this.valor = valor;
-		
-		//Borrar
 	}
 
 
