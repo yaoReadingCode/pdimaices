@@ -1,5 +1,10 @@
-1,MAIZ,Maiz,-16711936,0,
-2,INDETERMINADO,Materia Extrania,-65536,-1,
-3,GRANO_QUEBRADO,Grano Quebrado,-256,2,
-4,GRANO_DANIADO,Grano Daniado,-256,3,
-5,GRANO_PICADO,Grano Picado,-256,4,
+
+                                           
+                                       
+                                     
+                                   
+1,MAIZ,Maiz,-16711936,0,Maiz
+2,INDETERMINADO,Materia Extrania,-65536,-1,Materia Extrania
+3,GRANO_QUEBRADO,Grano Quebrado,-256,2,Grano Quebrado
+4,GRANO_DANIADO,Grano Daniado,-256,3,Grano Daniado
+5,GRANO_PICADO,Grano Picado,-256,4,Grano Picado
