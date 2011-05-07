@@ -52,15 +52,14 @@ public class FrameResultado extends JFrame {
 		resultado.setContenedor(this);
 		this.addPanel(resultado,"Resultado");
 		
+		resultado.initDataSetModels();
+		
 		for(EvaluadorClase c: lClases){
 			List<Objeto> objetosClase = getClasificador().getClasificacion().get(c);
 			JPanel container = new JPanel();
 			GridBagLayout gbl = new GridBagLayout();
 			int cant = 0;
-			float porcentaje = 0;
-			if (getClasificador().countObject() != 0)
-				porcentaje = (objetosClase.size()*100)/getClasificador().countObject();
-			resultado.addValueCount(c.getClase().getDescripcion(), objetosClase.size(),porcentaje);
+			resultado.addValueCount(c.getClase().getAgrupador(), objetosClase.size());
 			container.setLayout(gbl);
 			//frame.getContentPane().add(new JScrollPane(container),BorderLayout.CENTER);
 			long cantidadPixeles = 0;
@@ -86,10 +85,12 @@ public class FrameResultado extends JFrame {
 				cant++;
 				cantidadPixeles = cantidadPixeles + (obj.getPuntos().size() + obj.getContorno().size()); 
 			}
-			resultado.addValuePixel(c.getClase().getDescripcion(), cantidadPixeles);
+			resultado.addValuePixel(c.getClase().getAgrupador(), cantidadPixeles);
 			
 			this.addPanel(container, c.getClase().getDescripcion());
 		}
+		resultado.actualizarDataSetCount();
+		resultado.actualizarDataSetPixel();
 		resultado.graficar();
 	}
 	

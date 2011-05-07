@@ -5,12 +5,10 @@
 package aplicarFiltros;
 
 import java.awt.*;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Insets;
-import java.awt.Rectangle;
+import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.swing.*;
 
 import javax.swing.ImageIcon;
@@ -22,7 +20,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.border.*;
-import javax.swing.border.BevelBorder;
 import javax.swing.table.DefaultTableModel;
 
 import org.jfree.chart.ChartFactory;
@@ -43,6 +40,12 @@ public class PanelResultado extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private DefaultPieDataset datasetCount = new DefaultPieDataset();
 	private DefaultPieDataset datasetPixel = new DefaultPieDataset();
+	
+	private Map<String,Integer> datasetCountModel = new HashMap<String, Integer>();
+	private Map<String,Long> datasetPixelModel = new HashMap<String, Long>();
+	
+	private Integer totalObjetos = 0;
+	
 	public JFrame getContenedor() {
 		return contenedor;
 	}
@@ -51,18 +54,57 @@ public class PanelResultado extends JPanel {
 	}
 
 	private JFrame contenedor;
-	public void addValueCount(String nombre, int cantidad, float porcentaje){
+
+	public void initDataSetModels(){
+		totalObjetos = 0;
+		datasetCountModel.clear();
+		datasetPixelModel.clear();
+		datasetCount.clear();
+		datasetPixel.clear();
+	}
+	public void addValueCount(String nombre, int cantidad){
+		Integer count = cantidad;
+		if (datasetCountModel.containsKey(nombre)){
+			Integer cantidaParcial = datasetCountModel.get(nombre);
+			count += cantidaParcial;
+		}
+		totalObjetos += cantidad;
+		datasetCountModel.put(nombre, count);
+
+		
+	}
+	
+	public void addValuePixel(String nombre, Long cantidadPixeles){
+		Long count = cantidadPixeles;
+		if (datasetPixelModel.containsKey(nombre)){
+			Long cantidaParcial = datasetPixelModel.get(nombre);
+			count += cantidaParcial;
+		}
+		datasetPixelModel.put(nombre, count);
+	}
+	
+	public void actualizarDataSetCount(){
 		DefaultTableModel model = (DefaultTableModel) tableRasgos2.getModel();
-		model.addRow(new Object[]{nombre, cantidad, (porcentaje+"%")});
-		//Grafico
-		datasetCount.setValue( nombre,cantidad);
+		DecimalFormat formater = new DecimalFormat("0.00");
+
+		for(String agrupador: datasetCountModel.keySet()){
+			Integer cantidad = datasetCountModel.get(agrupador);
+			Double porcentaje = 0.0;
+			if (totalObjetos != 0)
+				porcentaje = (cantidad * 100)/ (double) totalObjetos;
+			model.addRow(new Object[]{agrupador, cantidad, formater.format(porcentaje)+"%"});
+			//Grafico
+			datasetCount.setValue( agrupador,cantidad);
+		}
 	}
-	
-	public void addValuePixel(String nombre, long cantidadPixeles){
-		//Grafico
-		datasetPixel.setValue( nombre,cantidadPixeles);
+
+	public void actualizarDataSetPixel(){
+		for(String agrupador: datasetPixelModel.keySet()){
+			Long cantidad = datasetPixelModel.get(agrupador);
+			//Grafico
+			datasetPixel.setValue( agrupador,cantidad);
+		}
 	}
-	
 	
 	public void graficar(){
 		//Grafico de cantidad de semillas

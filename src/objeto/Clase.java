@@ -153,7 +153,9 @@ public class Clase {
 	}
 
 	public String getAgrupador() {
-		return agrupador;
+		if (agrupador != null)
+			return agrupador;
+		return getDescripcion();
 	}
 
 	public void setAgrupador(String agrupador) {
