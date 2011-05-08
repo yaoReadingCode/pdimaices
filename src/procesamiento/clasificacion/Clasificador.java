@@ -13,6 +13,10 @@ import objeto.RasgoObjeto;
 import dataAcces.ObjectDao;
 
 public class Clasificador {
+	
+	/**
+	 * Identificador de la clase que representa que el objeto no se pudo clasificar
+	 */
 	public static String CLASE_INDETERMINADO = "INDETERMINADO";
 
 	private Map<EvaluadorClase, List<Objeto>> clasificacion = new HashMap<EvaluadorClase, List<Objeto>>();
