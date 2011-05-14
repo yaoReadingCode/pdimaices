@@ -6,7 +6,6 @@ package aplicarFiltros;
 
 import info.clearthought.layout.TableLayout;
 import info.clearthought.layout.TableLayoutConstraints;
-import jai.DisplayDEM;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -15,11 +14,12 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.SystemColor;
-import java.awt.Dialog.ModalExclusionType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,7 +31,6 @@ import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
 import javax.media.jai.PlanarImage;
 import javax.media.jai.TileCache;
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -51,11 +50,22 @@ import components.ImageFileView;
 import components.ImageFilter;
 import components.ImagePreview;
 
+
 /**
- * @author User #3
+ * @author
  */
 public class ImageEditorPanel extends JPanel implements IImageProcessing,
 		MouseMotionListener {
+
+	{
+		//Set Look & Feel
+		try {
+			javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 
 	static private String newline = "\n";
 	private JFileChooser fc;
@@ -434,4 +444,7 @@ public class ImageEditorPanel extends JPanel implements IImageProcessing,
 	}
 
 
+	public BufferedImage getSelectedRectangle() {
+		return dd.getSelectedRectangle();
+	}
 }

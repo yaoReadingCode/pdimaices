@@ -10,6 +10,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 
+import aplicarFiltros.DisplayDEM;
+
 import procesamiento.Binarizar;
 import procesamiento.HSVRange;
 

@@ -4,23 +4,35 @@
 
 package aplicarFiltros;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.DataBuffer;
+import java.awt.image.Raster;
+import java.awt.image.SampleModel;
 
 import javax.media.jai.PlanarImage;
+import javax.media.jai.RasterFactory;
+import javax.media.jai.TiledImage;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
@@ -28,6 +40,8 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
 
 import org.hibernate.exception.JDBCConnectionException;
+
+import com.sun.media.jai.widget.DisplayJAI;
 
 import procesamiento.Binarizar;
 import procesamiento.Closing;
@@ -132,24 +146,6 @@ public class OperacionesPanel extends JPanel {
 	 */
 	private HSVRange getHSVRangeObjeto() {
 		HSVRange range = new HSVRange();
-		if (textFieldHMin2.getText() != null
-				&& !textFieldHMin2.getText().trim().equals(""))
-			range.setHMin(Float.parseFloat(textFieldHMin2.getText()));
-		if (textFieldHMax2.getText() != null
-				&& !textFieldHMax2.getText().trim().equals(""))
-			range.setHMax(Float.parseFloat(textFieldHMax2.getText()));
-		if (textFieldSMin2.getText() != null
-				&& !textFieldSMin2.getText().trim().equals(""))
-			range.setSMin(Float.parseFloat(textFieldSMin2.getText()));
-		if (textFieldSMax2.getText() != null
-				&& !textFieldSMax2.getText().trim().equals(""))
-			range.setSMax(Float.parseFloat(textFieldSMax2.getText()));
-		if (textFieldVMin2.getText() != null
-				&& !textFieldVMin2.getText().trim().equals(""))
-			range.setVMin(Float.parseFloat(textFieldVMin2.getText()));
-		if (textFieldVMax2.getText() != null
-				&& !textFieldVMax2.getText().trim().equals(""))
-			range.setVMax(Float.parseFloat(textFieldVMax2.getText()));
 		return range;
 	}
 	
@@ -158,14 +154,6 @@ public class OperacionesPanel extends JPanel {
 	 * @return
 	 */
 	private void setHSVRangeObjeto(HSVRange range) {
-		if (range != null){
-			textFieldHMin2.setText((range.getHMin()!= null) ? range.getHMin().toString() : null );
-			textFieldHMax2.setText((range.getHMax()!= null) ? range.getHMax().toString() : null );
-			textFieldSMin2.setText((range.getSMin()!= null) ? range.getSMin().toString() : null );
-			textFieldSMax2.setText((range.getSMax()!= null) ? range.getSMax().toString() : null );
-			textFieldVMin2.setText((range.getVMin()!= null) ? range.getVMin().toString() : null );
-			textFieldVMax2.setText((range.getVMax()!= null) ? range.getVMax().toString() : null );
-		}
 	}
 
 	private void buttonBinarizarActionPerformed(ActionEvent e) {
@@ -330,22 +318,6 @@ public class OperacionesPanel extends JPanel {
 		textFieldVMin = new JTextField();
 		labelVMax = new JLabel();
 		textFieldVMax = new JTextField();
-		objetoPanel = new JPanel();
-		panelH2 = new JPanel();
-		labelHMin2 = new JLabel();
-		textFieldHMin2 = new JTextField();
-		labelHMax2 = new JLabel();
-		textFieldHMax2 = new JTextField();
-		panelS3 = new JPanel();
-		labelSMin2 = new JLabel();
-		textFieldSMin2 = new JTextField();
-		labelSMax2 = new JLabel();
-		textFieldSMax2 = new JTextField();
-		panelS4 = new JPanel();
-		labelVSMin2 = new JLabel();
-		textFieldVMin2 = new JTextField();
-		labelVMax2 = new JLabel();
-		textFieldVMax2 = new JTextField();
 		panel7 = new JPanel();
 		buttonBinarizar = new JButton();
 		buttonGradientMagnitude = new JButton();
@@ -642,189 +614,6 @@ public class OperacionesPanel extends JPanel {
 				panel2.add(fondoPanel);
 				fondoPanel.setBounds(10, 5, 310, 180);
 
-				//======== objetoPanel ========
-				{
-					objetoPanel.setLayout(null);
-
-					//======== panelH2 ========
-					{
-						panelH2.setBorder(new TitledBorder(null, "H", TitledBorder.LEADING, TitledBorder.TOP, null, SystemColor.textHighlight));
-						panelH2.setLayout(null);
-
-						//---- labelHMin2 ----
-						labelHMin2.setText("Min:");
-						labelHMin2.setFont(new Font("Tahoma", Font.BOLD, 11));
-						panelH2.add(labelHMin2);
-						labelHMin2.setBounds(10, 25, 35, labelHMin2.getPreferredSize().height);
-
-						//---- textFieldHMin2 ----
-						textFieldHMin2.addKeyListener(new KeyAdapter() {
-							@Override
-							public void keyTyped(KeyEvent e) {
-								textFieldIntegerKeyTyped(e);
-							}
-						});
-						panelH2.add(textFieldHMin2);
-						textFieldHMin2.setBounds(50, 20, 65, textFieldHMin2.getPreferredSize().height);
-
-						//---- labelHMax2 ----
-						labelHMax2.setText("Max:");
-						labelHMax2.setFont(new Font("Tahoma", Font.BOLD, 11));
-						panelH2.add(labelHMax2);
-						labelHMax2.setBounds(150, 25, 35, 14);
-
-						//---- textFieldHMax2 ----
-						textFieldHMax2.addKeyListener(new KeyAdapter() {
-							@Override
-							public void keyTyped(KeyEvent e) {
-								textFieldIntegerKeyTyped(e);
-							}
-						});
-						panelH2.add(textFieldHMax2);
-						textFieldHMax2.setBounds(190, 20, 65, 20);
-
-						{ // compute preferred size
-							Dimension preferredSize = new Dimension();
-							for(int i = 0; i < panelH2.getComponentCount(); i++) {
-								Rectangle bounds = panelH2.getComponent(i).getBounds();
-								preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
-								preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
-							}
-							Insets insets = panelH2.getInsets();
-							preferredSize.width += insets.right;
-							preferredSize.height += insets.bottom;
-							panelH2.setMinimumSize(preferredSize);
-							panelH2.setPreferredSize(preferredSize);
-						}
-					}
-					objetoPanel.add(panelH2);
-					panelH2.setBounds(10, 20, 290, 55);
-
-					//======== panelS3 ========
-					{
-						panelS3.setBorder(new TitledBorder(null, "S", TitledBorder.LEADING, TitledBorder.TOP, null, SystemColor.textHighlight));
-						panelS3.setLayout(null);
-
-						//---- labelSMin2 ----
-						labelSMin2.setText("Min:");
-						labelSMin2.setFont(new Font("Tahoma", Font.BOLD, 11));
-						panelS3.add(labelSMin2);
-						labelSMin2.setBounds(10, 25, 35, labelSMin2.getPreferredSize().height);
-
-						//---- textFieldSMin2 ----
-						textFieldSMin2.addKeyListener(new KeyAdapter() {
-							@Override
-							public void keyTyped(KeyEvent e) {
-								textFieldIntegerKeyTyped(e);
-							}
-						});
-						panelS3.add(textFieldSMin2);
-						textFieldSMin2.setBounds(50, 20, 65, textFieldSMin2.getPreferredSize().height);
-
-						//---- labelSMax2 ----
-						labelSMax2.setText("Max:");
-						labelSMax2.setFont(new Font("Tahoma", Font.BOLD, 11));
-						panelS3.add(labelSMax2);
-						labelSMax2.setBounds(150, 25, 35, 14);
-
-						//---- textFieldSMax2 ----
-						textFieldSMax2.addKeyListener(new KeyAdapter() {
-							@Override
-							public void keyTyped(KeyEvent e) {
-								textFieldIntegerKeyTyped(e);
-							}
-						});
-						panelS3.add(textFieldSMax2);
-						textFieldSMax2.setBounds(190, 20, 65, 20);
-
-						{ // compute preferred size
-							Dimension preferredSize = new Dimension();
-							for(int i = 0; i < panelS3.getComponentCount(); i++) {
-								Rectangle bounds = panelS3.getComponent(i).getBounds();
-								preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
-								preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
-							}
-							Insets insets = panelS3.getInsets();
-							preferredSize.width += insets.right;
-							preferredSize.height += insets.bottom;
-							panelS3.setMinimumSize(preferredSize);
-							panelS3.setPreferredSize(preferredSize);
-						}
-					}
-					objetoPanel.add(panelS3);
-					panelS3.setBounds(10, 75, 290, 55);
-
-					//======== panelS4 ========
-					{
-						panelS4.setBorder(new TitledBorder(null, "V", TitledBorder.LEADING, TitledBorder.TOP, null, SystemColor.textHighlight));
-						panelS4.setLayout(null);
-
-						//---- labelVSMin2 ----
-						labelVSMin2.setText("Min:");
-						labelVSMin2.setFont(new Font("Tahoma", Font.BOLD, 11));
-						panelS4.add(labelVSMin2);
-						labelVSMin2.setBounds(10, 25, 35, labelVSMin2.getPreferredSize().height);
-
-						//---- textFieldVMin2 ----
-						textFieldVMin2.addKeyListener(new KeyAdapter() {
-							@Override
-							public void keyTyped(KeyEvent e) {
-								textFieldIntegerKeyTyped(e);
-							}
-						});
-						panelS4.add(textFieldVMin2);
-						textFieldVMin2.setBounds(50, 20, 65, textFieldVMin2.getPreferredSize().height);
-
-						//---- labelVMax2 ----
-						labelVMax2.setText("Max:");
-						labelVMax2.setFont(new Font("Tahoma", Font.BOLD, 11));
-						panelS4.add(labelVMax2);
-						labelVMax2.setBounds(150, 25, 35, 14);
-
-						//---- textFieldVMax2 ----
-						textFieldVMax2.addKeyListener(new KeyAdapter() {
-							@Override
-							public void keyTyped(KeyEvent e) {
-								textFieldIntegerKeyTyped(e);
-							}
-						});
-						panelS4.add(textFieldVMax2);
-						textFieldVMax2.setBounds(190, 20, 65, 20);
-
-						{ // compute preferred size
-							Dimension preferredSize = new Dimension();
-							for(int i = 0; i < panelS4.getComponentCount(); i++) {
-								Rectangle bounds = panelS4.getComponent(i).getBounds();
-								preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
-								preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
-							}
-							Insets insets = panelS4.getInsets();
-							preferredSize.width += insets.right;
-							preferredSize.height += insets.bottom;
-							panelS4.setMinimumSize(preferredSize);
-							panelS4.setPreferredSize(preferredSize);
-						}
-					}
-					objetoPanel.add(panelS4);
-					panelS4.setBounds(10, 130, 290, 55);
-
-					{ // compute preferred size
-						Dimension preferredSize = new Dimension();
-						for(int i = 0; i < objetoPanel.getComponentCount(); i++) {
-							Rectangle bounds = objetoPanel.getComponent(i).getBounds();
-							preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
-							preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
-						}
-						Insets insets = objetoPanel.getInsets();
-						preferredSize.width += insets.right;
-						preferredSize.height += insets.bottom;
-						objetoPanel.setMinimumSize(preferredSize);
-						objetoPanel.setPreferredSize(preferredSize);
-					}
-				}
-				panel2.add(objetoPanel);
-				objetoPanel.setBounds(10, 190, 310, 190);
-
 				{ // compute preferred size
 					Dimension preferredSize = new Dimension();
 					for(int i = 0; i < panel2.getComponentCount(); i++) {
@@ -839,9 +628,6 @@ public class OperacionesPanel extends JPanel {
 					panel2.setPreferredSize(preferredSize);
 				}
 			}
-			tabbedPane1.addTab("Fonfo", panel2);
-
-
 			//======== panel7 ========
 			{
 				panel7.setLayout(null);
@@ -1006,6 +792,7 @@ public class OperacionesPanel extends JPanel {
 		add(tabbedPane1);
 		tabbedPane1.setBounds(25, 25, 340, 345);
 
+		tabbedPane1.addTab("Fondo", null, panel2, null);
 		{ // compute preferred size
 			Dimension preferredSize = new Dimension();
 			for(int i = 0; i < getComponentCount(); i++) {
@@ -1022,7 +809,7 @@ public class OperacionesPanel extends JPanel {
 		// //GEN-END:initComponents
 		
 		fondoPanel.setBorder(new TitledBorder(null, "Fondo", TitledBorder.LEADING, TitledBorder.TOP, null, SystemColor.textHighlight));
-		objetoPanel.setBorder(new TitledBorder(null, "Objeto", TitledBorder.LEADING, TitledBorder.TOP, null, SystemColor.textHighlight));
+			panel2.add(getButtonSeleccionarFondo(), null);
 	}
 
 	// JFormDesigner - Variables declaration - DO NOT MODIFY
@@ -1052,22 +839,6 @@ public class OperacionesPanel extends JPanel {
 	private JTextField textFieldVMin;
 	private JLabel labelVMax;
 	private JTextField textFieldVMax;
-	private JPanel objetoPanel;
-	private JPanel panelH2;
-	private JLabel labelHMin2;
-	private JTextField textFieldHMin2;
-	private JLabel labelHMax2;
-	private JTextField textFieldHMax2;
-	private JPanel panelS3;
-	private JLabel labelSMin2;
-	private JTextField textFieldSMin2;
-	private JLabel labelSMax2;
-	private JTextField textFieldSMax2;
-	private JPanel panelS4;
-	private JLabel labelVSMin2;
-	private JTextField textFieldVMin2;
-	private JLabel labelVMax2;
-	private JTextField textFieldVMax2;
 	private JPanel panel7;
 	private JButton buttonBinarizar;
 	private JButton buttonGradientMagnitude;
@@ -1083,5 +854,52 @@ public class OperacionesPanel extends JPanel {
 	private JButton buttonEliminarFondo;
 	private JButton buttonSkeleton;
 	private JButton buttonRangoObjeto;
-	// JFormDesigner - End of variables declaration //GEN-END:variables
+	private JButton buttonSeleccionarFondo = null;
+
+	/**
+	 * This method initializes buttonSeleccionarFondo	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getButtonSeleccionarFondo() {
+		if (buttonSeleccionarFondo == null) {
+			buttonSeleccionarFondo = new JButton();
+			buttonSeleccionarFondo.setBounds(new Rectangle(15, 196, 303, 26));
+			buttonSeleccionarFondo.setText("Seleccionar fondo desde imagen");
+			buttonSeleccionarFondo.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					buttonSeleccionarFondoActionPerformed(e);
+				}
+			});
+		}
+		return buttonSeleccionarFondo;
+	}
+	private void buttonSeleccionarFondoActionPerformed(ActionEvent e) {
+		//Raster raster = getImageHolder().getSelectedRectangle();
+		//ColorModel colorModel = PlanarImage.createColorModel(raster.getSampleModel());
+		//TiledImage image = new TiledImage(0, 0, raster.getWidth(), raster.getHeight(), 0, 0,raster.getSampleModel(), colorModel);
+		// Set the data of the tiled image to be the raster.
+		BufferedImage image = getImageHolder().getSelectedRectangle();
+		//image.setData(raster);
+		
+		JFrame frame = new JFrame();
+		frame.setTitle("Seleccion");
+		// Get the JFrame's ContentPane.
+		Container contentPane = frame.getContentPane();
+		contentPane.setLayout(new BorderLayout());
+		// Create an instance of DisplayJAI.
+		DisplayJAI dj = new DisplayJAI(image);
+		// Add to the JFrame's ContentPane an instance of JScrollPane containing the
+		// DisplayJAI instance.
+		contentPane.add(new JScrollPane(dj),BorderLayout.CENTER);
+		// Add a text label with the image information.
+		// Set the closing operation so the application is finished.
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.pack();
+		//frame.setSize(image.getWidth()+20,image.getHeight()+20); // adjust the frame size.
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+
+	}
+	
 }
