@@ -1,9 +1,12 @@
 package procesamiento;
 
+import java.awt.image.Raster;
+
 /**
  * Clase que contiene métodos para hacer conversiones entre formatos HSV y RGB
+ * 
  * @author oscar
- *
+ * 
  */
 
 public class RgbHsv {
@@ -58,7 +61,7 @@ public class RgbHsv {
 			h += 360;
 		hsv[0] = h;
 		hsv[1] = s * 100;
-		hsv[2] = v*100/255;
+		hsv[2] = v * 100 / 255;
 		return hsv;
 	}
 
@@ -111,11 +114,65 @@ public class RgbHsv {
 		int rgb = ((r & 0xff) << 16) | ((g & 0xff) << 8) | b & 0xff;
 		return rgb;
 	}
-	
+
+	/**
+	 * Crea un rango HSV a partir de una porcion de una imagen
+	 * 
+	 * @param raster
+	 * @return
+	 */
+	public static HSVRange createHsvRange(Raster raster, HSVRange excludeRange) {
+		HSVRange range = new HSVRange();
+		Float hMin = null;
+		Float hMax = null;
+		Float sMin = null;
+		Float sMax = null;
+		Float vMin = null;
+		Float vMax = null;
+
+		for (int x = 0; x < raster.getWidth(); x++)
+			for (int y = 0; y < raster.getHeight(); y++) {
+				int[] pixel = null;
+
+				pixel = raster.getPixel(x, y, pixel);
+				int r = pixel[0];
+				int g = pixel[0];
+				int b = pixel[0];
+
+				if (pixel.length == 3) {
+					g = pixel[1];
+					b = pixel[2];
+				}
+
+				float[] hsv = RgbHsv.RGBtoHSV(r, g, b);
+				if (excludeRange == null || !excludeRange.isEnRango(hsv[0], hsv[1], hsv[2])){
+					if (hMin == null || hsv[0] < hMin)
+						hMin = hsv[0];
+					if (hMax == null || hsv[0] > hMax)
+						hMax = hsv[0];
+					if (sMin == null || hsv[1] < sMin)
+						sMin = hsv[1];
+					if (sMax == null || hsv[1] > sMax)
+						sMax = hsv[1];
+					if (vMin == null || hsv[2] < vMin)
+						vMin = hsv[2];
+					if (vMax == null || hsv[2] > vMax)
+						vMax = hsv[2];
+				}
+			}
+		range.setHMin(hMin);
+		range.setHMax(hMax);
+		range.setSMin(sMin);
+		range.setSMax(sMax);
+		range.setVMin(vMin);
+		range.setVMax(vMax);
+		return range;
+	}
+
 	public static void main(String[] args) {
-		float[] hsv  = RGBtoHSV(83, 106, 186);
-		
-		System.out.println(hsv[0]+ "," + hsv[1]+","+hsv[2]);
+		float[] hsv = RGBtoHSV(83, 106, 186);
+
+		System.out.println(hsv[0] + "," + hsv[1] + "," + hsv[2]);
 	}
 
 }

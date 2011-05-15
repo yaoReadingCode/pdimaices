@@ -1,5 +1,8 @@
 package procesamiento.clasificacion;
 
+import procesamiento.HSVRange;
+
+
 public class Configuracion {
 
 	private Long id;
@@ -129,5 +132,41 @@ public class Configuracion {
 	public void setColorObjetoRefRgb(Integer colorObjetoRefRgb) {
 		this.colorObjetoRefRgb = colorObjetoRefRgb;
 	}
+	
+	public HSVRange getHSVRange(){
+		HSVRange range = new HSVRange();
+		range.setHMin(getFondoHMin());
+		range.setHMax(getFondoHMax());
+		range.setSMin(getFondoSMin());
+		range.setSMax(getFondoSMax());
+		range.setVMin(getFondoVMin());
+		range.setVMax(getFondoVMax());
+		return range;
+	}
+	
+	public void setHSVRange(HSVRange range){
+		setFondoHMin(range.getHMin());
+		setFondoHMax(range.getHMax());
+		setFondoSMin(range.getSMin());
+		setFondoSMax(range.getSMax());
+		setFondoVMin(range.getVMin());
+		setFondoVMax(range.getVMax());
+	}
 
+	public boolean equals(Object obj) {
+		if (obj == null)
+			return false;
+		if (!(obj instanceof Configuracion))
+			return false;
+		Configuracion c = (Configuracion) obj;
+		if (getNombreSistema() != null)
+			return getNombreSistema().equals(c.getNombreSistema());
+		return false;
+	}
+
+	public String toString() {
+		return getNombreSistema();
+	}
+
+	
 }
