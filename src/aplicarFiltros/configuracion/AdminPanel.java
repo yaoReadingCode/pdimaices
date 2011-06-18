@@ -66,6 +66,8 @@ public class AdminPanel extends JPanel {
 		model.setAdminPanel(this);
 		getDataTable().setModel(model);
 		getDataTable().setDefaultRenderer(Object.class, tableRenderer);
+		getDataTable().setRowSelectionAllowed(true);
+		getDataTable().setColumnSelectionAllowed(true);
 	}
 
 	/**
@@ -157,7 +159,7 @@ public class AdminPanel extends JPanel {
 					GeneralTableModel tableModel = (GeneralTableModel) getDataTable().getModel();
 					tableModel.addRow();
 					int selectionIndex = tableModel.getRowCount() - 1;
-					getDataTable().getSelectionModel().setSelectionInterval(selectionIndex, selectionIndex);
+					selectCell(selectionIndex, 0);
 					getDataTable().revalidate();
 					
 				}
@@ -179,8 +181,12 @@ public class AdminPanel extends JPanel {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					try{
 						GeneralTableModel tableModel = (GeneralTableModel) getDataTable().getModel();
-						tableModel.saveRow(getDataTable().getSelectedRow());
+						int row = getDataTable().getSelectedRow();
+						tableModel.saveRow(row);
+						selectCell(row, 0);
 						getDataTable().revalidate();
+						//getDataTable().repaint();
+						
 					}
 					catch (ValidationException ex) {
 						showErrorMessage(ex, getDataTable().getSelectedRow());
@@ -207,8 +213,11 @@ public class AdminPanel extends JPanel {
 			eliminarButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					GeneralTableModel tableModel = (GeneralTableModel) getDataTable().getModel();
-					tableModel.deleteRow(getDataTable().getSelectedRow());
+					int row = getDataTable().getSelectedRow();
+					tableModel.deleteRow(row);
 					getDataTable().revalidate();
+					if (row -1 > -1)
+						selectCell(row - 1, 0);
 				}
 			});
 		}
@@ -283,8 +292,9 @@ public class AdminPanel extends JPanel {
 		final int errorRow = row;
 		final int errorCol = ex.getFieldId();
 		this.tableRenderer.setErrorCol(errorRow,errorCol);
+		selectCell(errorRow, errorCol);
 		getDataTable().revalidate();
-		getDataTable().validate();
+		//this.repaint();
 	}
 
 	public void cleanErrorMessage() {
@@ -292,6 +302,13 @@ public class AdminPanel extends JPanel {
 		this.errorLabel.setVisible(false);
 		this.messageLabel.setText("");
 		
+	}
+
+	public void selectCell(int row, int col) {
+		getDataTable().getSelectionModel().setSelectionInterval(row, row);
+		getDataTable().setColumnSelectionInterval(col, col);
+		getDataTable().transferFocus();
+		//getDataTable().repaint();
 	}
 
 }

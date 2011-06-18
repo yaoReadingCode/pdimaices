@@ -57,10 +57,8 @@ public class RenderTabla extends DefaultTableCellRenderer {
 			this.setText(value.toString());
 		this.setBorder(new LineBorder(Color.gray,0,true));
 		
-		this.setBorder(new LineBorder(Color.white,0,true));
-		
 		if (antErrorRow == row && antErrorCol == column){
-			this.setBorder(new LineBorder(Color.white,0,true));
+			this.setBorder(new LineBorder(Color.gray,0,true));
 		}
 
 

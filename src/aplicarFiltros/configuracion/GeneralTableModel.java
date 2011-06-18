@@ -59,6 +59,8 @@ public class GeneralTableModel extends AbstractTableModel {
             	try {
     				mapper.setValueAt(value, row, col);
     				getAdminPanel().cleanErrorMessage();
+    				getAdminPanel().selectCell(row,col);
+    				
     			} catch (ValidationException e) {
     				getAdminPanel().showErrorMessage(e, row);
     			}
@@ -77,6 +79,7 @@ public class GeneralTableModel extends AbstractTableModel {
     public void saveRow(int row) throws ValidationException{
     	if (mapper != null){
     		mapper.saveRow(row);
+    		getAdminPanel().cleanErrorMessage();
     	}
     }
 
