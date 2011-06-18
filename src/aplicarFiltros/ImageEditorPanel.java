@@ -19,7 +19,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
-import java.awt.image.Raster;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -45,14 +44,17 @@ import procesamiento.IImageProcessing;
 import procesamiento.ImageComand;
 import procesamiento.ImageUtil;
 import procesamiento.clasificacion.Clasificador;
+import aplicarFiltros.configuracion.AdminPanel;
+import aplicarFiltros.configuracion.GeneralTableModel;
+import aplicarFiltros.configuracion.modelmapper.ClaseMapper;
+import aplicarFiltros.configuracion.modelmapper.RasgoMapper;
 
 import components.ImageFileView;
 import components.ImageFilter;
 import components.ImagePreview;
 
-
 /**
- * @author
+ * @author User #3
  */
 public class ImageEditorPanel extends JPanel implements IImageProcessing,
 		MouseMotionListener {
@@ -65,8 +67,7 @@ public class ImageEditorPanel extends JPanel implements IImageProcessing,
 			e.printStackTrace();
 		}
 	}
-
-
+	
 	static private String newline = "\n";
 	private JFileChooser fc;
 	private PlanarImage inputImage = null;
@@ -257,6 +258,7 @@ public class ImageEditorPanel extends JPanel implements IImageProcessing,
 				menuEdicion.add(menuItemDeshacer);
 			}
 			menuBar1.add(menuEdicion);
+			menuBar1.add(getConfiguracionMenu());
 		}
 		add(menuBar1, BorderLayout.NORTH);
 
@@ -339,6 +341,82 @@ public class ImageEditorPanel extends JPanel implements IImageProcessing,
 	private static JTextArea log;
 	private JTextArea inferior;
 	// JFormDesigner - End of variables declaration //GEN-END:variables
+	private JMenu configuracionMenu = null;
+	private JMenuItem adminRasgosMenuItem = null;
+	private JMenuItem adminClasesMenuItem = null;
+
+	/**
+	 * This method initializes configuracionMenu	
+	 * 	
+	 * @return javax.swing.JMenu	
+	 */
+	private JMenu getConfiguracionMenu() {
+		if (configuracionMenu == null) {
+			configuracionMenu = new JMenu();
+			configuracionMenu.setText("Configuración");
+			configuracionMenu.add(getAdminRasgosMenuItem());
+			configuracionMenu.add(getAdminClasesMenuItem());
+		}
+		return configuracionMenu;
+	}
+	
+	/**
+	 * This method initializes adminRasgosMenuItem	
+	 * 	
+	 * @return javax.swing.JMenuItem	
+	 */
+	private JMenuItem getAdminRasgosMenuItem() {
+		if (adminRasgosMenuItem == null) {
+			adminRasgosMenuItem = new JMenuItem();
+			adminRasgosMenuItem.setText("Administrar Rasgos");
+			adminRasgosMenuItem.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					adminRasgosActionPerformed(e);
+				}
+			});
+		}
+		return adminRasgosMenuItem;
+	}
+
+
+	protected void adminRasgosActionPerformed(ActionEvent e) {
+		GeneralTableModel model = new GeneralTableModel(new RasgoMapper());
+		createFrame(new AdminPanel(model, "Rasgos"), "Administrar Rasgos");
+	}
+
+	protected void adminClasesActionPerformed(ActionEvent e) {
+		GeneralTableModel model = new GeneralTableModel(new ClaseMapper());
+		createFrame(new AdminPanel(model, "Clases"), "Administrar Clases");
+	}
+
+	private JFrame createFrame(JPanel panel, String title){
+		JFrame frame = new JFrame(title);
+		frame.add(panel);
+		frame.pack();
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+		return frame;
+	}
+
+	/**
+	 * This method initializes adminClasesMenuItem	
+	 * 	
+	 * @return javax.swing.JMenuItem	
+	 */
+	private JMenuItem getAdminClasesMenuItem() {
+		if (adminClasesMenuItem == null) {
+			adminClasesMenuItem = new JMenuItem();
+			adminClasesMenuItem.setText("Administrar Clases");
+			adminClasesMenuItem.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					adminClasesActionPerformed(e);
+				}
+			});
+		}
+		return adminClasesMenuItem;
+	}
+
 
 	public static void main(String[] args) {
 		TileCache cache = JAI.createTileCache(1l * 1024 * 1024);
@@ -443,8 +521,8 @@ public class ImageEditorPanel extends JPanel implements IImageProcessing,
 		this.clasificador = clasificador;
 	}
 
-
 	public BufferedImage getSelectedRectangle() {
 		return dd.getSelectedRectangle();
 	}
+
 }

@@ -42,7 +42,7 @@ public class ObjectDao {
 		return sessionFactory;
 	}
 	
-	public void save(Object object) {
+	public Object save(Object object) {
 		try {
 			Session session = getSessionFactory().openSession();
 			session.beginTransaction();
@@ -53,9 +53,10 @@ public class ObjectDao {
 			session.connection().commit();
 			session.connection().close();
 			session.close();
-
+			
+			return object;
 		} catch (Exception e) {
-			throw new RuntimeException(e.getMessage());
+			throw new RuntimeException(e);
 		}
 	}
 	
@@ -73,7 +74,7 @@ public class ObjectDao {
 			return result;
 		} 
 		catch (Exception e) {
-			throw new RuntimeException(e.getMessage());
+			throw new RuntimeException(e);
 		}
 	}
 	
@@ -120,7 +121,7 @@ public class ObjectDao {
 			return result;
 		} 
 		catch (Exception e) {
-			throw new RuntimeException(e.getMessage());
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -143,7 +144,7 @@ public class ObjectDao {
 			return result;
 		} 
 		catch (Exception e) {
-			throw new RuntimeException(e.getMessage());
+			throw new RuntimeException(e);
 		}
 	}
 	
@@ -165,7 +166,23 @@ public class ObjectDao {
 			return result;
 		} 
 		catch (Exception e) {
-			throw new RuntimeException(e.getMessage());
+			throw new RuntimeException(e);
+		}
+	}
+
+	public void delete(Object object) {
+		try {
+			Session session = getSessionFactory().openSession();
+			session.beginTransaction();
+
+			session.delete(object);
+
+			session.getTransaction().commit();
+			session.connection().commit();
+			session.connection().close();
+			session.close();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 	}
 	
