@@ -13,7 +13,6 @@ public class GeneralTableModel extends AbstractTableModel {
     
 	public GeneralTableModel(ModelMapper mapper) {
 		super();
-		this.adminPanel = adminPanel;
 		this.mapper = mapper;
 		if(mapper != null){
 			columnNames = mapper.getColumnNames();
