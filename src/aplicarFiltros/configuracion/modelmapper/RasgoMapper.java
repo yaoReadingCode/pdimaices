@@ -64,7 +64,7 @@ public class RasgoMapper extends ModelMapper<Rasgo> {
 		default:
 			break;
 		}
-		validateRasgo(rasgo);
+		validate(rasgo);
 		
 	}
 
@@ -73,7 +73,7 @@ public class RasgoMapper extends ModelMapper<Rasgo> {
 		getDataModel().add(nuevo);
 	}
 	
-	public void validateRasgo(Rasgo rasgo) throws ValidationException{
+	public void validate(Rasgo rasgo) throws ValidationException{
 		if (rasgo.getNombre() == null || rasgo.getNombre().trim().equals(""))
 			throw new ValidationException(NOMBRE_INDEX, "Debe ingresar un nombre");
 		if (rasgo.getDescripcion() == null || rasgo.getDescripcion().trim().equals(""))
@@ -84,7 +84,7 @@ public class RasgoMapper extends ModelMapper<Rasgo> {
 
 	public void saveRow(int row) throws ValidationException{
 		Rasgo rasgo = getDataModel().get(row);
-		validateRasgo(rasgo);
+		validate(rasgo);
 		ObjectDao.getInstance().save(rasgo);
 	}
 

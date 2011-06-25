@@ -3,6 +3,8 @@ package aplicarFiltros.configuracion.modelmapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import objeto.Rasgo;
+
 import aplicarFiltros.configuracion.exception.ValidationException;
 
 public abstract class ModelMapper<T> {
@@ -34,7 +36,9 @@ public abstract class ModelMapper<T> {
 	public abstract void addNewRow();
 	
 	public abstract void saveRow(int row) throws ValidationException;
-	
+
+	public abstract void validate(T object) throws ValidationException;
+
 	/**
 	 * Hook method
 	 * @param row

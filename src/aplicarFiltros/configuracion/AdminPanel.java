@@ -66,8 +66,10 @@ public class AdminPanel extends JPanel {
 		model.setAdminPanel(this);
 		getDataTable().setModel(model);
 		getDataTable().setDefaultRenderer(Object.class, tableRenderer);
+		getDataTable().setDefaultRenderer(Color.class, new ColorRenderer());
 		getDataTable().setRowSelectionAllowed(true);
 		getDataTable().setColumnSelectionAllowed(true);
+		getDataTable().setDefaultEditor(Color.class, new ColorCellEditor());
 	}
 
 	/**

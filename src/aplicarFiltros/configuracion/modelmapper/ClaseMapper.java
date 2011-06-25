@@ -1,6 +1,9 @@
 package aplicarFiltros.configuracion.modelmapper;
 
+import java.awt.Color;
 import java.util.List;
+
+import aplicarFiltros.configuracion.exception.ValidationException;
 
 import objeto.Clase;
 import dataAcces.ObjectDao;
@@ -45,7 +48,7 @@ public class ClaseMapper extends ModelMapper<Clase> {
 			data[index][DESCRIPCION_INDEX] = c.getDescripcion();
 			data[index][AGRUPADOR_INDEX] = c.getAgrupador();
 			data[index][ORDEN_INDEX] = c.getOrdenEvaluacion();
-			data[index][COLOR_INDEX] = c.getColorRgb();
+			data[index][COLOR_INDEX] = (c.getColorRgb() != null) ? new Color(c.getColorRgb()): Color.gray;
 		}
 		return data;
 	}
@@ -54,27 +57,28 @@ public class ClaseMapper extends ModelMapper<Clase> {
 	 * (non-Javadoc)
 	 * @see aplicarFiltros.configuracion.TableMapper#setValueAt(java.lang.Object, int, int)
 	 */
-	public void setValueAt(Object value, int row, int col) {
+	public void setValueAt(Object value, int row, int col) throws ValidationException{
+		Clase clase = getDataModel().get(row); 
 		switch (col) {
 		case NOMBRE_INDEX:
-			getDataModel().get(row).setNombre((String)value);
+			clase.setNombre((String)value);
 			break;
 		case DESCRIPCION_INDEX:
-			getDataModel().get(row).setDescripcion((String)value);
+			clase.setDescripcion((String)value);
 			break;
 		case AGRUPADOR_INDEX:
-			getDataModel().get(row).setAgrupador((String)value);
+			clase.setAgrupador((String)value);
 			break;
 		case ORDEN_INDEX:
-			getDataModel().get(row).setOrdenEvaluacion((Integer)value);
+			clase.setOrdenEvaluacion((Integer)value);
 			break;
 		case COLOR_INDEX:
-			getDataModel().get(row).setColorRgb((Integer)value);
+			clase.setColorRgb(((Color)value).getRGB());
 			break;
 		default:
 			break;
 		}
-		
+		validate(clase);
 	}
 
 	public void addNewRow() {
@@ -82,9 +86,10 @@ public class ClaseMapper extends ModelMapper<Clase> {
 		getDataModel().add(nuevo);
 	}
 
-	public void saveRow(int row) {
-		Object obj = getDataModel().get(row);
-		ObjectDao.getInstance().save(obj);
+	public void saveRow(int row) throws ValidationException {
+		Clase clase = getDataModel().get(row);
+		validate(clase);
+		ObjectDao.getInstance().save(clase);
 	}
 
 	public Clase deleteRow(int row) {
@@ -94,5 +99,14 @@ public class ClaseMapper extends ModelMapper<Clase> {
 			ObjectDao.getInstance().delete(clase);
 		}
 		return clase;
+	}
+
+	public void validate(Clase clase) throws ValidationException {
+		if (clase.getNombre() == null || clase.getNombre().trim().equals(""))
+			throw new ValidationException(NOMBRE_INDEX, "Debe ingresar un nombre");
+		if (clase.getDescripcion() == null || clase.getDescripcion().trim().equals(""))
+			throw new ValidationException(DESCRIPCION_INDEX, "Debe ingresar una descripción");
+		if (clase.getOrdenEvaluacion() == null)
+			throw new ValidationException(ORDEN_INDEX, "Debe el orden de evaluación");
 	}
 }
