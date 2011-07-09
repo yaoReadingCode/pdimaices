@@ -206,9 +206,17 @@ public class DetectarObjetos extends AbstractImageCommand {
 						//g.drawString(circularidadRasgo.toString(),(int) medio.getX()-15,(int)medio.getY()+15);
 						//g.drawString(aspectRatioRasgo.toString(),(int) medio.getX()-15,(int)medio.getY()+30);
 					}
+					Pixel pixelPunta1 = obj.getPixelPunta1();
+					Pixel pixelPunta2 = obj.getPixelPunta2();
+					if (pixelPunta1 != null)
+						pintarPixel(ti, pixelPunta1.getX(), pixelPunta1.getY(), Color.BLUE);
+					if (pixelPunta2 != null)
+						pintarPixel(ti, pixelPunta2.getX(), pixelPunta2.getY(), Color.RED);
+
 				}
+
 			}
-			
+
 			
 			return ti;
 		}

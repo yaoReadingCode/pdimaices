@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MaximizeAction;
+
 public class Objeto {
 	
 	private Long id;
@@ -64,6 +66,10 @@ public class Objeto {
 	private double[] acumuladorG = null;
 
 	private double[] acumuladorB = null;
+	
+	private Pixel pixelPunta1 = null;
+	
+	private Pixel pixelPunta2 = null;
 	
 	
 	public double[] getAcumuladorR() {
@@ -306,6 +312,12 @@ public class Objeto {
 		double x = 0;
 		double y = 0;
 		double minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, maxX = 0, maxY = 0;
+		Integer maxXImage = null;
+		Integer maxYImage = null;
+		if (contorno.size() > 0){
+			maxXImage = contorno.get(0).getMaxX();
+			maxYImage = contorno.get(0).getMaxY();
+		}
 		for (Pixel p : contorno) {
 			x += p.getXDouble();
 			y += p.getYDouble();
@@ -319,7 +331,7 @@ public class Objeto {
 				maxY = p.getYDouble();
 		}
 		setBoundingBox(new BoundingBox(minX, minY, maxX, maxY));
-		Pixel medio = new Pixel( x / contorno.size(), y / contorno.size(), null);
+		Pixel medio = new Pixel( x / contorno.size(), y / contorno.size(), null,maxXImage, maxYImage);
 		setPixelMedio(medio);
 	}
 
@@ -424,17 +436,27 @@ public class Objeto {
 	 * @param angulo
 	 */
 	public void rotarContorno(double angulo) {
+		rotarPixeles(getContorno(), angulo);
+		calcularMedioYBoundingBox();
+	}
 
-		for (Pixel p : getContorno()) {
+	private void rotarPixeles(List<Pixel> lista, double angulo){
+		for (Pixel p : lista) {
 			p.restar(getPixelMedio());
 			p.rotar(angulo);
 			p.sumar(getPixelMedio());
 		}
-		/*
-		 * for (Pixel p : getPuntos()){ p.rotar(angulo); }
-		 */
-		calcularMedioYBoundingBox();
 	}
+	
+	/**
+	 * Rota el contorno del objeto un angulo especificado
+	 * @param angulo
+	 */
+	public void rotar(double angulo) {
+		rotarPixeles(getContorno(), angulo);
+		rotarPixeles(getPuntos(), angulo);
+		calcularMedioYBoundingBox();
+	}	
 
 	public Pixel getPixelMedio() {
 		return pixelMedio;
@@ -611,6 +633,86 @@ public class Objeto {
 	@Override
 	public String toString() {
 		return this.getName();
+	}
+
+	public Pixel getPixelPunta(){
+		if (getContorno() != null && getContorno().size() > 0){
+			List<Pixel> contorno = getContorno();
+			Pixel punto1 = null;
+			Pixel punto2 = null;
+			int index1 = 0;
+			int index2 = 0;
+			double mayorDistancia = 0;
+			for(int i = 0; i < contorno.size(); i++){
+				Pixel actual1 = contorno.get(i);
+				for(int j = i + 1; j < contorno.size(); j++){
+					Pixel actual2 = contorno.get(j);
+					double distancia = actual1.distancia(actual2);
+					if (punto1 == null || distancia > mayorDistancia){
+						mayorDistancia = distancia;
+						punto1 = actual1;
+						punto2 = actual2;
+						index1 = i;
+						index2 = j;
+					}
+				}
+			}
+			if (punto2 != null){
+				int ventanaPixel = 20;
+				int indexInicio = index1 - ventanaPixel;
+				if (indexInicio < 0)
+					indexInicio = Math.abs(contorno.size() + indexInicio) % contorno.size();
+				Pixel iniVentana = contorno.get(indexInicio);
+				Pixel finVentana = contorno.get((index1 + ventanaPixel) % contorno.size());
+				Double angulo1 = ObjetoUtil.calcularAngulo(iniVentana, punto1, finVentana);
+				indexInicio = index2 - ventanaPixel;
+				if (indexInicio < 0)
+					indexInicio = Math.abs(contorno.size() + indexInicio) % contorno.size();
+				iniVentana = contorno.get(indexInicio);
+				finVentana = contorno.get((index2 + ventanaPixel) % contorno.size());
+				Double angulo2 = ObjetoUtil.calcularAngulo(iniVentana, punto2, finVentana);
+				if (angulo1 != null && angulo2 != null){
+					if (angulo1 > angulo2){
+						setPixelPunta1(punto1);
+						setPixelPunta2(punto2);
+						return punto1;
+					}
+					else{
+						setPixelPunta1(punto2);
+						setPixelPunta2(punto1);
+						return punto2;
+					}
+				}
+				else if (angulo1 != null){
+					setPixelPunta1(punto1);
+					setPixelPunta2(punto2);
+					return punto1;
+				}
+				setPixelPunta1(punto2);
+				setPixelPunta2(punto2);
+				return punto2;
+			}
+			setPixelPunta1(punto1);
+			setPixelPunta1(punto1);
+			return punto1;
+		}
+		return null;
+	}
+
+	public Pixel getPixelPunta2() {
+		return pixelPunta2;
+	}
+
+	public void setPixelPunta2(Pixel pixelPunta2) {
+		this.pixelPunta2 = pixelPunta2;
+	}
+
+	public Pixel getPixelPunta1() {
+		return pixelPunta1;
+	}
+
+	public void setPixelPunta1(Pixel pixelPunta1) {
+		this.pixelPunta1 = pixelPunta1;
 	}
 
 }

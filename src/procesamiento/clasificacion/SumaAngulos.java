@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import objeto.Objeto;
+import objeto.ObjetoUtil;
 import objeto.Pixel;
 import objeto.RasgoClase;
 import objeto.RasgoObjeto;
@@ -35,50 +36,6 @@ public class SumaAngulos extends EvaluadorRasgo {
 		this.ventanaPixeles = ventanaPixeles;
 	}
 	
-	/***
-	 * Calcula los coeficientes a, b y c de la recta a * x + b * y + c = 0 formada por el vector director
-	 * de la recta y un punto de la misma
-	 * @param vectorDirector Vector director de la recta
-	 * @param puntoRecta Punto que pertenece a la recta
-	 * @param a
-	 * @param b
-	 * @param c
-	 */
-	public void coeficientesRecta(double pendiente, Pixel punto, CoeficientesRecta coeficientes){
-		coeficientes.a = -1 * pendiente;
-		coeficientes.b = 1;
-		coeficientes.c = pendiente * punto.getXDouble() - punto.getYDouble();
-	}
-	/**
-	 * Calcula el punto de intersección de dos rectas: <a * x + b * y + c = 0> y <d * x + e * y + f = 0> 
-	 * @param a
-	 * @param b
-	 * @param c
-	 * @param d
-	 * @param e
-	 * @param f
-	 * @return
-	 */
-	public Pixel calcularInterseccionRectas(double a, double b, double c, double d, double e, double f){
-		Double x = null, y = null;
-		Double c1 = 0.0, c2 = 0.0;
-		if (a - d != 0){
-			c1 = a * (e - b)/(a - d);
-			c2 = a * (f - c)/(a - d);
-		}
-		if (c1 + b != 0)
-			y = (-c2 - c)/(c1 + b);
-		if (d != 0 && y != null)
-			x = (-f - e * y)/ d;
-		if (x != null && y != null)
-			return new Pixel(x,y,null);
-		return null;
-	}
-	
-	public double distancia(Pixel p, CoeficientesRecta recta){
-		double distancia = Math.abs((-1 * recta.a * p.getXDouble() - p.getYDouble() - recta.c) / Math.sqrt(Math.pow(recta.a,2) + 1));
-		return distancia;
-	}
 	/**
 	 * 
 	 * @param contorno
@@ -95,13 +52,13 @@ public class SumaAngulos extends EvaluadorRasgo {
 		Pixel fin = contorno.get(posFin % contorno.size());
 		Double pendiente = (fin.getYDouble() - inicio.getYDouble()) / (fin.getXDouble() - inicio.getXDouble()); 
 		CoeficientesRecta recta = new CoeficientesRecta();
-		coeficientesRecta(pendiente, inicio, recta);
+		ObjetoUtil.coeficientesRecta(pendiente, inicio, recta);
 		
 		int i = 0;
 		int cantPixeles = Math.abs(posFin - posInicio);
 		while (i <= cantPixeles){
 			Pixel p = contorno.get((posInicio + i) % contorno.size());
-			double dist = distancia(p, recta);
+			double dist = ObjetoUtil.distancia(p, recta);
 			distanciaPromedio += dist ;
 			i++;
 		}
@@ -118,11 +75,11 @@ public class SumaAngulos extends EvaluadorRasgo {
 		Double pendiente2 = -1 / pendiente1;
 		CoeficientesRecta coefR1 = new CoeficientesRecta();
 		CoeficientesRecta coefR2 = new CoeficientesRecta();
-		coeficientesRecta(pendiente1, pInicio, coefR1);
-		coeficientesRecta(pendiente2, pFin, coefR2);
+		ObjetoUtil.coeficientesRecta(pendiente1, pInicio, coefR1);
+		ObjetoUtil.coeficientesRecta(pendiente2, pFin, coefR2);
 		if (pMedio.getX() == 67 && pMedio.getY() == 32)
 			System.out.println("");
-		Pixel pInterseccion = calcularInterseccionRectas(coefR1.a, coefR1.b, coefR1.c, coefR2.a, coefR2.b, coefR2.c);
+		Pixel pInterseccion = ObjetoUtil.calcularInterseccionRectas(coefR1.a, coefR1.b, coefR1.c, coefR2.a, coefR2.b, coefR2.c);
 		if (pInterseccion != null){
 			pInterseccion.setMaxX(pInicio.getMaxX());
 			pInterseccion.setMaxY(pInicio.getMaxY());

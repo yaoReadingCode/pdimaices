@@ -375,7 +375,10 @@ public class Pixel implements Cloneable {
 	public double distancia(Pixel pixel) {
 		double distX = this.xDouble - pixel.xDouble;
 		double distY = this.yDouble - pixel.yDouble;
-		return Math.sqrt(distX * distX + distY * distY);
+		double val = distX * distX + distY * distY;
+		if (val != 0)
+			return Math.sqrt(val);
+		return 0;
 	}
 
 	public void restar(Pixel pixel) {
@@ -485,4 +488,43 @@ public class Pixel implements Cloneable {
 		this.maxY = maxY;
 	}
 
+	public Double getAnguloPolar(){
+		if (x > 0 && y >= 0){
+			return Math.toDegrees(Math.atan(yDouble/xDouble));
+		}
+		if (x > 0 && y < 0){
+			return Math.toDegrees(Math.atan(yDouble/xDouble)) + 360;
+		}
+		if (x < 0){
+			return Math.toDegrees(Math.atan(yDouble/xDouble)) + 180;
+		}
+		if (x == 0 && y > 0){
+			return 90.0;
+		}
+		if (x == 0 && y < 0){
+			return 270.0;
+		}
+		return null;
+
+
+	}
+	
+	/**
+	 * Transforma el punto a coordenadas cartesianas
+	 * @return
+	 */
+	public Pixel getCoordenadasCartesianas(){
+		Pixel p = new Pixel();
+		p.setXDouble(this.getXCartesiano());
+		p.setYDouble(this.getYCartesiano());
+		p.setCol(this.getCol());
+		return p;
+	}
+	
+	public Pixel getPuntoMedio(Pixel punto){
+		Pixel p = new Pixel();
+		p.setXDouble((this.xDouble + punto.xDouble) / 2);
+		p.setYDouble((this.yDouble + punto.yDouble) / 2);
+		return p;
+	}
 }
