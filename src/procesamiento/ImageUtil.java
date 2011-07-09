@@ -316,4 +316,20 @@ public class ImageUtil {
 
 			 return image;
 	}
+	
+	public static Color getColorPunto(Pixel pixel, PlanarImage ti) {
+		/**/
+		int[] pix = ImageUtil.readPixel(pixel.getX(), pixel.getY(), ti);
+
+		int r = pix[0];
+		int g = pix[0];
+		int b = pix[0];
+		if (pix.length == 3) {
+			g = pix[1];
+			b = pix[2];
+		}
+		return new Color(r, g, b);
+
+	}
+
 }

@@ -1,7 +1,6 @@
 package procesamiento;
 
 import javax.media.jai.PlanarImage;
-import javax.media.jai.TiledImage;
 /**
  * Comando que detecta el contorno grueso de los objetos de una imagen.<br>
  * Realiza la resta entre una imagen binaria (blanco y negro) y su erosión.

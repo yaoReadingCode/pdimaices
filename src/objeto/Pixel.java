@@ -527,4 +527,11 @@ public class Pixel implements Cloneable {
 		p.setYDouble((this.yDouble + punto.yDouble) / 2);
 		return p;
 	}
+	
+	public Pixel trasladar(Pixel punto){
+		Pixel aux = this.clonar();
+		aux.setXDouble(this.xDouble + punto.xDouble);
+		aux.setYDouble(this.yDouble + punto.yDouble);
+		return aux;
+	}
 }

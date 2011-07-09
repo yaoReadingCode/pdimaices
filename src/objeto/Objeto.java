@@ -1,11 +1,15 @@
 package objeto;
 
 import java.awt.Color;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MaximizeAction;
+import javax.media.jai.PlanarImage;
+
+import procesamiento.ImageUtil;
+import procesamiento.RgbHsv;
 
 public class Objeto {
 	
@@ -71,6 +75,7 @@ public class Objeto {
 	
 	private Pixel pixelPunta2 = null;
 	
+	private PlanarImage originalImage;	
 	
 	public double[] getAcumuladorR() {
 		if (acumuladorR == null) this.colorPromedio();
@@ -482,6 +487,7 @@ public class Objeto {
 
 	public Objeto clonar() {
 		Objeto obj = new Objeto();
+		obj.setOriginalImage(this.getOriginalImage());
 		List<Pixel> contorno = new ArrayList<Pixel>();
 		for (Pixel p : getContorno()) {
 			contorno.add(p.clonar());
@@ -672,6 +678,23 @@ public class Objeto {
 				finVentana = contorno.get((index2 + ventanaPixel) % contorno.size());
 				Double angulo2 = ObjetoUtil.calcularAngulo(iniVentana, punto2, finVentana);
 				if (angulo1 != null && angulo2 != null){
+					
+					if (punto1.getCol() != null && punto2.getCol() != null){
+						Color color1 = calcularPromedioColorPunto(punto1, 6);
+						Color color2 = calcularPromedioColorPunto(punto2, 6);
+						float[] hsv1 = RgbHsv.RGBtoHSV(color1.getRed(), color1.getGreen(), color1.getBlue());
+						float[] hsv2 = RgbHsv.RGBtoHSV(color2.getRed(), color2.getGreen(), color2.getBlue());
+						if (hsv1[2] > 200 && hsv1[2] > hsv2[2]){
+							setPixelPunta1(punto1);
+							setPixelPunta2(punto2);
+							return punto1;
+						}
+						if (hsv2[2] > 200 && hsv1[2] < hsv2[2]){
+							setPixelPunta1(punto2);
+							setPixelPunta2(punto1);
+							return punto2;
+						}
+					}
 					if (angulo1 > angulo2){
 						setPixelPunta1(punto1);
 						setPixelPunta2(punto2);
@@ -713,6 +736,51 @@ public class Objeto {
 
 	public void setPixelPunta1(Pixel pixelPunta1) {
 		this.pixelPunta1 = pixelPunta1;
+	}
+	/**
+	 * Calcula el color promedio del objeto alrededor del punto pasado como parámetro.
+	 * 
+	 * @param punto Un punto del objeto
+	 * @param tamañoRec Tamaño del rectángulo alrededor del punto que se tendrá en cuenta para evaluar el colot promedio
+	 * @return Color promedio
+	 */
+	public Color calcularPromedioColorPunto(Pixel punto, int tamanioRec){
+		Pixel aux = getPixelMedio().clonar();
+		aux.restar(punto);
+		int ancho = tamanioRec / 2;
+		int r = 0;
+		int g = 0;
+		int b = 0;
+		int cantPuntos = 0;
+		Pixel direccion = new Pixel(ancho * aux.getXDouble()/aux.modulo(),ancho * aux.getYDouble()/aux.modulo(),null);
+		Pixel centro = punto.trasladar(direccion);
+		for(int x = centro.getX() - ancho; x < centro.getX() + ancho; x++)
+			for(int y = centro.getY() - ancho; y < centro.getY() + ancho; y++){
+				Pixel p = new Pixel(x,y,null);
+				if (isPertenece(p)){
+					Color color = ImageUtil.getColorPunto(p, getOriginalImage());
+					if (color != null){
+						r += color.getRed();
+						g += color.getGreen();
+						b += color.getBlue();
+						cantPuntos++;
+					}
+				}
+			}
+		if (cantPuntos > 0){
+			r = r / cantPuntos;
+			g = g / cantPuntos;
+			b = b / cantPuntos;
+		}
+		return new Color(r,g,b);
+	}
+
+	public PlanarImage getOriginalImage() {
+		return originalImage;
+	}
+
+	public void setOriginalImage(PlanarImage originalImage) {
+		this.originalImage = originalImage;
 	}
 
 }

@@ -47,7 +47,7 @@ public class ObjetoUtil {
 			TiledImage ti = new TiledImage(0, 0, width, height, 0, 0, sampleModel, colorModel);
 			ti.setData(raster);
 
-			if (o.getName().equals("Maiz221"))
+			if (o.getName().equals("Maiz187"))
 				System.out.println("");
 			Pixel pixelPunta = o.getPixelPunta();
 			Pixel medio = o.getPixelMedio();
@@ -61,7 +61,7 @@ public class ObjetoUtil {
 			}
 			
 			o.getPixelPunta1().setCol(Color.RED);
-			o.getPixelPunta2().setCol(Color.BLUE);
+			o.getPixelPunta2().setCol(Color.RED);
 			pintarPunto(o.getPixelPunta1(), o, ti, medio, width, height);
 			pintarPunto(o.getPixelPunta2(), o, ti, medio, width, height);
 			

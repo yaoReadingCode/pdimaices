@@ -325,7 +325,7 @@ public class DetectarContorno extends AbstractImageCommand {
 
 		while (nextContorno != null && !pixel.equals(nextContorno)) {
 			/**/
-			nextContorno.setCol(getColorPunto(pixel, ti));
+			nextContorno.setCol(getColorPunto(nextContorno, getOriginalImage()));
 			contorno.add(nextContorno);
 			setVisitado(nextContorno);
 			next = getNextContorno(nextContorno, pixelAnt, pixel);
@@ -373,7 +373,7 @@ public class DetectarContorno extends AbstractImageCommand {
 						// }
 					/*}*/
 		}
-
+		
 	}
 
 	private void getPixelsAllInternal(Pixel[] all, int cantidad,
@@ -825,6 +825,7 @@ public class DetectarContorno extends AbstractImageCommand {
 				List<Objeto> objetos = detectarObjetos();
 				SepararObjetos separarObjetos = new SepararObjetos(getImage(),
 						objetos, this);
+				separarObjetos.setOriginalImage(getOriginalImage());
 				separarObjetos.setClasificador(getClasificador());
 				separarObjetos.execute();
 				objetos = separarObjetos.getObjetos();
@@ -888,20 +889,12 @@ public class DetectarContorno extends AbstractImageCommand {
 			// int[getImage().getHeight()][getImage().getWidth()];
 			setWidth(getImage().getWidth());
 			setHeight(getImage().getHeight());
-			TiledImage ti = (TiledImage) getImage();// ImageUtil.createTiledImage(getImage(),
-			// ImageUtil.tileWidth,
-			// ImageUtil.tileHeight);
+			TiledImage ti = (TiledImage) getImage();
 			
 			Color nuevo = new Color(0, 0, 0);
 
-			PlanarImage tiOriginal = getOriginalImage();/*
-														 * ImageUtil.createTiledImage
-														 * (DetectarObjetos.
-														 * getOriginalImage(),
-														 * ImageUtil.tileWidth,
-														 * ImageUtil
-														 * .tileHeight);
-														 */
+			PlanarImage tiOriginal = getOriginalImage();
+			
 			tWidth = ImageUtil.tileWidth;
 			tHeight = ImageUtil.tileHeight;
 			
@@ -953,6 +946,7 @@ public class DetectarContorno extends AbstractImageCommand {
 												pixel, tiOriginal);
 										if (pixelsContorno.size() > 0) {
 											Objeto o = new Objeto();
+											o.setOriginalImage(getOriginalImage());
 											o.setContorno(pixelsContorno);
 											if (o.validarContorno()) {
 												o.setName("Maiz"+ nombreObjeto);

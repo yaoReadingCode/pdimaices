@@ -6,8 +6,6 @@ import java.util.List;
 
 import javax.media.jai.PlanarImage;
 
-import aplicarFiltros.Visualizador;
-
 import objeto.Clase;
 import objeto.Objeto;
 import objeto.Pixel;
@@ -15,11 +13,9 @@ import objeto.Rasgo;
 import objeto.RasgoClase;
 import procesamiento.clasificacion.AspectRatio;
 import procesamiento.clasificacion.Circularidad;
-import procesamiento.clasificacion.Clasificador;
 import procesamiento.clasificacion.EvaluadorClase;
 import procesamiento.clasificacion.EvaluadorRasgo;
-import procesamiento.clasificacion.ObjetoReferencia;
-import sun.security.action.GetLongAction;
+import aplicarFiltros.Visualizador;
 
 public class SepararObjetos extends AbstractImageCommand {
 
@@ -32,6 +28,8 @@ public class SepararObjetos extends AbstractImageCommand {
 	private int ventanaPixeles = 10;
 	//private static int anguloDesvio = 35;
 	private static int anguloDesvio = 30;
+	
+	private PlanarImage originalImage;
 	
 	/**
 	 * Porcentaje de la longitud del contorno de objeto con el cuál se define el tamaño del segmento
@@ -438,8 +436,10 @@ public class SepararObjetos extends AbstractImageCommand {
 								dividirContorno(contorno, puntoConflicto, nextPuntoConflic, contorno1, contorno2);
 								
 								Objeto obj1 = new Objeto();
+								obj1.setOriginalImage(getOriginalImage());
 								obj1.setContorno(contorno1);
 								Objeto obj2 = new Objeto();
+								obj2.setOriginalImage(getOriginalImage());
 								obj2.setContorno(contorno2);
 								
 								Objeto nuevoObjeto = null;
@@ -489,6 +489,7 @@ public class SepararObjetos extends AbstractImageCommand {
 				}
 				if (!huboDivision && contorno.size() > 0){
 					Objeto nuevoObj = new Objeto();
+					nuevoObj.setOriginalImage(getOriginalImage());
 					nuevoObj.setContorno(contorno);
 					if (nuevoObj.validarContorno()){
 						detectarContorno.limpiarVisitados();
@@ -551,17 +552,17 @@ public class SepararObjetos extends AbstractImageCommand {
 			double b = fin.getYDouble() - a * fin.getXDouble();
 			for(int x = inicio.getX(); x <= fin.getX(); x++){
 				int y = (int) Math.round(a * x + b);
-				Pixel p = new Pixel(x, y, Color.WHITE,getImage().getMaxX(),getImage().getMaxY());
+				Pixel p = new Pixel(x, y, Color.BLACK,getImage().getMaxX(),getImage().getMaxY());
 				if (!anterior.isAdyacente(p)){
 					
 					for(int y2 = anterior.getY() + 1; anterior.getY()< p.getY() && y2 < p.getY(); y2++){
-						Pixel pAux = new Pixel(p.getX(), y2, Color.WHITE,getImage().getMaxX(),getImage().getMaxY());
+						Pixel pAux = new Pixel(p.getX(), y2, Color.BLACK,getImage().getMaxX(),getImage().getMaxY());
 						linea.add(pAux);
 						anterior = pAux;
 					}
 
 					for(int y2 = anterior.getY() - 1; p.getY() < anterior.getY() && y2 > p.getY(); y2--){
-						Pixel pAux = new Pixel(p.getX(), y2, Color.WHITE,getImage().getMaxX(),getImage().getMaxY());
+						Pixel pAux = new Pixel(p.getX(), y2, Color.BLACK,getImage().getMaxX(),getImage().getMaxY());
 						linea.add(pAux);
 						anterior = pAux;
 					}
@@ -576,7 +577,7 @@ public class SepararObjetos extends AbstractImageCommand {
 		}
 		else{
 			for(int y = inicio.getY(); y <= fin.getY(); y++){
-				Pixel p = new Pixel(inicio.getX(), y, Color.WHITE,getImage().getMaxX(),getImage().getMaxY());
+				Pixel p = new Pixel(inicio.getX(), y, Color.BLACK,getImage().getMaxX(),getImage().getMaxY());
 				if (!linea.contains(p))
 					linea.add(p);	
 			}
@@ -594,6 +595,16 @@ public class SepararObjetos extends AbstractImageCommand {
 	public void postExecute() {
 		// TODO Auto-generated method stub
 
+	}
+
+
+	public PlanarImage getOriginalImage() {
+		return originalImage;
+	}
+
+
+	public void setOriginalImage(PlanarImage originalImage) {
+		this.originalImage = originalImage;
 	}
 
 }
