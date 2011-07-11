@@ -679,17 +679,17 @@ public class Objeto {
 				Double angulo2 = ObjetoUtil.calcularAngulo(iniVentana, punto2, finVentana);
 				if (angulo1 != null && angulo2 != null){
 					
-					if (punto1.getCol() != null && punto2.getCol() != null){
+					if (Math.abs(angulo1 - angulo2) < 20 && punto1.getCol() != null && punto2.getCol() != null){
 						Color color1 = calcularPromedioColorPunto(punto1, 6);
 						Color color2 = calcularPromedioColorPunto(punto2, 6);
 						float[] hsv1 = RgbHsv.RGBtoHSV(color1.getRed(), color1.getGreen(), color1.getBlue());
 						float[] hsv2 = RgbHsv.RGBtoHSV(color2.getRed(), color2.getGreen(), color2.getBlue());
-						if (hsv1[2] > 200 && hsv1[2] > hsv2[2]){
+						if (hsv1[2] > 80 && hsv1[2] > hsv2[2]){
 							setPixelPunta1(punto1);
 							setPixelPunta2(punto2);
 							return punto1;
 						}
-						if (hsv2[2] > 200 && hsv1[2] < hsv2[2]){
+						if (hsv2[2] > 80 && hsv1[2] < hsv2[2]){
 							setPixelPunta1(punto2);
 							setPixelPunta2(punto1);
 							return punto2;

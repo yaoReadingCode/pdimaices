@@ -47,7 +47,7 @@ public class ObjetoUtil {
 			TiledImage ti = new TiledImage(0, 0, width, height, 0, 0, sampleModel, colorModel);
 			ti.setData(raster);
 
-			if (o.getName().equals("Maiz187"))
+			if (o.getName().equals("Maiz221"))
 				System.out.println("");
 			Pixel pixelPunta = o.getPixelPunta();
 			Pixel medio = o.getPixelMedio();
@@ -60,6 +60,7 @@ public class ObjetoUtil {
 				pintarPunto(p, o, ti, medio, width, height);
 			}
 			
+			/*
 			o.getPixelPunta1().setCol(Color.RED);
 			o.getPixelPunta2().setCol(Color.RED);
 			pintarPunto(o.getPixelPunta1(), o, ti, medio, width, height);
@@ -67,7 +68,8 @@ public class ObjetoUtil {
 			
 			int pixel[] = { Color.RED.getRed(), Color.RED.getGreen(), Color.RED.getBlue() };
 			ImageUtil.writePixel(width / 2, height / 2, pixel, ti);
-
+			*/
+			
 			o.setPathImage("image\\" + o.getName() + ".tif");
 			PlanarImage image = ti;
 			
@@ -193,18 +195,20 @@ public class ObjetoUtil {
 			else
 				return 0.0;
 		}
-		Double pendiente2 = 0.0;
-		if (pendiente1 != 0)
-			pendiente2 = -1 / pendiente1;
+		Pixel pInterseccion = null;
+		if (pendiente1 != 0){
+			Double pendiente2 =  -1 / pendiente1;
 
-		if (pendiente1 == pendiente2)
-			return 0.0;
-
-		CoeficientesRecta coefR1 = new CoeficientesRecta();
-		CoeficientesRecta coefR2 = new CoeficientesRecta();
-		coeficientesRecta(pendiente1, pInicio, coefR1);
-		coeficientesRecta(pendiente2, pFin, coefR2);
-		Pixel pInterseccion = calcularInterseccionRectas(coefR1.a, coefR1.b, coefR1.c, coefR2.a, coefR2.b, coefR2.c);
+			CoeficientesRecta coefR1 = new CoeficientesRecta();
+			CoeficientesRecta coefR2 = new CoeficientesRecta();
+			coeficientesRecta(pendiente1, pInicio, coefR1);
+			coeficientesRecta(pendiente2, pFin, coefR2);
+			pInterseccion = calcularInterseccionRectas(coefR1.a, coefR1.b, coefR1.c, coefR2.a, coefR2.b, coefR2.c);
+		}
+		else{
+			pInterseccion = new Pixel(pFin.getXDouble(),pInicio.getYDouble(),null);
+		}
+		
 		if (pInterseccion != null){
 			pInterseccion.setMaxX(pInicio.getMaxX());
 			pInterseccion.setMaxY(pInicio.getMaxY());
@@ -227,17 +231,11 @@ public class ObjetoUtil {
 	}
 	
 	public static void main(String[] args) {
-		Pixel punto = new Pixel(293,678,null,1000,1000);
-		Pixel pInicio = new Pixel(293,688,null,1000,1000);
-		Pixel pFin = new Pixel(303,674,null,1000,1000);
+		Pixel punto = new Pixel(1655,833,null,1000,1000);
+		Pixel pInicio = new Pixel(1635,833,null,1000,1000);
+		Pixel pFin = new Pixel(1660,853,null,1000,1000);
 		Double angulo1 = ObjetoUtil.calcularAngulo(pInicio, punto, pFin);
 		System.out.println(angulo1);
-
-		punto = new Pixel(346,699,null,1000,1000);
-		pInicio = new Pixel(347,689,null,1000,1000);
-		pFin = new Pixel(340,709,null,1000,1000);
-		Double angulo2 = ObjetoUtil.calcularAngulo(pInicio, punto, pFin);
-		System.out.println(angulo2);
 
 	}
 }
