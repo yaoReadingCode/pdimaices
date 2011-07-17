@@ -25,9 +25,9 @@ public class SepararObjetos extends AbstractImageCommand {
 	 */
 	//private int ventanaPixeles = 20;
 	//private static int anguloDesvio = 70;
-	private int ventanaPixeles = 10;
+	private int ventanaPixeles = 20;
 	//private static int anguloDesvio = 35;
-	private static int anguloDesvio = 30;
+	private static int anguloDesvio = 35;
 	
 	private PlanarImage originalImage;
 	

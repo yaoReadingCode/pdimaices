@@ -47,7 +47,7 @@ public class ObjetoUtil {
 			TiledImage ti = new TiledImage(0, 0, width, height, 0, 0, sampleModel, colorModel);
 			ti.setData(raster);
 
-			if (o.getName().equals("Maiz221"))
+			if (o.getName().equals("Maiz139"))
 				System.out.println("");
 			Pixel pixelPunta = o.getPixelPunta();
 			Pixel medio = o.getPixelMedio();
@@ -80,10 +80,10 @@ public class ObjetoUtil {
 				Double angulo = p.getAnguloPolar();
 				if (angulo != null){
 					float angle= (float) Math.toRadians(angulo + ORIENTACION_ABAJO);
-					float centerX= width / 2;
-					float centerY= height / 2;
-					angle = (float)((angle * 10000000))/10000000.0f; 
-					ParameterBlock pb= new ParameterBlock();
+					angle = (float)((int)(angle * 100000))/100000.0f;
+					float centerX= width / 2f;
+					float centerY= height / 2f;
+ 					ParameterBlock pb= new ParameterBlock();
 					pb.addSource(ti);
 					pb.add(centerX);
 					pb.add(centerY);
@@ -94,18 +94,22 @@ public class ObjetoUtil {
 				}
 			}
 			Rectangle rec = new Rectangle();
-			
-			rec.x = image.getWidth() / 2 - Math.max(width,height) / 2;
-			if (rec.x < 0)
-				rec.x = 0;
-			rec.y = image.getHeight() / 2 - Math.max(width,height) / 2;
-			if (rec.y < 0)
-				rec.y = 0;
-			rec.width = width;
-			rec.height = height;
-			Raster dataRaster = image.getData(rec);
-			ti.setData(dataRaster);
-			JAI.create("filestore", ti, o.getPathImage(), "TIFF");
+			try{
+				rec.x = image.getWidth() / 2 - Math.max(width,height) / 2;
+				if (rec.x < 0)
+					rec.x = 0;
+				rec.y = image.getHeight() / 2 - Math.max(width,height) / 2;
+				if (rec.y < 0)
+					rec.y = 0;
+				rec.width = width;
+				rec.height = height;
+				Raster dataRaster = image.getData(rec);
+				ti.setData(dataRaster);
+				JAI.create("filestore", ti, o.getPathImage(), "TIFF");
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
 
 		}
 
