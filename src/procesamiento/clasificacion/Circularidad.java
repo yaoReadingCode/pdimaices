@@ -18,21 +18,35 @@ public class Circularidad extends EvaluadorRasgo {
 
 	 
 	public RasgoObjeto calcularValor(Objeto objeto) {
-		/*
-		double perimetro = objeto.getLongitudPerimetro();
-		double area = objeto.getArea();
-		
-		if (perimetro != 0){
-			return area / perimetro;
-		}
-		return null;*/
-
-		double perimetro = objeto.getLongitudPerimetro();
-		double radio = objeto.getRadio();
 		Double circularidad = null;
-		if (radio != 0)
-			circularidad = perimetro / (2 * Math.PI* radio);
+		if (objeto.getPuntos().size() > 0){
+			double radio = objeto.getRadio();
+			double area = objeto.getArea();
+			circularidad = null;
+			if (radio != 0)
+				circularidad = area / (Math.PI * Math.pow(radio,2));
+		}
+		else{
+			double perimetro = objeto.getLongitudPerimetro();
+			double radio = objeto.getRadio();
+			circularidad = null;
+			if (radio != 0)
+				circularidad = perimetro / (2 * Math.PI* radio);
+		}
 		
+		
+		//Sumatoria de distancia de los puntos al centro del objeto
+		/*
+		double sumDisCentro = 0;
+		double radio = objeto.getLongitudPerimetro() / (2 * Math.PI);
+		double radio2 = objeto.getRadio();
+		
+		System.out.println("Radio: " + radio);
+		System.out.println("Radio2: " + radio2);
+		for(Pixel p:objeto.getContorno()){
+			sumDisCentro += p.distancia(objeto.getPixelMedio());
+		}
+		double circularidad = sumDisCentro / (objeto.getLongitudPerimetro() * Math.max(radio,radio2));*/
 		return new RasgoObjeto(this.getRasgoClase().getRasgo(),circularidad);
 	}
 
