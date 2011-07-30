@@ -1,7 +1,6 @@
 package objeto;
 
 import java.awt.Color;
-import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -347,41 +346,29 @@ public class Objeto {
 	public void calcularTriangulosContenedores() {
 		if (getContorno() != null) {
 
-			double radioMin = 0;
-			double radioMax = 0;
+			double radio = 0;
 			
-			int paso = 5;
-
 			if (contorno.size() > 1) {
 				List<Triangulo> triangulos = new ArrayList<Triangulo>();
 				Pixel pixeltrianguloAnt = contorno.get(0);
 				Pixel primero = contorno.get(0);
-				Pixel actual = contorno.get(1);
-				//int ladoAnt = actual.getLado(pixeltrianguloAnt);
-				radioMin = getPixelMedio().distancia(primero);
-				radioMax = radioMin;
-				for (int i = 2; i < contorno.size(); i++) {
+				radio = getPixelMedio().distancia(primero);
+				for (int i = 1; i < contorno.size(); i++) {
 					Pixel ant = contorno.get(i - 1);
-					actual = contorno.get(i);
-					//int lado = actual.getLado(ant);
 					double dist = getPixelMedio().distancia(contorno.get(i - 1));
 
-					if (dist > radioMax)
-						radioMax = dist;
-					if (dist < radioMin)
-						radioMin = dist;
+					if (dist > radio)
+						radio = dist;
 					Triangulo t = new Triangulo(getPixelMedio(), pixeltrianguloAnt, ant);
-					if (t.validarTriangulo() /*(lado != ladoAnt*/) {
+					if (t.validarTriangulo()) {
 						triangulos.add(t);
-						//ladoAnt = lado;
 						pixeltrianguloAnt = ant;
 					}
 				}
 				Triangulo t = new Triangulo(getPixelMedio(), pixeltrianguloAnt,	primero);
 				triangulos.add(t);
 				setTriangulosContenedores(triangulos);
-				setRadio((radioMax + radioMin) / 2);
-				//setRadio(radioMin);
+				setRadio(radio);
 			}
 		}
 	}
@@ -462,6 +449,33 @@ public class Objeto {
 		rotarPixeles(getPuntos(), angulo);
 		calcularMedioYBoundingBox();
 	}	
+
+	/**
+	 * Traslada el objeto
+	 * @param angulo
+	 */
+	public void trasladar(Pixel punto) {
+		trasladar(getContorno(), punto);
+		trasladar(getPuntos(), punto);
+		//trasladarMedio(punto);
+		calcularMedioYBoundingBox();
+	}	
+
+	private void trasladarMedio(Pixel punto) {
+		getPixelMedio().trasladar(punto);
+		if (getPixelPunta1() != null)
+			getPixelPunta1().trasladar(punto);
+		if (getPixelPunta2() != null)
+			getPixelPunta2().trasladar(punto);
+		BoundingBox bb = getBoundingBox();
+		bb.trasladar(punto);		
+	}
+
+	private void trasladar(List<Pixel> lista, Pixel punto) {
+		for(Pixel p:lista)
+			p.trasladar(punto);
+		
+	}
 
 	public Pixel getPixelMedio() {
 		return pixelMedio;

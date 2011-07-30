@@ -38,4 +38,17 @@ public class BoundingBox {
 		this.maxY = maxY;
 	}
 
+	public double width(){
+		return Math.abs(this.maxX - this.minX);
+	}
+	public double height(){
+		return Math.abs(this.maxY - this.minY);
+	}
+	public void trasladar(Pixel punto) {
+		this.maxX += punto.getX();
+		this.maxY += punto.getY();
+		this.minX += punto.getX();
+		this.minY += punto.getY();
+	}
+
 }

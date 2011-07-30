@@ -19,6 +19,7 @@ import javax.media.jai.TiledImage;
 
 import procesamiento.ImageUtil;
 import procesamiento.clasificacion.CoeficientesRecta;
+import sun.net.idn.Punycode;
 
 public class ObjetoUtil {
 	private static final int ORIENTACION_ABAJO = 90;
@@ -37,7 +38,7 @@ public class ObjetoUtil {
 	public static void save(Objeto o) {
 		if (o != null) {
 			int width = 206;
-			int height = 174;
+			int height = 206;
 			byte[] data = new byte[width * height* 3]; // Image data array.
 			DataBufferByte dbuffer = new DataBufferByte(data, width * height * 3);
 			SampleModel sampleModel = RasterFactory.createPixelInterleavedSampleModel(DataBuffer.TYPE_BYTE, width,
@@ -71,8 +72,8 @@ public class ObjetoUtil {
 			*/
 			
 			o.setPathImage("image\\" + o.getName() + ".tif");
+
 			PlanarImage image = ti;
-			
 			if (pixelPunta != null){
 				Pixel p = pixelPunta.getCoordenadasCartesianas();
 				Pixel m = medio.getCoordenadasCartesianas();
@@ -91,26 +92,31 @@ public class ObjetoUtil {
 					pb.add(new InterpolationBilinear());
 					RenderingHints hints = JAI.getDefaultInstance().getRenderingHints();
 					image =JAI.create("rotate",pb,hints);
+					/*
+					Rectangle rec = new Rectangle();
+					rec.x = (int)centerX - width / 2;
+					//if (rec.x < 0) rec.x = 0;
+					rec.y = (int)centerY - height / 2;
+					//if (rec.y < 0) rec.y = 0;
+					rec.width = width;
+					rec.height = height;*/
+					
+					ParameterBlock pbCrop= new ParameterBlock();
+					pbCrop.addSource(image);
+					pbCrop.add(new Float(0));
+					pbCrop.add(new Float(0));
+					pbCrop.add(new Float(width));
+					pbCrop.add(new Float(height));
+					image =JAI.create("crop",pbCrop,hints);
+					
+					/*
+					Raster dataRaster = image.getData(rec);
+					ti.setData(dataRaster);*/
+					JAI.create("filestore", image, o.getPathImage(), "TIFF");
+					return;
 				}
 			}
-			Rectangle rec = new Rectangle();
-			try{
-				rec.x = image.getWidth() / 2 - Math.max(width,height) / 2;
-				if (rec.x < 0)
-					rec.x = 0;
-				rec.y = image.getHeight() / 2 - Math.max(width,height) / 2;
-				if (rec.y < 0)
-					rec.y = 0;
-				rec.width = width;
-				rec.height = height;
-				Raster dataRaster = image.getData(rec);
-				ti.setData(dataRaster);
-				JAI.create("filestore", ti, o.getPathImage(), "TIFF");
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-			}
-
+			JAI.create("filestore", ti, o.getPathImage(), "TIFF");
 		}
 
 	}
@@ -193,14 +199,13 @@ public class ObjetoUtil {
 		if (pMedio.getXDouble() - pInicio.getXDouble() != 0)
 			pendiente1 = (pMedio.getYDouble() - pInicio.getYDouble()) / (pMedio.getXDouble() - pInicio.getXDouble());
 		else{
-			if (pFin.getXDouble() - pMedio.getXDouble() != 0){
-				pendiente1 = (pFin.getYDouble() - pMedio.getYDouble()) / (pFin.getXDouble() - pMedio.getXDouble());
-			}
-			else
-				return 0.0;
+			pendiente1 = null;
 		}
 		Pixel pInterseccion = null;
-		if (pendiente1 != 0){
+		if (pendiente1 == null){
+			pInterseccion = new Pixel(pInicio.getXDouble(),pFin.getYDouble(),null);
+		}
+		else if (pendiente1 != 0){
 			Double pendiente2 =  -1 / pendiente1;
 
 			CoeficientesRecta coefR1 = new CoeficientesRecta();
@@ -222,24 +227,37 @@ public class ObjetoUtil {
 				if (ladoA != 0)
 					angulo = Math.toDegrees(Math.asin(ladoB / ladoA));
 
-				double ladoPuntoMedio = Pixel.lado2(pInicio, pMedio, pFin);
 				double ladoPuntoInterseccion = Pixel.lado2(pMedio, pInterseccion, pFin);
-				if (ladoPuntoInterseccion > 0 && angulo != null && ladoPuntoMedio < 0)
+				if (ladoPuntoInterseccion >= 0.0 && angulo != null)
 					angulo = 180 - angulo;
 
 			}else
 				angulo = 90.0;
 		
 		}
+		// lado del punto pFin Con respecto a la recta pinicio - pmedio
+		double ladoPfin =  Pixel.lado2(pInicio, pFin, pMedio);
+		if (ladoPfin < 0){
+			angulo = 180 - angulo;
+		}
 		return angulo;
 	}
 	
 	public static void main(String[] args) {
+		/*
 		Pixel punto = new Pixel(1655,833,null,1000,1000);
 		Pixel pInicio = new Pixel(1635,833,null,1000,1000);
 		Pixel pFin = new Pixel(1660,853,null,1000,1000);
 		Double angulo1 = ObjetoUtil.calcularAngulo(pInicio, punto, pFin);
 		System.out.println(angulo1);
+		*/
+		Pixel p = new Pixel(50,37,null);
+		p.rotar(318.50353164478446);
+		System.out.println(p);
+		
+		p = new Pixel(51,37,null);
+		p.rotar(318.50353164478446);
+		System.out.println(p);
 
 	}
 }

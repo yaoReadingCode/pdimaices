@@ -382,8 +382,8 @@ public class Pixel implements Cloneable {
 	}
 
 	public void restar(Pixel pixel) {
-		double PX = xDouble - pixel.xDouble;
-		double PY = yDouble - pixel.yDouble;
+		double PX = x - pixel.x;
+		double PY = y - pixel.y;
 		xDouble = PX;
 		yDouble = PY;
 		x = (int) xDouble;
@@ -391,8 +391,8 @@ public class Pixel implements Cloneable {
 	};
 
 	public void sumar(Pixel pixel) {
-		double PX = xDouble + pixel.xDouble;
-		double PY = yDouble + pixel.yDouble;
+		double PX = x + pixel.x;
+		double PY = y + pixel.y;
 		xDouble = PX;
 		yDouble = PY;
 		x = (int) xDouble;
@@ -401,13 +401,13 @@ public class Pixel implements Cloneable {
 
 	public void rotar(double angulo) {
 		double coseno = Math.cos(Math.toRadians(angulo));
-		double seno = Math.sin(angulo);
-		double PX = xDouble * coseno + yDouble * seno;
-		double PY = (-1) * xDouble * seno + yDouble * coseno;
+		double seno = Math.sin(Math.toRadians(angulo));
+		double PX = x * coseno - y * seno;
+		double PY = x * seno + y * coseno;
 		xDouble = PX;
 		yDouble = PY;
-		x = (int) xDouble;
-		y = (int) yDouble;
+		x = (int) Math.rint(xDouble);
+		y = (int) Math.rint(yDouble);
 	};
 
 	/**

@@ -81,6 +81,10 @@ public class RasgoClase {
 		// TODO Auto-generated constructor stub
 	}
 
+	public RasgoClase(Clase clase) {
+		this.clase = clase;
+	}
+
 	public Long getId() {
 		return id;
 	}
