@@ -8,6 +8,7 @@ import javax.media.jai.PlanarImage;
 
 import objeto.Clase;
 import objeto.Objeto;
+import objeto.ObjetoUtil;
 import objeto.Pixel;
 import objeto.Rasgo;
 import objeto.RasgoClase;
@@ -15,6 +16,7 @@ import procesamiento.clasificacion.AspectRatio;
 import procesamiento.clasificacion.Circularidad;
 import procesamiento.clasificacion.EvaluadorClase;
 import procesamiento.clasificacion.EvaluadorRasgo;
+import procesamiento.clasificacion.SumaAngulos;
 import aplicarFiltros.Visualizador;
 
 public class SepararObjetos extends AbstractImageCommand {
@@ -23,19 +25,13 @@ public class SepararObjetos extends AbstractImageCommand {
 	 * Cantidad de pixeles del contorno a utilizar para ver si un pixel se desvía 
 	 * demasiado del contorno. Lo que indicaría que pertenece a otro objeto
 	 */
-	//private int ventanaPixeles = 20;
-	//private static int anguloDesvio = 70;
 	private int ventanaPixeles = 20;
-	//private static int anguloDesvio = 35;
+	//private static int anguloDesvio = 70;
+	//private int ventanaPixeles = 5;
+	//private static int anguloDesvio = 45;
 	private static int anguloDesvio = 35;
 	
 	private PlanarImage originalImage;
-	
-	/**
-	 * Porcentaje de la longitud del contorno de objeto con el cuál se define el tamaño del segmento
-	 */
-	private int porcTamanioSegmento = 1;
-
 	
 	List<Objeto> objetos = null;
 	
@@ -76,6 +72,7 @@ public class SepararObjetos extends AbstractImageCommand {
 	
 
 	public PlanarImage execute() {
+		/*
 		if (getObjetos() != null){
 			RasgoClase rcCircularidad = new RasgoClase();
 			rcCircularidad.setRasgo(new Rasgo("Circularidad"));
@@ -84,8 +81,8 @@ public class SepararObjetos extends AbstractImageCommand {
 			rcAspectRadio.setRasgo(new Rasgo("AspectRadio"));
 			
 		
-			Circularidad circularidad = new Circularidad(rcCircularidad, 1.0, 0.2);
-			AspectRatio aspectRadio = new AspectRatio(rcAspectRadio, 1.0, 0.4);
+			Circularidad circularidad = new Circularidad(rcCircularidad, 1.0, 0.4);
+			AspectRatio aspectRadio = new AspectRatio(rcAspectRadio, 1.0, 0.3);
 			//Area area = new Area("Area", 3000.0,2000.0);
 
 			List<EvaluadorRasgo> rasgos = new ArrayList<EvaluadorRasgo>();
@@ -94,14 +91,26 @@ public class SepararObjetos extends AbstractImageCommand {
 			
 			Clase claseObjetoCircular = new Clase();
 			claseObjetoCircular.setNombre("Objeto circular");
-			//rasgos.add(area);
+			
+			List<EvaluadorRasgo> rasgosEvaluador = new ArrayList<EvaluadorRasgo>();
+			
+			SumaAngulos sumaAngulos = new SumaAngulos(new RasgoClase(new Clase("SumaAngulos")),180.0,180.0);
+			sumaAngulos.setObjetoReferencia(getClasificador().getObjetoReferencia());
+			rasgosEvaluador.add(sumaAngulos);
+
+			Clase claseEvaluador = new Clase();
+			claseEvaluador.setNombre("Objeto circular");
+
 			EvaluadorClase objetoCircular = new EvaluadorClase(claseObjetoCircular, rasgos);
+			EvaluadorClase evaluador = new EvaluadorClase(claseEvaluador, rasgosEvaluador);
+
 			List<Objeto> nuevos = new ArrayList<Objeto>();
 			int cantObjetos = getObjetos().size();
 			for (Objeto obj : getObjetos()) {
 
 				if (!objetoCircular.pertenece(obj,false)){
-					
+					if (obj.getName().endsWith("249"))
+						System.out.println("");
 					//System.out.println("Separar objeto: " + obj.getPixelMedio());
 					List<Objeto> nuevosObjetos = separarObjetos(obj, objetoCircular, 0, cantObjetos);
 					nuevos.addAll(nuevosObjetos);
@@ -115,7 +124,7 @@ public class SepararObjetos extends AbstractImageCommand {
 			}
 
 			setObjetos(nuevos);
-		}
+		}*/
 		return null;
 	}
 	
@@ -136,6 +145,9 @@ public class SepararObjetos extends AbstractImageCommand {
 			int aux = indexP1;
 			indexP1 = indexP2;
 			indexP2 = aux;
+			Pixel auxP = puntoConflicto1.clonar();
+			puntoConflicto1 = puntoConflicto2;
+			puntoConflicto2 = auxP;
 		}
 		
 		contorno1.clear();
@@ -149,27 +161,14 @@ public class SepararObjetos extends AbstractImageCommand {
 			//construimos el contorno 1
 			contorno1.addAll(list1);
 
-			List<Pixel> lineaPixeles = crearLinea(puntoConflicto1, puntoConflicto2);
-			//Linea de pixeles ordenada
-			List<Pixel> lineaPixelesOrd = new ArrayList<Pixel>();
-					
-			lineaPixeles.remove(puntoConflicto1);
-			Pixel proximo = puntoConflicto1;
-			while(lineaPixeles.size() > 0){
-				 proximo = proximo.getPixelMasCercano(lineaPixeles);
-				 if (!proximo.equals(puntoConflicto2))
-					 lineaPixelesOrd.add(proximo);
-				 lineaPixeles.remove(proximo);
-				 
-			}
-			
-			contorno1.addAll(lineaPixelesOrd);
+			List<Pixel> lineaPixeles = ObjetoUtil.crearLinea(puntoConflicto1, puntoConflicto2, getImage().getWidth(), getImage().getHeight());
+			contorno1.addAll(lineaPixeles);
 			contorno1.addAll(list3);
 			
 			//contruimos el contorno 2
 			contorno2.addAll(list2);
-			for(int j = lineaPixelesOrd.size() -1; j >= 0 ; j--)
-				contorno2.add(lineaPixelesOrd.get(j));
+			for(int j = lineaPixeles.size() -1; j >= 0 ; j--)
+				contorno2.add(lineaPixeles.get(j));
 
 		}
 	}
@@ -284,101 +283,61 @@ public class SepararObjetos extends AbstractImageCommand {
 	 * @return
 	 */
 	private List<Pixel> obtenerPuntosDeConflicto2(List<Pixel> contorno){
-		List<Integer> posPuntosConflicto = new ArrayList<Integer>();
 		List<Pixel> puntosConflicto = new ArrayList<Pixel>();
-		int tamanioSegmento = getVentanaPixeles();
-		int posIniVentana = 0;
-		int posFinVentana = tamanioSegmento;
-		int posFinVentana2 = tamanioSegmento * 2;
-		Pixel iniVentana = contorno.get(posIniVentana);
-		Pixel finVentana = contorno.get(posFinVentana);
-		Pixel finVentana2 = null;		
-		//Para la ecuacion de la recta
-		
+		int posIni = 0;
+		int posFin = (2 * getVentanaPixeles() - 1) % contorno.size();
+		Pixel pInicio = contorno.get(posIni);
+		Pixel pFin = contorno.get(posFin);
+		int inicio = getVentanaPixeles() - 1;
 		boolean parar = false;
-		int i = posFinVentana;
-		Integer posPuntoConflicto = i;
-		int inicio = i;
-		int cantPixelsIzquierda = 0;
-		while (!parar && contorno.size() > tamanioSegmento){
+		int i = inicio;
+		Pixel puntoConflicto = null;
+		Double anguloMejor = null;
+		while (!parar && contorno.size() > getVentanaPixeles()){
 			
-			Pixel p = contorno.get(i % contorno.size());
-			
-			if (p.getX() == 47 && p.getY() == 79)
-				System.out.println("");
-			/*
-			if (posPuntoConflicto == null){
-				finVentana2 = contorno.get((i + tamanioSegmento) % contorno.size());	
+			Pixel pMedio = contorno.get(i % contorno.size());
+			double lado = Pixel.lado(pInicio, pMedio, pFin);
+			boolean agregoPunto = false;
+			if (lado < 0){
+				if(pMedio.getX() == 72 && pMedio.getY() == 89)
+					System.out.println("");
+				double angulo = ObjetoUtil.calcularAngulo(pInicio, pMedio, pFin);
+				if (angulo > anguloDesvio && (puntoConflicto == null || angulo > anguloMejor)){
+					puntoConflicto = pMedio;
+					anguloMejor = angulo;
+					
+				}
+				else{
+					if (puntoConflicto != null){
+						puntosConflicto.add(puntoConflicto);
+						agregoPunto = true;
+					}
+				}
 			}
-			else*/
-			posFinVentana2 = (posFinVentana + tamanioSegmento) % contorno.size();
-			finVentana2 = contorno.get(posFinVentana2);
-				
-			double pendiente1 = 0;
-			if (finVentana.getXDouble() - iniVentana.getXDouble() != 0)
-				pendiente1 = (finVentana.getYDouble() - iniVentana.getYDouble()) / (finVentana.getXDouble() - iniVentana.getXDouble());
-			else 
-				pendiente1 = 1;
-			
-			double pendiente2 = 0;
-			if (finVentana2.getXDouble() - finVentana.getXDouble() != 0)
-				pendiente2 = (finVentana2.getYDouble() - finVentana.getYDouble()) / (finVentana2.getXDouble() - finVentana.getXDouble());
-			else
-				pendiente2 = 1;
-			
-			double tgAngulo = (pendiente2 - pendiente1) / (1 + pendiente2 * pendiente1);
-			double angulo = Math.abs(Math.toDegrees(Math.atan(tgAngulo)));
-			double lado = Pixel.lado(iniVentana, finVentana, finVentana2);
-			
-			if (lado < 0 && Math.abs(angulo) > anguloDesvio ){
-				cantPixelsIzquierda++;
-				//posPuntosConflicto.add(i % contorno.size());
+			if (agregoPunto){
+				posIni = contorno.indexOf(puntoConflicto);
+				i = (posIni + getVentanaPixeles()) % contorno.size();
+				posFin = (i + getVentanaPixeles()) % contorno.size();
+				pInicio = contorno.get(posIni);
+				pFin = contorno.get(posFin);
+				puntoConflicto = null;
+				anguloMejor = null;						
 			}
 			else{
-				cantPixelsIzquierda = 0;
-				posPuntoConflicto = null;
+				posIni = (posIni + 1) % contorno.size();
+				i = (i + 1) % contorno.size();
+				posFin = (posFin + 1) % contorno.size();
+				pInicio = contorno.get(posIni);
+				pFin = contorno.get(posFin);
 			}
 
-			if (cantPixelsIzquierda == 1){
-				posPuntoConflicto = i;
-				
-			}
-			
-			if (cantPixelsIzquierda > 0){
-				posPuntosConflicto.add(posPuntoConflicto % contorno.size());
-				i = posPuntoConflicto + tamanioSegmento;
-				posIniVentana = (Math.abs(i - tamanioSegmento) + 1) % contorno.size();
-				posFinVentana = i % contorno.size();
-				cantPixelsIzquierda = 0;
-				posPuntoConflicto = null;
-			}
-			else{
-				posIniVentana = (posIniVentana + 1) % contorno.size();
-				posFinVentana = (posFinVentana + 1) % contorno.size();
-			}
-			/*
-			posIniVentana = (posIniVentana + 1) % contorno.size();
-			posFinVentana = (posFinVentana + 1) % contorno.size();
-			*/
-			iniVentana = contorno.get(posIniVentana);
-			finVentana = contorno.get(posFinVentana);
-			
-			i++;
-			if (i > contorno.size())
+			if (i  % contorno.size() <= getVentanaPixeles() - 1)
 				parar = true;
-			//i = (i + 1) % contorno.size();
-		}
-
-		if (posPuntosConflicto.size() > 1){
-			for(i = 0; i < posPuntosConflicto.size(); i++)
-				puntosConflicto.add(contorno.get(posPuntosConflicto.get(i)));
-
 		}
 		return puntosConflicto;
 	}
 
-	/**
-	 * 
+	 /* 
 	 * @param obj
 	 * @param objetoCircular
 	 * @return
@@ -394,7 +353,7 @@ public class SepararObjetos extends AbstractImageCommand {
 			tamanioSegmento = 10;
 		setVentanaPixeles(tamanioSegmento);
 		*/
-		if (contorno.size() > getVentanaPixeles() && nivel < 100){
+		if (contorno.size() > getVentanaPixeles() && nivel < 50){
 			
 			boolean huboDivision = false;
 			List<Pixel> puntosConflicto = obtenerPuntosDeConflicto(contorno);
@@ -418,69 +377,66 @@ public class SepararObjetos extends AbstractImageCommand {
 							parar = true;
 						else{
 							puntosConflicAux.remove(nextPuntoConflic);
-							boolean divisionValida = true;
-							List<Pixel> lineaDivision = crearLinea(puntoConflicto, nextPuntoConflic);
-							lineaDivision.remove(puntoConflicto);
-							lineaDivision.remove(nextPuntoConflic);
-							for(Pixel pContorno: contorno){
-								if(lineaDivision.contains(pContorno) && !nextPuntoConflic.isAdyacente(pContorno)){
-									divisionValida = false;
-									break;
-								}
+							List<Pixel> contorno1 = new ArrayList<Pixel>();
+							List<Pixel> contorno2 = new ArrayList<Pixel>();
+							
+							dividirContorno(contorno, puntoConflicto, nextPuntoConflic, contorno1, contorno2);
+							
+							Objeto obj1 = new Objeto();
+							obj1.setOriginalImage(getOriginalImage());
+							obj1.setContorno(contorno1);
+							Objeto obj2 = new Objeto();
+							obj2.setOriginalImage(getOriginalImage());
+							obj2.setContorno(contorno2);
+							
+							Objeto nuevoObjeto = null;
+							Objeto objResto = null;
+							
+							if (obj2.validarContorno() && objetoCircular.pertenece(obj2, false)){
+								nuevoObjeto = obj2;
+								objResto = obj1;
 							}
 							
-							if (divisionValida){
-								List<Pixel> contorno1 = new ArrayList<Pixel>();
-								List<Pixel> contorno2 = new ArrayList<Pixel>();
-								
-								dividirContorno(contorno, puntoConflicto, nextPuntoConflic, contorno1, contorno2);
-								
-								Objeto obj1 = new Objeto();
-								obj1.setOriginalImage(getOriginalImage());
-								obj1.setContorno(contorno1);
-								Objeto obj2 = new Objeto();
-								obj2.setOriginalImage(getOriginalImage());
-								obj2.setContorno(contorno2);
-								
-								Objeto nuevoObjeto = null;
-								Objeto objResto = null;
-								
-								if (obj2.validarContorno() && objetoCircular.pertenece(obj2, false)){
-									nuevoObjeto = obj2;
-									objResto = obj1;
-								}
-								
-								else if (obj1.validarContorno() && objetoCircular.pertenece(obj1, false)){
+							else if (obj1.validarContorno() && objetoCircular.pertenece(obj1, false)){
+								nuevoObjeto = obj1;
+								objResto = obj2;
+							}
+							else{
+								if (obj1.getContorno().size() > obj2.getContorno().size()){
 									nuevoObjeto = obj1;
 									objResto = obj2;
 								}
-								
-								if (nuevoObjeto != null && nuevoObjeto.getContorno().size() > 100){
-									
-									detectarContorno.limpiarVisitados();
-									detectarContorno.completarObjeto(nuevoObjeto);
-									nuevoObjeto.calcularMRC();
-									objetos.add(nuevoObjeto);
-									nuevoObjeto.setName(obj.getName());
-									parar = true;
-									
-									String info = "Objeto catalogado: "
-										+ nuevoObjeto.getName()
-										+ " - Puntos detectados: "
-										+ nuevoObjeto.getPuntos().size();
+								else{
+									nuevoObjeto = obj2;
+									objResto = obj1;
+								}
+							}
 							
-									Visualizador.addLogInfo(info);
-									
-									
-									contorno = objResto.getContorno();
-									objResto.setName("Maiz" + (cantObjetos + 1));
-									List<Objeto> nuevosObjetos = separarObjetos(objResto, objetoCircular, nivel + 1, cantObjetos + 1);
-									objetos.addAll(nuevosObjetos);
-									
-									huboDivision = true;
-									
-									puntosConflictoVisitados.add(nextPuntoConflic);
-								}								
+							if (nuevoObjeto != null && nuevoObjeto.getContorno().size() > 100){
+								
+								detectarContorno.limpiarVisitados();
+								detectarContorno.completarObjeto(nuevoObjeto);
+								nuevoObjeto.calcularMRC();
+								objetos.add(nuevoObjeto);
+								nuevoObjeto.setName(obj.getName());
+								parar = true;
+								
+								String info = "Objeto catalogado: "
+									+ nuevoObjeto.getName()
+									+ " - Puntos detectados: "
+									+ nuevoObjeto.getPuntos().size();
+						
+								Visualizador.addLogInfo(info);
+								
+								
+								contorno = objResto.getContorno();
+								objResto.setName("Maiz" + (cantObjetos + 1));
+								List<Objeto> nuevosObjetos = separarObjetos(objResto, objetoCircular, nivel + 1, cantObjetos + 1);
+								objetos.addAll(nuevosObjetos);
+								
+								huboDivision = true;
+								
+								puntosConflictoVisitados.add(nextPuntoConflic);
 							}
 						}
 					}
@@ -524,68 +480,195 @@ public class SepararObjetos extends AbstractImageCommand {
 		list.add(obj);
 		return list;
 	}
-
 	/**
-	 * Crea una linea de pixeles que unen dos puntos
-	 * @param p1
-	 * @param p2
+	 * 
+	 * @param obj
+	 * @param objetoCircular
 	 * @return
 	 */
-	private List<Pixel> crearLinea(Pixel p1, Pixel p2){
-		List<Pixel> linea = new ArrayList<Pixel>();
-		Pixel inicio = p1;
-		Pixel fin = p2;
-		if (p2.getX() < p1.getX() && p1.getX() != p2.getX()){
-			inicio = p2;
-			fin = p1;
-		}
-		else{
-			if (p2.getX() == p1.getX() && p2.getY() < p1.getY()){
-				inicio = p2;
-				fin = p1;
-			}
-		}
-		//linea.add(inicio);
-		Pixel anterior = inicio;
-		if (fin.getX() != inicio.getX()){
-			double a = (fin.getYDouble() - inicio.getYDouble()) / (fin.getXDouble() - inicio.getXDouble());
-			double b = fin.getYDouble() - a * fin.getXDouble();
-			for(int x = inicio.getX(); x <= fin.getX(); x++){
-				int y = (int) Math.round(a * x + b);
-				Pixel p = new Pixel(x, y, Color.BLACK,getImage().getMaxX(),getImage().getMaxY());
-				if (!anterior.isAdyacente(p)){
-					
-					for(int y2 = anterior.getY() + 1; anterior.getY()< p.getY() && y2 < p.getY(); y2++){
-						Pixel pAux = new Pixel(p.getX(), y2, Color.BLACK,getImage().getMaxX(),getImage().getMaxY());
-						linea.add(pAux);
-						anterior = pAux;
-					}
+	private List<Objeto> separarObjetos2(Objeto obj, EvaluadorClase objetoCircular, int nivel, int cantObjetos) {	
+	
+		List<Pixel> contorno = obj.getContorno();
 
-					for(int y2 = anterior.getY() - 1; p.getY() < anterior.getY() && y2 > p.getY(); y2--){
-						Pixel pAux = new Pixel(p.getX(), y2, Color.BLACK,getImage().getMaxX(),getImage().getMaxY());
-						linea.add(pAux);
-						anterior = pAux;
-					}
-					
-				}
-				if (!linea.contains(p)){
-					linea.add(p);
-					anterior = p;
-				}
-					
-			}
-		}
-		else{
-			for(int y = inicio.getY(); y <= fin.getY(); y++){
-				Pixel p = new Pixel(inicio.getX(), y, Color.BLACK,getImage().getMaxX(),getImage().getMaxY());
-				if (!linea.contains(p))
-					linea.add(p);	
-			}
+		if (contorno.size() > getVentanaPixeles() && nivel < 20){
 			
+			boolean huboDivision = false;
+			List<Pixel> puntosConflicto = obtenerPuntosDeConflicto2(contorno);
+			if (puntosConflicto.size() > 1){
+		
+				List<Objeto> objetos = new ArrayList<Objeto>();
+				Objeto objetoActual = obj;
+				
+				contorno = objetoActual.getContorno();
+				List<Pixel> contorno1 = new ArrayList<Pixel>();
+				List<Pixel> contorno2 = new ArrayList<Pixel>();
+				separarContorno(contorno, puntosConflicto,contorno1, contorno2);
+				
+				Objeto obj1 = new Objeto();
+				obj1.setOriginalImage(getOriginalImage());
+				obj1.setContorno(contorno1);
+				Objeto obj2 = new Objeto();
+				obj2.setOriginalImage(getOriginalImage());
+				obj2.setContorno(contorno2);
+				
+				Objeto nuevoObjeto = null;
+				Objeto objResto = null;
+				
+				if (obj2.validarContorno() && objetoCircular.pertenece(obj2, false)){
+					nuevoObjeto = obj2;
+					objResto = obj1;
+				}
+				
+				else if (obj1.validarContorno() && objetoCircular.pertenece(obj1, false)){
+					nuevoObjeto = obj1;
+					objResto = obj2;
+				}
+				
+				if (nuevoObjeto != null && nuevoObjeto.getContorno().size() > 100){
+					
+					detectarContorno.limpiarVisitados();
+					detectarContorno.completarObjeto(nuevoObjeto);
+					nuevoObjeto.calcularMRC();
+					objetos.add(nuevoObjeto);
+					nuevoObjeto.setName(obj.getName());
+					
+					String info = "Objeto catalogado: "
+						+ nuevoObjeto.getName()
+						+ " - Puntos detectados: "
+						+ nuevoObjeto.getPuntos().size();
+			
+					Visualizador.addLogInfo(info);
+					
+					objResto.calcularMRC();
+					contorno = objResto.getContorno();
+					objResto.setName("Maiz" + (cantObjetos + 1));
+					List<Objeto> nuevosObjetos = separarObjetos2(objResto, objetoCircular, nivel + 1, cantObjetos + 1);
+					objetos.addAll(nuevosObjetos);
+					
+					huboDivision = true;
+					
+				}								
+
+				if (!huboDivision && contorno.size() > 0){
+					Objeto nuevoObj = new Objeto();
+					nuevoObj.setOriginalImage(getOriginalImage());
+					nuevoObj.setContorno(contorno);
+					if (nuevoObj.validarContorno()){
+						detectarContorno.limpiarVisitados();
+						detectarContorno.completarObjeto(nuevoObj);
+						nuevoObj.calcularMRC();
+						objetos.add(nuevoObj);
+						nuevoObj.setName(obj.getName());
+						
+						String info = "Objeto catalogado: "
+							+ nuevoObj.getName()
+							+ " - Puntos detectados: "
+							+ nuevoObj.getPuntos().size();
+				
+						Visualizador.addLogInfo(info);
+						
+					}
+				}
+				return objetos;
+			}
 		}
-		//linea.add(fin);
-		return linea;
+		
+		if (obj.validarContorno()){
+			detectarContorno.limpiarVisitados();
+			detectarContorno.completarObjeto(obj);
+		}
+		List<Objeto> list = new ArrayList<Objeto>();
+		if (obj.getPuntos() == null || obj.getPuntos().size() == 0){
+			detectarContorno.limpiarVisitados();
+			detectarContorno.completarObjeto(obj);
+			obj.calcularMRC();
+		}
+		list.add(obj);
+		return list;
 	}
+
+	private void separarContorno(List<Pixel> contorno, List<Pixel> puntosConflicto, List<Pixel> objeto1, List<Pixel> objeto2) {
+		Double mejor = null;
+		List<Pixel> contorno1Mejor = new ArrayList<Pixel>();
+		List<Pixel> contorno2Mejor = new ArrayList<Pixel>();
+		for(Pixel puntoConflicto:puntosConflicto){
+			int posPuntoConflicto = contorno.indexOf(puntoConflicto);
+			int posPuntoAnterior = posPuntoConflicto - getVentanaPixeles();
+			if (posPuntoAnterior < 0)
+				posPuntoAnterior = (contorno.size() - posPuntoAnterior) % contorno.size();
+			Pixel puntoAnterior = contorno.get(posPuntoAnterior);
+			Pixel nextPuntoConflic = seleccionarPuntoConflicto(puntoAnterior, puntoConflicto,puntosConflicto);
+			if (nextPuntoConflic == null)
+				break;
+			else{
+				List<Pixel> contorno1 = new ArrayList<Pixel>();
+				List<Pixel> contorno2 = new ArrayList<Pixel>();
+				if (puntoConflicto.getX()== 74 && puntoConflicto.getY() == 91)
+					System.out.println("");
+				dividirContorno(contorno, puntoConflicto, nextPuntoConflic, contorno1, contorno2);
+				
+				Objeto obj1 = new Objeto();
+				obj1.setOriginalImage(getOriginalImage());
+				obj1.setContorno(contorno1);
+				//obj1.calcularMRC();
+				Objeto obj2 = new Objeto();
+				obj2.setOriginalImage(getOriginalImage());
+				obj2.setContorno(contorno2);
+				//obj2.calcularMRC();
+				
+				double actual = puntoConflicto.distancia(nextPuntoConflic);
+				if (mejor == null || actual < mejor){
+					contorno1Mejor = contorno1;
+					contorno2Mejor = contorno2;
+					mejor = actual;
+				}
+			}
+		}
+		objeto1.clear();
+		objeto2.clear();
+		objeto1.addAll(contorno1Mejor);
+		objeto2.addAll(contorno2Mejor);
+	}
+
+
+	/**
+	 * Selecciona el punto que este a la derecha de la recta formada por los puntos puntoAnterior y puntoConflicto y cuyo
+	 * angulo con la recta sea el menor posible  
+	 * @param puntoAnterior
+	 * @param puntoConflicto
+	 * @param puntosConflicAux
+	 * @return
+	 */
+	private Pixel seleccionarPuntoConflicto(Pixel puntoAnterior, Pixel puntoConflicto, List<Pixel> puntosConflicAux) {
+		if (puntosConflicAux != null && puntosConflicAux.size() > 0){
+			double anguloMenor = Double.MAX_VALUE;
+			double distanciaMenor = Double.MAX_VALUE;
+			Pixel mejor = null;
+			for(Pixel p:puntosConflicAux){
+				if (!p.equals(puntoConflicto)){
+					double lado = Pixel.lado(puntoAnterior, puntoConflicto, p);
+					if (lado > 0){
+						/*
+						double angulo = ObjetoUtil.calcularAngulo(puntoAnterior, puntoConflicto, p);
+						if (angulo < anguloMenor){
+							anguloMenor = angulo;
+							mejor = p;
+						}*/
+						double distancia = p.distancia(puntoConflicto);
+						if (distancia < distanciaMenor){
+							distancia = distanciaMenor;
+							mejor = p;
+						}
+						
+					}
+				}
+			}
+			return mejor;
+		}
+		return null;
+	}
+
+
 
 	public String getCommandName() {
 		return this.getClass().getName();

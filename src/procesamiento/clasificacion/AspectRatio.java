@@ -23,30 +23,14 @@ public class AspectRatio extends EvaluadorRasgo {
 
 	 
 	public RasgoObjeto calcularValor(Objeto objeto) {
-		//Objeto objAux = objeto.clonar();
 		double altoMRC = objeto.getAlto();
 		double anchoMRC = objeto.getAncho();
-		/*
-		double areaMin = altoMRC * anchoMRC;
-		double anguloRot = 3;
-		for (double anguloTot = anguloRot; anguloTot < 360; anguloTot += anguloRot) {
-			objAux.rotarContorno(anguloRot);
-			double alto = objAux.getAlto();
-			double ancho = objAux.getAncho();
-			double area = alto * ancho;
-			if (area < areaMin) {
-				anchoMRC = ancho;
-				altoMRC = alto;
-				areaMin = ancho * alto;
-			}
-		}*/
-		
+	
 		double aspectRatio = 0;
 		if (anchoMRC < altoMRC)
 			aspectRatio = anchoMRC / altoMRC;
 		else
 			aspectRatio = altoMRC / anchoMRC;
-		//System.out.println(objeto.getName() + " - Apect Radio: " + aspectRatio);
 		return new RasgoObjeto(this.getRasgoClase().getRasgo(),aspectRatio);
 	}
 

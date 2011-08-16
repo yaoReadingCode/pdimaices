@@ -2,7 +2,6 @@ package objeto;
 
 import java.awt.Color;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
@@ -10,6 +9,8 @@ import java.awt.image.DataBufferByte;
 import java.awt.image.Raster;
 import java.awt.image.SampleModel;
 import java.awt.image.renderable.ParameterBlock;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.media.jai.InterpolationBilinear;
 import javax.media.jai.JAI;
@@ -19,7 +20,6 @@ import javax.media.jai.TiledImage;
 
 import procesamiento.ImageUtil;
 import procesamiento.clasificacion.CoeficientesRecta;
-import sun.net.idn.Punycode;
 
 public class ObjetoUtil {
 	private static final int ORIENTACION_ABAJO = 90;
@@ -224,11 +224,14 @@ public class ObjetoUtil {
 			if (!pInterseccion.equals(pMedio)){
 				double ladoA = pFin.distancia(pMedio);
 				double ladoB = pFin.distancia(pInterseccion);
+				if (ladoB < 1)
+					return 0.0;
 				if (ladoA != 0)
 					angulo = Math.toDegrees(Math.asin(ladoB / ladoA));
 
 				double ladoPuntoInterseccion = Pixel.lado2(pMedio, pInterseccion, pFin);
-				if (ladoPuntoInterseccion >= 0.0 && angulo != null)
+				
+				if (ladoPuntoInterseccion > 0.0 && angulo != null)
 					angulo = 180 - angulo;
 
 			}else
@@ -242,15 +245,88 @@ public class ObjetoUtil {
 		}
 		return angulo;
 	}
+	/**
+	 * Crea una linea de pixeles que unen dos puntos
+	 * @param p1
+	 * @param p2
+	 * @return
+	 */
+	public static List<Pixel> crearLinea(Pixel p1, Pixel p2,int width, int height){
+		List<Pixel> linea = new ArrayList<Pixel>();
+		Pixel inicio = p1;
+		Pixel fin = p2;
+		if (p2.getX() < p1.getX() && p1.getX() != p2.getX()){
+			inicio = p2;
+			fin = p1;
+		}
+		else{
+			if (p2.getX() == p1.getX() && p2.getY() < p1.getY()){
+				inicio = p2;
+				fin = p1;
+			}
+		}
+		//linea.add(inicio);
+		Pixel anterior = inicio;
+		if (fin.getX() != inicio.getX()){
+			double a = (fin.getYDouble() - inicio.getYDouble()) / (fin.getXDouble() - inicio.getXDouble());
+			double b = fin.getYDouble() - a * fin.getXDouble();
+			for(int x = inicio.getX(); x <= fin.getX(); x++){
+				int y = (int) Math.round(a * x + b);
+				Pixel p = new Pixel(x, y, Color.BLACK,width,height);
+				if (!anterior.isAdyacente(p)){
+					
+					for(int y2 = anterior.getY() + 1; anterior.getY()< p.getY() && y2 < p.getY(); y2++){
+						Pixel pAux = new Pixel(p.getX(), y2, Color.BLACK,width,height);
+						linea.add(pAux);
+						anterior = pAux;
+					}
+
+					for(int y2 = anterior.getY() - 1; p.getY() < anterior.getY() && y2 > p.getY(); y2--){
+						Pixel pAux = new Pixel(p.getX(), y2, Color.BLACK,width,height);
+						linea.add(pAux);
+						anterior = pAux;
+					}
+					
+				}
+				if (!linea.contains(p)){
+					linea.add(p);
+					anterior = p;
+				}
+					
+			}
+		}
+		else{
+			for(int y = inicio.getY(); y <= fin.getY(); y++){
+				Pixel p = new Pixel(inicio.getX(), y, Color.BLACK,width,height);
+				if (!linea.contains(p))
+					linea.add(p);	
+			}
+			
+		}
+		List<Pixel> lineaPixelesOrd = new ArrayList<Pixel>();
+		linea.remove(p1);
+		Pixel proximo = p1;
+		while(linea.size() > 0){
+			 proximo = proximo.getPixelMasCercano(linea);
+			 if (!proximo.equals(p2))
+				 lineaPixelesOrd.add(proximo);
+			 linea.remove(proximo);
+		}
+
+		return lineaPixelesOrd;
+	}
+
 	
 	public static void main(String[] args) {
-		/*
-		Pixel punto = new Pixel(1655,833,null,1000,1000);
-		Pixel pInicio = new Pixel(1635,833,null,1000,1000);
-		Pixel pFin = new Pixel(1660,853,null,1000,1000);
-		Double angulo1 = ObjetoUtil.calcularAngulo(pInicio, punto, pFin);
+		
+		Pixel pInicio = new Pixel(106,77,null,1000,1000);
+		Pixel pMedio = new Pixel(99,87,null,1000,1000);
+		Pixel pFin = new Pixel(91,97,null,1000,1000);
+		Double angulo1 = ObjetoUtil.calcularAngulo(pInicio, pMedio, pFin);
 		System.out.println(angulo1);
-		*/
+		
+		
+		/*
 		Pixel p = new Pixel(50,37,null);
 		p.rotar(318.50353164478446);
 		System.out.println(p);
@@ -258,6 +334,12 @@ public class ObjetoUtil {
 		p = new Pixel(51,37,null);
 		p.rotar(318.50353164478446);
 		System.out.println(p);
-
+		*/
+		 int a = 2; 
+		 int b = 4; 
+		  
+		 System.out.println((a * b));
+		 System.out.println((++a * b));
+		 System.out.println((a * ++b));
 	}
 }

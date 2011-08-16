@@ -34,7 +34,7 @@ public class PixelComparator implements Comparator<Pixel> {
 			comparacion = 1;
 		if (!invert)
 			return (-1) * comparacion;
-		return 0;
+		return comparacion;
 	}
 
 }

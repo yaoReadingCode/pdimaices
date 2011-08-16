@@ -4,14 +4,14 @@ import java.awt.Color;
 import java.util.List;
 
 public class Pixel implements Cloneable {
-	public static final int DIR_E = 2;
-	public static final int DIR_SE = 3;
-	public static final int DIR_S = 4;
-	public static final int DIR_SO = 5;
-	public static final int DIR_O = 6;
-	public static final int DIR_NO = 7;
-	public static final int DIR_N = 0;
+	public static final int DIR_N  = 0;
 	public static final int DIR_NE = 1;
+	public static final int DIR_E  = 2;
+	public static final int DIR_SE = 3;
+	public static final int DIR_S  = 4;
+	public static final int DIR_SO = 5;
+	public static final int DIR_O  = 6;
+	public static final int DIR_NO = 7;
 
 	public static final int LADO_IZQ = -1;
 	public static final int LADO_DER = 1;
@@ -232,69 +232,58 @@ public class Pixel implements Cloneable {
 	}
 
 	public Pixel getAdyacente(int ady, int maxX, int maxY) {
-		Pixel adyacente = new Pixel();
+		ady = ady % 8;
+		if (ady < 0){
+			ady = 8 + ady;
+		}
+		if (x == 111 && y == 123)
+			System.out.println("");
+		Pixel adyacente = null;
 		if (ady == DIR_N && y - 1 >= 0) {
+			adyacente = new Pixel();
 			adyacente.setX(x);
 			adyacente.setY(y - 1);
-			adyacente.setMaxX(maxX);
-			adyacente.setMaxY(maxY);
-			return adyacente;
 		}
-		if (ady == DIR_NE && y - 1 >= 0 && x + 1 < maxX) {
+		else if (ady == DIR_NE && y - 1 >= 0 && x + 1 < maxX) {
+			adyacente = new Pixel();
 			adyacente.setX(x + 1);
 			adyacente.setY(y - 1);
-			adyacente.setMaxX(maxX);
-			adyacente.setMaxY(maxY);
-			return adyacente;
 		}
-
-		if (ady == DIR_E && x + 1 < maxX) {
+		else if (ady == DIR_E && x + 1 < maxX) {
+			adyacente = new Pixel();
 			adyacente.setX(x + 1);
 			adyacente.setY(y);
-			adyacente.setMaxX(maxX);
-			adyacente.setMaxY(maxY);
-			return adyacente;
 		}
-
-		if (ady == DIR_SE && x + 1 < maxX && y + 1 < maxY) {
+		else if (ady == DIR_SE && x + 1 < maxX && y + 1 < maxY) {
+			adyacente = new Pixel();
 			adyacente.setX(x + 1);
 			adyacente.setY(y + 1);
-			adyacente.setMaxX(maxX);
-			adyacente.setMaxY(maxY);
-			return adyacente;
 		}
-
-		if (ady == DIR_S && y + 1 < maxY) {
+		else if (ady == DIR_S && y + 1 < maxY) {
+			adyacente = new Pixel();
 			adyacente.setX(x);
 			adyacente.setY(y + 1);
-			adyacente.setMaxX(maxX);
-			adyacente.setMaxY(maxY);
-			return adyacente;
 		}
-
-		if (ady == DIR_SO && y + 1 < maxY && x - 1 >= 0) {
+		else if (ady == DIR_SO && y + 1 < maxY && x - 1 >= 0) {
+			adyacente = new Pixel();
 			adyacente.setX(x - 1);
 			adyacente.setY(y + 1);
-			adyacente.setMaxX(maxX);
-			adyacente.setMaxY(maxY);
-			return adyacente;
 		}
-		if (ady == DIR_O && x - 1 >= 0) {
+		else if(ady == DIR_O && x - 1 >= 0) {
+			adyacente = new Pixel();
 			adyacente.setX(x - 1);
 			adyacente.setY(y);
-			adyacente.setMaxX(maxX);
-			adyacente.setMaxY(maxY);
-			return adyacente;
 		}
-
-		if (ady == DIR_NO && x - 1 >= 0 && y - 1 >= 0) {
+		else if (ady == DIR_NO && x - 1 >= 0 && y - 1 >= 0) {
+			adyacente = new Pixel();
 			adyacente.setX(x - 1);
 			adyacente.setY(y - 1);
+		}
+		if (adyacente != null){
 			adyacente.setMaxX(maxX);
 			adyacente.setMaxY(maxY);
 			return adyacente;
 		}
-
 		return null;
 	}
 
@@ -308,20 +297,9 @@ public class Pixel implements Cloneable {
 	 * @return -1 si esta a la izquierda, 1 si esta a la derercha y 0 si
 	 *         pertenece al segmento
 	 */
-	public static double lado(Pixel a, Pixel b, Pixel c) {
-
-		if (a != null && b != null && c != null) {
-			/*
-			 * int d = (b.getY() - a.getY()) c.getX() + (a.getX() -
-			 * b.getX())c.getY() + b.getX() a.getY() - b.getY()a.getX(); return
-			 * d;
-			 */
-
-			Pixel P21 = new Pixel(b.getX() - a.getX(), b.getY() - a.getY(),
-					null, null, null);
-			Pixel P32 = new Pixel(c.getX() - a.getX(), c.getY() - a.getY(),
-					null, null, null);
-			double prodV = P21.productoVectorial(P32);
+	public static double lado(Pixel p1, Pixel p2, Pixel p0) {
+		if (p1 != null && p2 != null && p0 != null) {
+			double prodV = (p2.getYCartesiano() - p1.getYCartesiano()) * p0.getX() + (p1.getX() - p2.getX()) * p0.getYCartesiano() + (p2.getX()*p1.getYCartesiano() - p2.getYCartesiano()*p1.getX()) ;
 			return prodV;
 		}
 		return 0;
@@ -533,5 +511,108 @@ public class Pixel implements Cloneable {
 		aux.setXDouble(this.xDouble + punto.xDouble);
 		aux.setYDouble(this.yDouble + punto.yDouble);
 		return aux;
+	}
+	
+	/**
+	 * Retorna un array de direcciones para recorrer los pixeles adyacentes en sentido horario
+	 * @return
+	 */
+	public static int[] getRecorridoHorarioAdayacentes(int direccion, int ventana){
+		int cant = 2 * ventana + 1;
+		direccion = direccion % 8;
+		if (cant > 8)
+			cant = 8;
+		int[] direcciones = new int[cant];
+		int inicio = direccion - ventana;
+		if (inicio < 0){
+			inicio = 8 + inicio;
+		}
+		int dir = inicio;
+		for (int i = 0; i < cant; i++){
+			direcciones[i] = dir;
+			dir = (dir + 1) % 8;
+		}
+			
+		return direcciones;
+	}
+	/**
+	 * Retorna un array de direcciones para recorrer los pixeles adyacentes en sentido antihorario
+	 * @return
+	 */
+	public static int[] getRecorridoAntiHorarioAdayacentes(int direccion, int ventana){
+		int cant = 2 * ventana + 1;
+		if (cant > 8)
+			cant = 8;
+		int[] direcciones = new int[cant];
+		int inicio = (direccion + ventana) % 8;
+		int dir = inicio;
+		for (int i = 0; i < cant; i++){
+			direcciones[i] = dir;
+			dir--;
+			if (dir < 0)
+				dir = 8 + dir;
+		}
+		return direcciones;
+	}
+	
+	public static double distanciaLado(int lado1, int lado2){
+		if (lado1 == lado2)
+			return 0;
+		double distHorario = Math.abs(lado2 - lado1);
+		double distAntihorario = 8 - distHorario;
+		return Math.min(distHorario, distAntihorario);
+	}
+	public static void main(String[] args) {
+		Pixel inicio = new Pixel(97,131,null,500,500);
+		Pixel medio = new Pixel(100,122,null,500,500);
+		Pixel fin = new Pixel(94,115,null,500,500);
+		double lado = Pixel.lado(inicio, medio, fin);
+		if (lado < 0)
+			System.out.println("Correcto");
+		else
+			System.out.println("Incorrecto");
+
+		inicio = new Pixel(110,114,null,500,500);
+		medio = new Pixel(100,122,null,500,500);
+		fin = new Pixel(94,115,null,500,500);
+		lado = Pixel.lado(inicio, medio, fin);
+		if (lado > 0)
+			System.out.println("Correcto");
+		else
+			System.out.println("Incorrecto");
+
+		inicio = new Pixel(165,80,null,500,500);
+		medio = new Pixel(173,84,null,500,500);
+		fin = new Pixel(178,80,null,500,500);
+		lado = Pixel.lado(inicio, medio, fin);
+		if (lado < 0)
+			System.out.println("Correcto");
+		else
+			System.out.println("Incorrecto");
+
+		inicio = new Pixel(165,80,null,500,500);
+		medio = new Pixel(173,84,null,500,500);
+		fin = new Pixel(168,91,null,500,500);
+		lado = Pixel.lado(inicio, medio, fin);
+		if (lado > 0)
+			System.out.println("Correcto");
+		else
+			System.out.println("Incorrecto");
+
+		inicio = new Pixel(25,44,null,500,500);
+		medio = new Pixel(26,44,null,500,500);
+		fin = new Pixel(27,43,null,500,500);
+		lado = Pixel.lado(inicio, medio, fin);
+		if (lado < 0)
+			System.out.println("Correcto");
+		else
+			System.out.println("Incorrecto");
+		
+		int[] recorrido = Pixel.getRecorridoAntiHorarioAdayacentes(7, 2);
+		for(int i:recorrido){
+			System.out.println(i);
+		}
+		
+
 	}
 }

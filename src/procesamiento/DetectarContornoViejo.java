@@ -1,14 +1,20 @@
 package procesamiento;
 
 import java.awt.Color;
+import java.awt.image.WritableRaster;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.media.jai.PlanarImage;
 import javax.media.jai.TiledImage;
 
 import objeto.Objeto;
+import objeto.ObjetoUtil;
 import objeto.Pixel;
+import objeto.PixelComparator;
+import aplicarFiltros.Visualizador;
+import dataAcces.ObjectDao;
 
 /**
  * Comando que detecta el contorno de 1 pixel exterior de los objetos de una
@@ -18,10 +24,17 @@ import objeto.Pixel;
  * 
  */
 public class DetectarContornoViejo extends AbstractImageCommand {
+	private static final int maximoPuntos = 10000;
+
 	/**
 	 * Imagen original
 	 */
 	private PlanarImage originalImage;
+
+	private int Matriz[][] = null;
+	private int maxMatrixW = 0;
+	private int maxMatrixH = 0;
+	private TiledImage visitados = null;
 	/**
 	 * Color del fondo de la imagen
 	 */
@@ -33,6 +46,11 @@ public class DetectarContornoViejo extends AbstractImageCommand {
 	private Color colorContorno;
 
 	/**
+	 * Color utilizado para marcar el interior
+	 */
+	private Color colorInterior;
+
+	/**
 	 * Lista de objetos detectados
 	 */
 	private List<Objeto> objetos = new ArrayList<Objeto>();
@@ -40,7 +58,7 @@ public class DetectarContornoViejo extends AbstractImageCommand {
 	/**
 	 * Marca de pixels visitados
 	 */
-	private List<Pixel> visitados;
+	// private List<Pixel> visitados;
 
 	/**
 	 * Ancho de la imagen
@@ -58,9 +76,35 @@ public class DetectarContornoViejo extends AbstractImageCommand {
 	private int nbands;
 
 	/**
-	 * Pixels blancos (que no son fondo) de la imagen
+	 * Coordenada x del tile actualmente en proceso
 	 */
-	private List<Pixel> pixelsBlancos = new ArrayList<Pixel>();
+	private int tileXActual;
+
+	/**
+	 * Coordenada y del tile actualmente en proceso
+	 */
+	private int tileYActual;
+
+	/**
+	 * Raster correspondiente al tile actualmente en proceso
+	 */
+	private WritableRaster rasterActual;
+
+	private int tWidth;
+
+	private int tHeight;
+
+	private int twGlobal;
+
+	private int thGlobal;
+
+	public Color getColorInterior() {
+		return colorInterior;
+	}
+
+	public void setColorInterior(Color colorInterior) {
+		this.colorInterior = colorInterior;
+	}
 
 	public DetectarContornoViejo(PlanarImage binaryImage, PlanarImage originalImage,
 			Color colorUmbralFondo, Color colorContorno) {
@@ -90,13 +134,39 @@ public class DetectarContornoViejo extends AbstractImageCommand {
 	 * Limpia los pixels visitados
 	 */
 	private void initVisitados() {
-		visitados = new ArrayList<Pixel>();
 		/*
-		visitados = new int[width][height];
-		for (int i = 0; i < width; i++)
-			for (int j = 0; j < height; j++)
-				visitados[i][j] = 0;
-		*/
+		 * // The image dimensions. int width = getImage().getWidth(); int
+		 * height = getImage().getHeight(); // We need a sample model where the
+		 * pixels are packed into one data // type. MultiPixelPackedSampleModel
+		 * sampleModel = new MultiPixelPackedSampleModel( DataBuffer.TYPE_BYTE,
+		 * ImageUtil.tileWidth, ImageUtil.tileHeight, 1); // one bit per pixel
+		 * // Create a TiledImage using the SampleModel. visitados = new
+		 * TiledImage(0, 0, width, height, ImageUtil.tileWidth,
+		 * ImageUtil.tileHeight, sampleModel, null);
+		 */
+		this.Matriz  = null;
+		this.Matriz = new int[maxMatrixW+1][maxMatrixH+1];
+
+	}
+
+	
+
+	public int getMaxMatrixW() {
+		return maxMatrixW;
+	}
+
+	public void setMaxMatrixW(int maxMatrixW) {
+		this.maxMatrixW = maxMatrixW;
+	}
+
+	
+
+	public int getMaxMatrixH() {
+		return maxMatrixH;
+	}
+
+	public void setMaxMatrixH(int maxMatrixH) {
+		this.maxMatrixH = maxMatrixH;
 	}
 
 	/**
@@ -105,7 +175,7 @@ public class DetectarContornoViejo extends AbstractImageCommand {
 	private void liberarMemoria() {
 		visitados = null;
 		originalImage = null;
-		//pixels = null;
+		// pixels = null;
 		objetos = null;
 		System.gc();
 	}
@@ -144,83 +214,13 @@ public class DetectarContornoViejo extends AbstractImageCommand {
 	 * @param objetos
 	 * @return
 	 */
-	public List<Objeto> completarObjetos(List<Objeto> objetos) {
-		if (getImage() != null) {
-			for (Pixel pixel : getPixelsBlancos()) {
-				Objeto objeto = getObjetoContenedor(pixel, objetos);
-				if (objeto != null)
-					objeto.agregarPunto(pixel);
-			}
+	public void completarObjeto(Objeto objeto) {
+		if (objeto.getContorno().size() > 0) {
+			List<Pixel> interior = new ArrayList<Pixel>();
+			getPixelsInterior(objeto.getContorno().get(0),
+					objeto.getContorno(), interior, objeto, getOriginalImage());
+			objeto.setPuntos(interior);
 		}
-		return objetos;
-	}
-
-	/**
-	 * Detecta el contorno de un objeto
-	 * 
-	 * @param obj
-	 * @return
-	 */
-	public void detectarContorno(Objeto obj) {
-		List<Pixel> contorno = new ArrayList<Pixel>();
-		for (Pixel pixel : obj.getPuntos()) {
-			if (isContorno(pixel))
-				contorno.add(pixel);
-		}
-		obj.setContorno(contorno);
-	}
-
-	/**
-	 * Detecta los objetos de la imagen
-	 * 
-	 * @return Lista de objetos detectados
-	 */
-	public List<Objeto> detectarObjetos() {
-		List<Objeto> objetos = new ArrayList<Objeto>();
-		if (getImage() != null) {
-			initVisitados();
-			for (Pixel pixel : getPixelsBlancos()) {
-
-				if (!isVisitado(pixel) && isContorno(pixel)
-						&& !perteneceAAlgunObjeto(pixel, objetos)) {
-					List<Pixel> pixelsContorno = getPixelsContorno(pixel);
-					if (pixelsContorno.size() > 0) {
-						System.out.println("Objeto detectado:");
-						System.out.println(pixelsContorno);
-						Objeto o = new Objeto();
-						o.setContorno(pixelsContorno);
-						objetos.add(o);
-					}
-				}
-			/*
-			setWidth(getImage().getWidth());
-			setHeight(getImage().getHeight());
-			SampleModel sm = getImage().getSampleModel();
-			setBands(sm.getNumBands());
-			Raster inputRaster = getImage().getData();
-			int[] pixels = new int[nbands * width * height];
-			inputRaster.getPixels(0, 0, width, height, pixels);
-			setPixels(pixels);
-			initVisitados();
-
-			for (Pixel pixel : getPixelsBlancos()) {
-				int offset = pixel.getX() * width * nbands + pixel.getY()
-						* nbands;
-				if (!isVisitado(pixel) && isContorno(pixel, offset)
-						&& !perteneceAAlgunObjeto(pixel, objetos)) {
-					List<Pixel> pixelsContorno = getPixelsContorno(pixel,
-							offset);
-					if (pixelsContorno.size() > 0) {
-						Objeto o = new Objeto();
-						o.setContorno(pixelsContorno);
-						objetos.add(o);
-					}
-				}*/
-
-			}
-		}
-
-		return objetos;
 	}
 
 	/**
@@ -230,50 +230,76 @@ public class DetectarContornoViejo extends AbstractImageCommand {
 	 * @return
 	 */
 	public PlanarImage pintarContorno(List<Objeto> objetos) {
-		if (getOriginalImage() != null){
-			TiledImage ti = ImageUtil.createTiledImage(getOriginalImage(), ImageUtil.tileWidth, ImageUtil.tileHeight);
-			
+		if (getOriginalImage() != null) {
+			TiledImage ti = ImageUtil.createTiledImage(getOriginalImage(),
+					ImageUtil.tileWidth, ImageUtil.tileHeight);
+
 			for (int i = 0; i < objetos.size(); i++) {
 				for (Pixel p : objetos.get(i).getContorno()) {
-					
+
 					pintarPixel(ti, p.getX(), p.getY(), getColorContorno());
 				}
 			}
 			return ti;
-
-			/*
-			int width = getOriginalImage().getWidth();
-			int height = getOriginalImage().getHeight();
-			SampleModel sm = getOriginalImage().getSampleModel();
-			int nbands = sm.getNumBands();
-
-			TiledImage ti = new TiledImage(getOriginalImage().createSnapshot(),	false);
-			Raster inputRaster = ti.getData();
-			 WritableRaster outputRaster = inputRaster.createCompatibleWritableRaster();
-			//WritableRaster outputRaster = ti.getWritableTile(0, 0);
-			int[] pixels = new int[nbands * width * height];
-			inputRaster.getPixels(0, 0, width, height, pixels);
-			//outputRaster.getPixels(0, 0, width, height, pixels);
-			
-			int offset;
-
-			for (int i = 0; i < objetos.size(); i++) {
-				for (Pixel p : objetos.get(i).getContorno()) {
-					offset = p.getX() * width * nbands + p.getY() * nbands;
-					pintarPixel(pixels, p.getX(), p.getY(), offset, getColorContorno());
-				}
-			}
-
-			outputRaster.setPixels(0, 0, width, height, pixels);
-			//TiledImage image = new TiledImage(getOriginalImage(), 1, 1);
-			// TiledImage ti = (TiledImage) getOriginalImage();
-			ti.setData(outputRaster);
-			return ti;*/
 		}
 		return null;
 
 	}
 
+	/**
+	 * Pinta el interior de los objetos detectados
+	 * 
+	 * @param objetos
+	 * @return
+	 */
+	public PlanarImage pintarInterior(List<Objeto> objetos) {
+		Color interior = new Color(50, 50, 50);
+		if (getOriginalImage() != null) {
+			TiledImage ti = ImageUtil.createTiledImage(getOriginalImage(),
+					ImageUtil.tileWidth, ImageUtil.tileHeight);
+
+			for (int i = 0; i < objetos.size(); i++) {
+				for (Pixel p : objetos.get(i).getPuntos()) {
+
+					pintarPixel(ti, p.getX(), p.getY(), interior);
+				}
+			}
+			return ti;
+		}
+		return null;
+
+	}
+
+	public Color getColorPunto(Pixel pixel, PlanarImage ti) {
+		/**/
+		int[] pix = ImageUtil.readPixel(pixel.getX(), pixel.getY(), ti);
+
+		int r = pix[0];
+		int g = pix[0];
+		int b = pix[0];
+		if (pix.length == 3) {
+			g = pix[1];
+			b = pix[2];
+		}
+		return new Color(r, g, b);
+
+	}
+	public Color getColorPunto(Pixel pixel) {
+		/**/
+		int[] pix = ImageUtil.readPixel(pixel.getX(), pixel.getY(), getImage());
+
+		int r = pix[0];
+		int g = pix[0];
+		int b = pix[0];
+		if (pix.length == 3) {
+			g = pix[1];
+			b = pix[2];
+		}
+		return new Color(r, g, b);
+
+	}
+
+	
 	/**
 	 * Retorna los pixels que forman el contorno a partir de un pixel blanco
 	 * dado
@@ -283,8 +309,10 @@ public class DetectarContornoViejo extends AbstractImageCommand {
 	 * @param offset
 	 * @return Pixels que forman el contorno de un objeto
 	 */
-	private List<Pixel> getPixelsContorno(Pixel pixel) {
+	public List<Pixel> getPixelsContorno(Pixel pixel, PlanarImage ti) {
 		List<Pixel> contorno = new ArrayList<Pixel>();
+		/**/
+		pixel.setCol(getColorPunto(pixel, getOriginalImage()));
 
 		Pixel nextContorno = pixel;
 		Pixel pixelAnt = pixel.getAdyacente(Pixel.DIR_O, width, height);
@@ -295,6 +323,8 @@ public class DetectarContornoViejo extends AbstractImageCommand {
 		nextContorno = next;
 
 		while (nextContorno != null && !pixel.equals(nextContorno)) {
+			/**/
+			nextContorno.setCol(getColorPunto(nextContorno, getOriginalImage()));
 			contorno.add(nextContorno);
 			setVisitado(nextContorno);
 			next = getNextContorno(nextContorno, pixelAnt, pixel);
@@ -305,17 +335,126 @@ public class DetectarContornoViejo extends AbstractImageCommand {
 	}
 
 	/**
+	 * Retorna los pixels que forman el interior del objeto a partir de un pixel
+	 * blanco dado
+	 * 
+	 * @param pixel
+	 *            Pixel blanco
+	 * @param offset
+	 * @return Pixels que forman el contorno de un objeto
+	 */
+	public void getPixelsInterior(Pixel pixel, List<Pixel> contorno,
+			List<Pixel> interior, Objeto o, PlanarImage ti) {
+		Pixel p = new Pixel(1552,622,null);
+		//limpiarVisitados();
+		if (contorno.contains(p))
+			System.out.println("");
+		for (int dir = 0; dir < 8; dir++) {
+
+			Pixel actual = getAdyacenteNuevo(pixel, dir, getOriginalImage());
+			/*Para que complete los objetos cuando se divide un objeto en dos o mas*/
+			twGlobal = ti.XToTileX(actual.getX());
+			thGlobal = ti.YToTileY(actual.getY());
+			
+			if (actual != null)
+				if (!contorno.contains(actual))
+					/*if (!isVisitado(actual)) {
+						setVisitado(actual);*/
+						// if (o.isPerteneceTriangulo(actual)) {
+						/**/
+						actual.setCol(getColorPunto(pixel, getOriginalImage()));
+						interior.add(actual);
+						Pixel[] all = new Pixel[maximoPuntos];
+						int cantidad = 0;
+						all[cantidad] = actual;
+						cantidad++;
+						getPixelsAllInternal(all, cantidad, interior, o, ti);
+						// }
+					/*}*/
+		}
+		
+	}
+
+	private void getPixelsAllInternal(Pixel[] all, int cantidad,
+			List<Pixel> interior, Objeto o, PlanarImage ti) {
+
+		for (int i = 0; i < cantidad && i < maximoPuntos; i++) {
+			Pixel pixel = all[i];
+			if (pixel != null)
+				for (int dir = 0; dir < 8; dir = dir + 2) {
+					int direccion = adyacentes(dir);
+					if (direccion != -1) {
+						Pixel actual = getAdyacenteNuevo(pixel, direccion,
+								getOriginalImage());
+						if (actual != null)
+							if ((actual != null) && (!isVisitado(actual))) {
+								setVisitado(actual);
+								if (o.isPerteneceTriangulo(actual)) {
+									/**/
+									actual.setCol(getColorPunto(pixel,
+											getOriginalImage()));
+									interior.add(actual);
+									if (cantidad < maximoPuntos) {
+										all[cantidad] = actual;
+										cantidad++;
+									}
+								}
+							}
+					}
+				}
+		}
+
+	}
+
+	private int adyacentes(int ady) {
+		if (ady == Pixel.DIR_E)
+			return Pixel.DIR_E;
+		if (ady == Pixel.DIR_N)
+			return Pixel.DIR_N;
+		if (ady == Pixel.DIR_O)
+			return Pixel.DIR_O;
+		if (ady == Pixel.DIR_S)
+			return Pixel.DIR_S;
+		return -1;
+
+	}
+
+	/**
 	 * Retorna si un pixel fue visitado
 	 * 
 	 * @param pixel
 	 * @return
 	 */
-	private boolean isVisitado(Pixel pixel) {
-		return visitados.contains(pixel);
+	/**
+	 * @param pixel
+	 * @return
+	 */
+	private boolean isVisitado(Pixel p) {
+		Pixel pixel =  convertirPixel(p);
+		if (pixel != null)
+			if (Matriz[pixel.getX()][pixel.getY()] == 1){
+				return true;
+			}else{ 
+				return false;
+			}	
+
+		return true;
+
 		/*
-		if (visitados[pixel.getY()][pixel.getX()] == 1)
-			return true;
-		return false;*/
+		 * int[] value = ImageUtil .readPixel(pixel.getX(), pixel.getY(),
+		 * visitados); if (value != null && value[0] == 1) return true; return
+		 * false;
+		 */
+
+	}
+	
+	private Pixel convertirPixel(Pixel p){
+		Pixel pixel = new Pixel((p.getX() - twGlobal * tWidth),(p.getY() - thGlobal * tHeight), p.getCol(), getImage().getMaxX(), getImage().getMaxY());
+		if ((pixel.getY() >= maxMatrixH) || (pixel.getX() >= maxMatrixW))
+			return null;
+		if ((pixel.getY() <= 0) || (pixel.getX() <= 0))
+			return null;
+		return pixel;
 	}
 
 	/**
@@ -323,10 +462,25 @@ public class DetectarContornoViejo extends AbstractImageCommand {
 	 * 
 	 * @param pixel
 	 */
-	private void setVisitado(Pixel pixel) {
-		if (!visitados.contains(pixel))
-			visitados.add(pixel);
-		//visitados[pixel.getY()][pixel.getX()] = 1;
+	/**
+	 * @param pixel
+	 */
+	private void setVisitado(Pixel p) {
+		Pixel p2 = new Pixel(511,510,null);
+
+		Pixel pixel =  convertirPixel(p);
+		if (pixel.equals(p2)){
+			System.out.println("");
+			System.out.println(isVisitado(pixel));
+		}
+			
+
+		if (pixel != null)
+			Matriz[pixel.getX()][pixel.getY()] = 1;
+		/*
+		 * int[] value = new int[1]; value[0] = 1;
+		 * ImageUtil.writePixel(pixel.getX(), pixel.getY(), value, visitados);
+		 */
 	}
 
 	/**
@@ -339,13 +493,19 @@ public class DetectarContornoViejo extends AbstractImageCommand {
 	 * @param pixels
 	 * @return
 	 */
-	public Pixel getPixel(int x, int y) {
-		int[] pixel = ImageUtil.readPixel(x, y, (TiledImage) getImage());
+	public Pixel getPixel(int x, int y, PlanarImage image) {
+		int[] pixel = ImageUtil.readPixel(x, y, (TiledImage) image,
+				getRasterActual(), getTileXActual(), getTileYActual());
 		int r = pixel[0];
-		int g = pixel[1];
-		int b = pixel[2];
+		int g = pixel[0];
+		int b = pixel[0];
+
+		if (pixel.length == 3) {
+			g = pixel[1];
+			b = pixel[2];
+		}
 		Color colorPixel = new Color(r, g, b);
-		return new Pixel(x, y, colorPixel);
+		return new Pixel(x, y, colorPixel,getImage().getMaxX(),getImage().getMaxY());
 	}
 
 	/**
@@ -357,7 +517,7 @@ public class DetectarContornoViejo extends AbstractImageCommand {
 	 * @param color
 	 */
 	public void pintarPixel(TiledImage image, int x, int y, Color color) {
-		int pixel[] = {color.getRed(), color.getGreen(), color.getBlue()};
+		int pixel[] = { color.getRed(), color.getGreen(), color.getBlue() };
 		ImageUtil.writePixel(x, y, pixel, image);
 	}
 
@@ -375,39 +535,63 @@ public class DetectarContornoViejo extends AbstractImageCommand {
 	 * @return
 	 */
 	public Pixel getNextContorno(Pixel pixel, Pixel pixelAnt, Pixel origen) {
+		if (pixel.getX() == 781 && pixel.getY() == 645)
+			System.out.println("entro");
 
-		List<Pixel> posiblesContornos = new ArrayList<Pixel>();
+		List<Pixel> posibles = new ArrayList<Pixel>();
 		for (int dir = 0; dir < 8; dir++) {
-			Pixel actual = getAdyacente(pixel, dir);
+			Pixel actual = getAdyacente(pixel, dir, getImage());
 			if (pixelAnt != null && !pixelAnt.equals(origen)
 					&& origen.equals(actual))
 				return actual;
-			if (actual != null && !isVisitado(actual)
-					&& isContorno(actual))
-				return actual;
-			/*
-			 * if (actual != null && !isVisitado(actual) && isContorno(actual,
-			 * offset)) posiblesContornos.add(actual);
-			 */
-		}
-		Double mejorContorno = null;
-		Pixel contorno = null;
-		if (pixelAnt != null)
-			for (Pixel p : posiblesContornos) {
-				double lado = Pixel.lado(pixelAnt, pixel, p);
-				if (mejorContorno != null) {
-					if (lado > mejorContorno) {
-						mejorContorno = lado;
-						contorno = p;
-					}
-				} else {
-					mejorContorno = lado;
-					contorno = p;
-				}
-
+			if (actual != null && !pixel.equals(actual) && !isVisitado(actual)
+					&& isContorno(actual)) {
+				double lado = Pixel.lado(pixel, pixelAnt, actual);
+				actual.setPeso(lado);
+				posibles.add(actual);
 			}
-		posiblesContornos = null;
-		return contorno;
+		}
+		Collections.sort(posibles, new PixelComparator());
+		if (posibles.size() > 0)
+			return posibles.get(0);
+		return null;
+	}
+
+	/**
+	 * Retorna el próximo pixel que forma el contorno de un objeto teniendo en
+	 * cuenta una imagen que contiene los bordes del objeto
+	 * 
+	 * @param pixel
+	 *            Pixel actual que es contorno
+	 * @param pixelAnt
+	 *            Pixel anterior al actual que es contorno
+	 * @param origen
+	 *            Pixel desde el cuál se partió
+	 * @param imageBordes
+	 *            PlanarImage
+	 * @return
+	 */
+	public Pixel getNextContorno(Pixel pixel, Pixel pixelAnt, Pixel origen,
+			PlanarImage imageBordes) {
+		List<Pixel> posibles = new ArrayList<Pixel>();
+		for (int dir = 0; dir < 8; dir++) {
+			Pixel actual = getAdyacente(pixel, dir, imageBordes);
+			if (pixelAnt != null && !pixelAnt.equals(origen)
+					&& origen.equals(actual))
+				return actual;
+			if (actual != null && !pixel.equals(actual) && !isVisitado(actual)
+					&& isContorno(actual, imageBordes)) {
+				double lado = Pixel.lado(pixel, pixelAnt, actual);
+				if (lado >= 0) {
+					actual.setPeso(lado);
+					posibles.add(actual);
+				}
+			}
+		}
+		Collections.sort(posibles, new PixelComparator());
+		if (posibles.size() > 0)
+			return posibles.get(0);
+		return null;
 	}
 
 	/**
@@ -416,7 +600,7 @@ public class DetectarContornoViejo extends AbstractImageCommand {
 	 * @param pixel
 	 * @return
 	 */
-	private boolean isFondo(Pixel pixel) {
+	public boolean isFondo(Pixel pixel) {
 		int umbralFondo = getColorUmbralFondo().getRed();
 		return pixel.getCol().getRed() < umbralFondo;
 	}
@@ -430,10 +614,27 @@ public class DetectarContornoViejo extends AbstractImageCommand {
 	 *            Dirección para recuperar el adyacente
 	 * @return Pixel adyacente
 	 */
-	public Pixel getAdyacente(Pixel pixel, int direccion) {
+	public Pixel getAdyacente(Pixel pixel, int direccion, PlanarImage image) {
 		Pixel ady = pixel.getAdyacente(direccion, width, height);
 		if (ady != null) {
-			return getPixel(ady.getX(), ady.getY());
+			return getPixel(ady.getX(), ady.getY(), image);
+		}
+		return null;
+	}
+
+	/**
+	 * Retorna el pixel adyacente a uno dado en una dirección determinada
+	 * 
+	 * @param pixel
+	 *            Pixel actual
+	 * @param direccion
+	 *            Dirección para recuperar el adyacente
+	 * @return Pixel adyacente
+	 */
+	public Pixel getAdyacenteNuevo(Pixel pixel, int direccion, PlanarImage image) {
+		Pixel ady = pixel.getAdyacente(direccion, width, height);
+		if (ady != null) {
+			return ady;
 		}
 		return null;
 	}
@@ -452,7 +653,7 @@ public class DetectarContornoViejo extends AbstractImageCommand {
 	 */
 	public int getLadoContorno(Pixel pixel, int umbralFondo) {
 		Pixel actual = null;
-		actual = getAdyacente(pixel, Pixel.DIR_N);
+		actual = getAdyacente(pixel, Pixel.DIR_N, getImage());
 
 		if (actual != null) {
 			// actual = getPixel(actual.getX(), actual.getY(), offset);
@@ -460,20 +661,20 @@ public class DetectarContornoViejo extends AbstractImageCommand {
 				return Pixel.DIR_N;
 
 		}
-		actual = getAdyacente(pixel, Pixel.DIR_E);
+		actual = getAdyacente(pixel, Pixel.DIR_E, getImage());
 		if (actual != null) {
 			// actual = getPixel(actual.getX(), actual.getY(), offset);
 			if (isFondo(actual))
 				return Pixel.DIR_E;
 		}
-		actual = getAdyacente(pixel, Pixel.DIR_S);
+		actual = getAdyacente(pixel, Pixel.DIR_S, getImage());
 		if (actual != null) {
 			// actual = getPixel(actual.getX(), actual.getY(), offset);
 			if (isFondo(actual))
 				return Pixel.DIR_S;
 
 		}
-		actual = getAdyacente(pixel, Pixel.DIR_O);
+		actual = getAdyacente(pixel, Pixel.DIR_O, getImage());
 		if (actual != null) {
 			// actual = getPixel(actual.getX(), actual.getY(), offset);
 			if (isFondo(actual))
@@ -497,36 +698,60 @@ public class DetectarContornoViejo extends AbstractImageCommand {
 		int x = pixel.getX();
 		int y = pixel.getY();
 
-		if (x == 67 && y == 22)
-			System.out.println("Entro");
 		if (isFondo(pixel))
 			return false;
 		Pixel actual = null;
+
+		if (x - 1 < 0 || y - 1 < 0 || x + 1 >= width || y + 1 >= height)
+			return true;
+
 		if (x - 1 >= 0) {
 
-			actual = getPixel(x - 1, y);
+			actual = getPixel(x - 1, y, getImage());
 			if (isFondo(actual))
 				return true;
 		}
 		if (y - 1 >= 0) {
-			actual = getPixel(x, y - 1);
+			actual = getPixel(x, y - 1, getImage());
 			if (isFondo(actual))
 				return true;
 		}
 
 		if (y + 1 < height) {
-			actual = getPixel(x, y + 1);
+			actual = getPixel(x, y + 1, getImage());
 			if (isFondo(actual))
 				return true;
 		}
 
 		if (x + 1 < width) {
-			actual = getPixel(x + 1, y);
+			actual = getPixel(x + 1, y, getImage());
 			if (isFondo(actual))
 				return true;
 		}
 
 		return false;
+
+	}
+
+	/**
+	 * Devuelve si un pixel es contorno fijandose solamente si el color del
+	 * pixel no es el del fondo en la imagen de contornos
+	 * 
+	 * @param pixel
+	 * @param width
+	 * @param nbands
+	 * @param pixels
+	 * @param umbralFondo
+	 * @param image
+	 *            Imagen de contornos
+	 * @return
+	 */
+	public boolean isContorno(Pixel pixel, PlanarImage image) {
+		pixel = getPixel(pixel.getX(), pixel.getY(), image);
+		if (isFondo(pixel))
+			return false;
+		return true;
+
 	}
 
 	public int getWidth() {
@@ -554,21 +779,11 @@ public class DetectarContornoViejo extends AbstractImageCommand {
 	}
 
 	/*
-	public int[][] getVisitados() {
-		return visitados;
-	}
-
-	public void setVisitados(int[][] visitados) {
-		this.visitados = visitados;
-	}*/
-	public List<Pixel> getVisitados() {
-		return visitados;
-	}
-
-	public void setVisitados(List<Pixel> visitados) {
-		this.visitados = visitados;
-	}
-
+	 * public List<Pixel> getVisitados() { return visitados; }
+	 * 
+	 * public void setVisitados(List<Pixel> visitados) { this.visitados =
+	 * visitados; }
+	 */
 
 	public Color getColorContorno() {
 		return colorContorno;
@@ -588,7 +803,7 @@ public class DetectarContornoViejo extends AbstractImageCommand {
 
 	public static void main(String[] args) {
 
-	} 
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -598,21 +813,37 @@ public class DetectarContornoViejo extends AbstractImageCommand {
 	public PlanarImage execute() {
 		if (getImage() != null) {
 			try {
-				setImage(ImageUtil.createTiledImage(getImage(), ImageUtil.tileWidth, ImageUtil.tileHeight));
-				eliminarFondo();
-				List<Objeto> objetos = detectarObjetos();
 
-				for (Objeto obj : objetos)
-					getPixelsBlancos().removeAll(obj.getPuntos());
+				// PlanarImage im0 = ImageUtil.createTiledImage(getImage(),
+				// ImageUtil.tileWidth, ImageUtil.tileHeight);
+				// PlanarImage im0 = ImageUtil.reformatImage(getImage(), new
+				// Dimension(ImageUtil.tileWidth, ImageUtil.tileHeight));
+				setImage(ImageUtil.createTiledImage(getImage(),
+						ImageUtil.tileWidth, ImageUtil.tileHeight));
+
+				List<Objeto> objetos = detectarObjetos();
+				SepararObjetosViejo separarObjetos = new SepararObjetosViejo(getImage(),
+						objetos, this);
+				separarObjetos.setOriginalImage(getOriginalImage());
+				separarObjetos.setClasificador(getClasificador());
+				separarObjetos.execute();
+				objetos = separarObjetos.getObjetos();
 
 				setObjetos(objetos);
-				PlanarImage output = pintarContorno(objetos);
-		 		completarObjetos(objetos);
+				for (Objeto obj : objetos) {
+					ObjetoUtil.save(obj);
+				}
+
+				// PlanarImage output = pintarContorno(objetos);
+				// completarObjetos(objetos);
+				// clasificarObjetos();
 				objetos = null;
-				return output;
+				// JAI.create("filestore", output, "contorno.tif", "TIFF");
+				return getImage();
+
 			} catch (OutOfMemoryError e) {
 				System.gc();
-				System.out.println("Error al pintar el contorno");
+				System.err.println("Error al pintar el contorno");
 				e.printStackTrace();
 			}
 		}
@@ -625,7 +856,7 @@ public class DetectarContornoViejo extends AbstractImageCommand {
 	 * @see procesamiento.ImageComand#getCommandName()
 	 */
 	public String getCommandName() {
-		return "Detectar contorno";
+		return "Detectar contorno Modificado";
 	}
 
 	/*
@@ -637,63 +868,138 @@ public class DetectarContornoViejo extends AbstractImageCommand {
 		liberarMemoria();
 	}
 
-	public List<Pixel> getPixelsBlancos() {
-		return pixelsBlancos;
-	}
-
-	public void setPixelsBlancos(List<Pixel> pixelsBlancos) {
-		this.pixelsBlancos = pixelsBlancos;
+	public void limpiarVisitados() {
+		/*
+		 * for(int i = 0; i< getImage().getHeight(); i++) for(int j = 0; j<
+		 * getImage().getHeight(); j++) this.Matriz[i][j] = 0;
+		 */
+		initVisitados();
 	}
 
 	/**
-	 * Método encargado de eliminar el fondo , completa la lista de pixels
-	 * blancos
+	 * Método encargado de detectar los objetos de la imagen
 	 */
-	public void eliminarFondo() {
-		List<Pixel> pixelBlancos = new ArrayList<Pixel>();
+	public List<Objeto> detectarObjetos() {
+		List<Objeto> objetos = new ArrayList<Objeto>();
+		// initVisitados();
+		int nombreObjeto = ObjectDao.getInstance().getCantidadObjetos() + 1;
 		if (getImage() != null) {
+			// this.Matriz = new
+			// int[getImage().getHeight()][getImage().getWidth()];
 			setWidth(getImage().getWidth());
 			setHeight(getImage().getHeight());
-			initVisitados();
+			TiledImage ti = (TiledImage) getImage();
 			
-			TiledImage ti = (TiledImage) getImage();//ImageUtil.createTiledImage(getImage(), ImageUtil.tileWidth, ImageUtil.tileHeight);
-			for (int h = 0; h < height; h++)
-				for (int w = 0; w < width; w++) {
-					int[] pix = ImageUtil.readPixel(w, h, ti);
-					int r = pix[0];
-					int g = pix[1];
-					int b = pix[2];
-					Color colorPixel = new Color(r, g, b);
-					Pixel pixel = new Pixel(w, h, colorPixel);
-					if (!isFondo(pixel))
-						pixelBlancos.add(pixel);
+			Color nuevo = new Color(0, 0, 0);
+
+			PlanarImage tiOriginal = getOriginalImage();
+			
+			tWidth = ImageUtil.tileWidth;
+			tHeight = ImageUtil.tileHeight;
+			
+			setMaxMatrixH(tHeight*2);
+			setMaxMatrixW(tWidth*2);
+			//initVisitados();
+			for (int tw = ti.getMinTileX(); tw <= ti.getMaxTileX(); tw++)
+				for (int th = ti.getMinTileY(); th <= ti.getMaxTileY(); th++) {
+					// Get a raster for that tile.
+					WritableRaster wr = ti.getWritableTile(tw, th);
+					setRasterActual(wr);
+					setTileXActual(tw);
+					setTileYActual(th);
+					/**
+					 * Parametros para setVisitados
+					 */
+					twGlobal = tw;
+					thGlobal = th;
+					initVisitados();
+					
+					for (int w = 0; w < tWidth; w++)
+						for (int h = 0; h < tHeight; h++) {
+							int x = tw * tWidth + w;
+							int y = th * tHeight + h;
+							if (x < width && y < height) {
+
+								Pixel pixelVerificar = new Pixel(x, y, nuevo, getImage().getMaxX(), getImage().getMaxY());
+								if (!isVisitado(pixelVerificar)) {
+									int[] pixel2 = null;
+									int[] pix = wr.getPixel(x, y, pixel2);
+
+									int r = pix[0];
+									int g = pix[0];
+									int b = pix[0];
+									if (pix.length == 3) {
+										g = pix[1];
+										b = pix[2];
+									}
+
+									Color colorPixel = new Color(r, g, b);
+									Pixel pixel = new Pixel(x, y, colorPixel, getImage().getMaxX(), getImage().getMaxY());
+									if (!isFondo(pixel) /*&& !isVisitado(pixel)*/
+											&& isContorno(pixel)
+									// && !perteneceAAlgunObjeto(pixel,
+									// objetos)
+									) {
+
+										List<Pixel> pixelsContorno = getPixelsContorno(
+												pixel, tiOriginal);
+										if (pixelsContorno.size() > 0) {
+											Objeto o = new Objeto();
+											o.setOriginalImage(getOriginalImage());
+											o.setContorno(pixelsContorno);
+											if (o.validarContorno()) {
+												o.setName("Maiz"+ nombreObjeto);
+												nombreObjeto++;
+												List<Pixel> interior = new ArrayList<Pixel>();
+												getPixelsInterior(pixel,
+														pixelsContorno,
+														interior, o, tiOriginal);
+												o.setPuntos(interior);
+												o.calcularMRC();
+
+												objetos.add(o);
+												String info = "Objeto catalogado: "
+													+ o.getName()
+													+ " - Puntos detectados: "
+													+ interior.size();
+												System.out.println(info);
+												
+												Visualizador.addLogInfo(info);
+											}
+										}
+									}
+									setVisitado(pixelVerificar);
+								}
+							}
+						}
+
 				}
-
-			/*
-			SampleModel sm = getImage().getSampleModel();
-			setBands(sm.getNumBands());
-			Raster inputRaster = getImage().getData();
-			int[] pixels = new int[nbands * width * height];
-			inputRaster.getPixels(0, 0, width, height, pixels);
-			setPixels(pixels);
-			int offset;
-
-			for (int h = 0; h < height; h++)
-				for (int w = 0; w < width; w++) {
-					offset = h * width * nbands + w * nbands;
-
-					int r = pixels[offset + 0];
-					int g = pixels[offset + 1];
-					int b = pixels[offset + 2];
-
-					Color colorPixel = new Color(r, g, b);
-					Pixel pixel = new Pixel(h, w, colorPixel);
-					if (!isFondo(pixel))
-						pixelBlancos.add(pixel);
-				}
-			*/
 		}
-		setPixelsBlancos(pixelBlancos);
+		return objetos;
+	}
+
+	private int getTileXActual() {
+		return tileXActual;
+	}
+
+	private void setTileXActual(int tileXActual) {
+		this.tileXActual = tileXActual;
+	}
+
+	private int getTileYActual() {
+		return tileYActual;
+	}
+
+	private void setTileYActual(int tileYActual) {
+		this.tileYActual = tileYActual;
+	}
+
+	private WritableRaster getRasterActual() {
+		return rasterActual;
+	}
+
+	private void setRasterActual(WritableRaster rasterActual) {
+		this.rasterActual = rasterActual;
 	}
 
 }

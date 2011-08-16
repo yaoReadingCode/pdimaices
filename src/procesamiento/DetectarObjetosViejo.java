@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import javax.media.jai.JAI;
 import javax.media.jai.PlanarImage;
 import javax.media.jai.TiledImage;
 import javax.swing.JFrame;
@@ -33,7 +32,7 @@ import aplicarFiltros.Visualizador;
  * @author oscar
  *
  */
-public class DetectarObjetos extends AbstractImageCommand { 
+public class DetectarObjetosViejo extends AbstractImageCommand { 
 	
 	private static PlanarImage originalImage;
 	private HSVRange hsvRange;
@@ -47,7 +46,7 @@ public class DetectarObjetos extends AbstractImageCommand {
 	 * @param hsvRange Rango de valores HSV para detectar el fondo de la imagen
 	 * @throws Exception 
 	 */
-	public DetectarObjetos(PlanarImage image, PlanarImage originalImage,
+	public DetectarObjetosViejo(PlanarImage image, PlanarImage originalImage,
 			HSVRange hsvRange,Clasificador clasificador) throws Exception {
 		super(image);
 		this.originalImage = originalImage;
@@ -92,35 +91,29 @@ public class DetectarObjetos extends AbstractImageCommand {
 		if (getOriginalImage() != null && getHsvRange() != null) {
 			//Visualizador.iniciarProgreso();
 			Date fechaInicio = new Date(System.currentTimeMillis()); 
-			//Visualizador.aumentarProgreso(0, "Binarizando...");
-			//Binarizar ef = new Binarizar(getOriginalImage(), getHsvRange());
-			Visualizador.aumentarProgreso(0, "Eliminando Fondo...");
-			EliminarFondo ef = new EliminarFondo(getOriginalImage(), getHsvRange());
+			Visualizador.aumentarProgreso(0, "Binarizando...");
+			Binarizar ef = new Binarizar(getOriginalImage(), getHsvRange());
 			PlanarImage output = ef.execute();
 			
-			//Visualizador.aumentarProgreso(15, "Detectando Contorno Grueso...");
-			//DetectarContornoGrueso dcg = new DetectarContornoGrueso(output);
-			Visualizador.aumentarProgreso(15, "Convirtiendo a escala de grises...");
-			ConvertEscalaGrises dcg = new ConvertEscalaGrises(output);
+			/*
+			Opening op = new Opening(output);
+			output = op.execute();
+			Visualizador.aumentarProgreso(15, "Realizando Opening...");
+			*/
+			/*
+			Visualizador.aumentarProgreso(15, "Realizando Gradient Magnitud...");
+			GradientMagnitud gr = new GradientMagnitud(output);
+			output = gr.execute();*/
+			
+			Visualizador.aumentarProgreso(15, "Detectando Contorno Grueso...");
+			DetectarContornoGrueso dcg = new DetectarContornoGrueso(output);
 			output = dcg.execute();
-			
-			//Visualizador.aumentarProgreso(20, "Detectando Contorno...");
-			//DetectarContorno dc = new DetectarContorno(output, getOriginalImage(), new Color(100, 100, 100), Color.RED);
-			Visualizador.aumentarProgreso(20, "Aplicando filtro Sobel...");
-			SobelFilter so = new SobelFilter(output);
-			so.setClasificador(getClasificador());
-			output = so.execute();
-			
-			HSVRange range = new HSVRange();
-			range.setVMax(60f);
-			EliminarFondo ef2 = new EliminarFondo(output, range);
-			output = ef2.execute();
-			
-			JAI.create("filestore", output, "sobel.tif", "TIFF");
 			
 			Visualizador.aumentarProgreso(20, "Detectando Contorno...");
 			DetectarContorno dc = new DetectarContorno(output, getOriginalImage(), new Color(100, 100, 100), Color.RED);
-			dc.execute();
+			dc.setClasificador(getClasificador());
+			output = dc.execute();
+			
 			List<Objeto> objetos = dc.getObjetos();
 
 			setObjetos(objetos);

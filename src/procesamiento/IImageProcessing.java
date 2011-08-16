@@ -1,8 +1,6 @@
 package procesamiento;
 
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.awt.image.Raster;
 
 import javax.media.jai.PlanarImage;
 
@@ -14,7 +12,6 @@ import procesamiento.clasificacion.Clasificador;
  *
  */
 public interface IImageProcessing {
-	
 	/**
 	 * Obtiene la imagen original sin procesar
 	 * @return
