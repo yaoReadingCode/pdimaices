@@ -2,11 +2,7 @@ package procesamiento;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.RenderingHints;
-import java.awt.font.FontRenderContext;
-import java.awt.font.TextLayout;
 import java.awt.image.ColorModel;
 import java.awt.image.Raster;
 import java.awt.image.SampleModel;
@@ -33,8 +29,8 @@ import aplicarFiltros.Matriz;
 import com.sun.imageio.plugins.jpeg.JPEGImageReaderSpi;
 
 public class ImageUtil {
-	public static final int tileWidth = 512;
-	public static final int tileHeight = 512;
+	public static final int tileWidth = 256;
+	public static final int tileHeight = 256;
 
 	public static PlanarImage sumImage(PlanarImage image1, PlanarImage image2) {
 		ParameterBlock pb = new ParameterBlock();
