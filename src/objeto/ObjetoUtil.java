@@ -48,8 +48,6 @@ public class ObjetoUtil {
 			TiledImage ti = new TiledImage(0, 0, width, height, 0, 0, sampleModel, colorModel);
 			ti.setData(raster);
 
-			if (o.getName().equals("Maiz139"))
-				System.out.println("");
 			Pixel pixelPunta = o.getPixelPunta();
 			Pixel medio = o.getPixelMedio();
 

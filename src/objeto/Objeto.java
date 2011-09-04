@@ -34,6 +34,11 @@ public class Objeto {
 	 * lista de pixeles del objeto
 	 */
 	private List<Triangulo> triangulosContenedores = new ArrayList<Triangulo>();
+	
+	/**
+	 * Cache que mantiene el triangulo que contuvo al ultimo pixel buscado 
+	 */
+	private Triangulo trianguloActual = null;
 
 	/**
 	 * Lista de pixeles del objeto
@@ -301,9 +306,13 @@ public class Objeto {
 	}
 	
 	public boolean isPerteneceTriangulo(Pixel p){
+		if (getTrianguloActual() != null && getTrianguloActual().isPertenece(p))
+			return true;
 		for (Triangulo t : getTriangulosContenedores()) {
-			if (t.isPertenece(p))
+			if (t.isPertenece(p)){
+				setTrianguloActual(t);
 				return true;
+			}
 		}
 		return false;
 	}
@@ -353,9 +362,10 @@ public class Objeto {
 				Pixel pixeltrianguloAnt = contorno.get(0);
 				Pixel primero = contorno.get(0);
 				radio = getPixelMedio().distancia(primero);
-				for (int i = 1; i < contorno.size(); i++) {
-					Pixel ant = contorno.get(i - 1);
-					double dist = getPixelMedio().distancia(contorno.get(i - 1));
+				int sizeLado = 3;
+				for (int i = sizeLado; i < contorno.size(); i= i + sizeLado ) {
+					Pixel ant = contorno.get(i - sizeLado);
+					double dist = getPixelMedio().distancia(ant);
 
 					if (dist > radio)
 						radio = dist;
@@ -795,6 +805,14 @@ public class Objeto {
 
 	public void setOriginalImage(PlanarImage originalImage) {
 		this.originalImage = originalImage;
+	}
+
+	public Triangulo getTrianguloActual() {
+		return trianguloActual;
+	}
+
+	public void setTrianguloActual(Triangulo trianguloActual) {
+		this.trianguloActual = trianguloActual;
 	}
 
 }

@@ -541,6 +541,8 @@ public class Pixel implements Cloneable {
 	 */
 	public static int[] getRecorridoAntiHorarioAdayacentes(int direccion, int ventana){
 		int cant = 2 * ventana + 1;
+		if (direccion < 0)
+			direccion = 8 + direccion;
 		if (cant > 8)
 			cant = 8;
 		int[] direcciones = new int[cant];
