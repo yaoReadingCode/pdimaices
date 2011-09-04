@@ -91,7 +91,9 @@ public class DetectarObjetos extends AbstractImageCommand {
 	public PlanarImage execute() {
 		if (getOriginalImage() != null && getHsvRange() != null) {
 			//Visualizador.iniciarProgreso();
+			
 			Date fechaInicio = new Date(System.currentTimeMillis()); 
+			/*
 			//Visualizador.aumentarProgreso(0, "Binarizando...");
 			//Binarizar ef = new Binarizar(getOriginalImage(), getHsvRange());
 			Visualizador.aumentarProgreso(0, "Eliminando Fondo...");
@@ -122,7 +124,33 @@ public class DetectarObjetos extends AbstractImageCommand {
 			DetectarContorno dc = new DetectarContorno(output, getOriginalImage(), new Color(100, 100, 100), Color.RED);
 			dc.execute();
 			List<Objeto> objetos = dc.getObjetos();
-
+			*/
+			Visualizador.aumentarProgreso(0, "Binarizando...");
+			Binarizar ef = new Binarizar(getOriginalImage(), getHsvRange());
+			PlanarImage binaryImage = ef.execute();
+			PlanarImage output = binaryImage;
+			
+			/*
+			Closing c = new Closing(output);
+			output = c.execute();
+			*/
+			
+			Visualizador.aumentarProgreso(15, "Detectando Contorno Grueso...");
+			DetectarContornoGrueso dcg = new DetectarContornoGrueso(output);
+			output = dcg.execute();
+			
+			//output = ImageUtil.createTiledImage(output, ImageUtil.tileWidth, ImageUtil.tileHeight);
+			JAI.create("filestore", output, "sobel.tif", "TIFF");
+			
+			Visualizador.aumentarProgreso(20, "Detectando Contorno...");
+			DetectarContorno dc = new DetectarContorno(output, getOriginalImage(), new Color(100, 100, 100), Color.RED);
+			dc.setBinaryImage(binaryImage);
+			dc.setClasificador(getClasificador());
+			dc.setRangeFondo(getHsvRange());
+			output = dc.execute();
+			
+			List<Objeto> objetos = dc.getObjetos();			
+			
 			setObjetos(objetos);
 			
 			Visualizador.aumentarProgreso(30, "Clasificando objetos...");
