@@ -1,5 +1,7 @@
 package procesamiento;
 
+import java.awt.Color;
+
 /**
  * Clase que contiene valores mínimos y máximos de los componentes de un color HSV 
  * @author oscar
@@ -96,6 +98,12 @@ public class HSVRange {
 		} 
 		return false;
 	}
+
+	public boolean isEnRango(Color color){
+		float[] hsv = RgbHsv.RGBtoHSV(color.getRed(), color.getGreen(), color.getBlue());
+		return isEnRango(hsv[0], hsv[1], hsv[2]);
+	}
+
 	
 	public boolean isNulo(){
 		if (getHMin() == null && getHMax() == null && getSMin() == null && getSMax() == null && getVMin() == null && getVMax() == null)
