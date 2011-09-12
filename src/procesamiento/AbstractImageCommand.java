@@ -20,8 +20,6 @@ public abstract class AbstractImageCommand implements ImageComand {
 	
 	private Clasificador clasificador;
 	
-	private Visualizador visualizador;
-
 	/**
 	 * Constructor
 	 * @param image Imagen a procesar

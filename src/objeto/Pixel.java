@@ -401,12 +401,10 @@ public class Pixel implements Cloneable {
 			double mejorDistancia = Double.MAX_VALUE;
 			for (int i = 0; i < lista.size(); i++) {
 				Pixel p = lista.get(i);
-				if (!this.equals(p)) {
-					double distancia = this.distancia(p);
-					if (mejorDistancia > distancia) {
-						mejorDistancia = distancia;
-						masCercano = p;
-					}
+				double distancia = this.distancia(p);
+				if (mejorDistancia > distancia) {
+					mejorDistancia = distancia;
+					masCercano = p;
 				}
 			}
 			return masCercano;
@@ -557,12 +555,33 @@ public class Pixel implements Cloneable {
 		return direcciones;
 	}
 	
-	public static double distanciaLado(int lado1, int lado2){
+	/**
+	 * Devuelve si dos lados son opuestos
+	 * @param lado1
+	 * @param lado2
+	 * @return
+	 */
+	public static int distanciaLado(int lado1, int lado2){
 		if (lado1 == lado2)
 			return 0;
 		double distHorario = Math.abs(lado2 - lado1);
 		double distAntihorario = 8 - distHorario;
-		return Math.min(distHorario, distAntihorario);
+		double distancia = Math.min(distHorario, distAntihorario);
+		return (int)distancia;
+	}
+
+	
+	/**
+	 * Devuelve si dos lados son opuestos
+	 * @param lado1
+	 * @param lado2
+	 * @return
+	 */
+	public static boolean isOpuestoLado(int lado1, int lado2){
+		int distancia = distanciaLado(lado1, lado2);
+		if (distancia == 4)
+			return true;
+		return false;
 	}
 	public static void main(String[] args) {
 		Pixel inicio = new Pixel(97,131,null,500,500);

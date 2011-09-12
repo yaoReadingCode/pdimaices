@@ -3,6 +3,7 @@ package procesamiento;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Polygon;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -19,6 +20,7 @@ import objeto.Objeto;
 import objeto.Pixel;
 import objeto.Rasgo;
 import objeto.RasgoObjeto;
+import objeto.Triangulo;
 import procesamiento.clasificacion.ClaseObjetoComparator;
 import procesamiento.clasificacion.Clasificador;
 import procesamiento.clasificacion.EvaluadorClase;
@@ -140,8 +142,6 @@ public class DetectarObjetos extends AbstractImageCommand {
 			output = dcg.execute();
 			
 			//output = ImageUtil.createTiledImage(output, ImageUtil.tileWidth, ImageUtil.tileHeight);
-			JAI.create("filestore", output, "sobel.tif", "TIFF");
-			
 			Visualizador.aumentarProgreso(20, "Detectando Contorno...");
 			DetectarContorno dc = new DetectarContorno(output, getOriginalImage(), new Color(100, 100, 100), Color.RED);
 			dc.setBinaryImage(binaryImage);
@@ -231,16 +231,31 @@ public class DetectarObjetos extends AbstractImageCommand {
 					r.setNombre("AREA");
 					RasgoObjeto areaRasgo = obj.getRasgo(r);
 					
+					/*
+					g.setColor(Color.green);
+					if (obj.getName().endsWith("1")){
+						for (Triangulo t: obj.getTriangulosContenedores()){
+							Polygon pol = new Polygon();
+							pol.addPoint(t.getP1().getX(), t.getP1().getY());
+							pol.addPoint(t.getP2().getX(), t.getP2().getY());
+							pol.addPoint(t.getP3().getX(), t.getP3().getY());
+							g.drawPolygon(pol);
+						}
+					}
+					*/
+					Pixel medio = obj.getPixelMedio();
+					g.drawString(obj.getName(),(int) medio.getX()-15,(int)medio.getY()-15);
+					/*
 					if (areaRasgo != null){
-						Pixel medio = obj.getPixelMedio();
+						
 						Font f = new Font("Helvetica",Font.PLAIN,12);
 						g.setColor(Color.white);
 						g.setFont(f);
-						g.drawString(obj.getName(),(int) medio.getX()-15,(int)medio.getY()-15);
+						
 						g.drawString(areaRasgo.toString(),(int) medio.getX()-15,(int)medio.getY());
 						//g.drawString(circularidadRasgo.toString(),(int) medio.getX()-15,(int)medio.getY()+15);
 						//g.drawString(aspectRatioRasgo.toString(),(int) medio.getX()-15,(int)medio.getY()+30);
-					}
+					}*/
 				}
 
 			}

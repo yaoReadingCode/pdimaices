@@ -51,4 +51,28 @@ public class BoundingBox {
 		this.minY += punto.getY();
 	}
 
+	/**
+	 * Retorna un nuevo pixel con x e y relativos al Bounding Box
+	 * @param p
+	 * @return
+	 */
+	public Pixel getPixelRelativo(Pixel p){
+		Pixel nuevo = p.clonar();
+		nuevo.setXDouble(p.getX() - this.minX);
+		nuevo.setYDouble(p.getY() - this.minY);
+		return nuevo;
+	}
+
+	/**
+	 * Retorna un nuevo pixel con x e y relativos al Bounding Box
+	 * @param p
+	 * @return
+	 */
+	public Pixel getPixelOriginal(Pixel p){
+		Pixel nuevo = p.clonar();
+		nuevo.setXDouble(p.getX() + this.minX);
+		nuevo.setYDouble(p.getY() + this.minY);
+		return nuevo;
+	}
+
 }

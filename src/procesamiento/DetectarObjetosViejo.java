@@ -89,21 +89,10 @@ public class DetectarObjetosViejo extends AbstractImageCommand {
 	 */
 	public PlanarImage execute() {
 		if (getOriginalImage() != null && getHsvRange() != null) {
-			//Visualizador.iniciarProgreso();
 			Date fechaInicio = new Date(System.currentTimeMillis()); 
 			Visualizador.aumentarProgreso(0, "Binarizando...");
 			Binarizar ef = new Binarizar(getOriginalImage(), getHsvRange());
 			PlanarImage output = ef.execute();
-			
-			/*
-			Opening op = new Opening(output);
-			output = op.execute();
-			Visualizador.aumentarProgreso(15, "Realizando Opening...");
-			*/
-			/*
-			Visualizador.aumentarProgreso(15, "Realizando Gradient Magnitud...");
-			GradientMagnitud gr = new GradientMagnitud(output);
-			output = gr.execute();*/
 			
 			Visualizador.aumentarProgreso(15, "Detectando Contorno Grueso...");
 			DetectarContornoGrueso dcg = new DetectarContornoGrueso(output);
@@ -121,18 +110,12 @@ public class DetectarObjetosViejo extends AbstractImageCommand {
 			Visualizador.aumentarProgreso(30, "Clasificando objetos...");
 			clasificarObjetos(dc.getObjetos());
 			
-			/*
-			Visualizador.aumentarProgreso(10, "Pintando interior...");
-			output = pintarInterior(getOriginalImage());*/
-			
 			Visualizador.aumentarProgreso(10, "Pintando contorno...");
 			output = pintarContorno(getOriginalImage());
 			
 			ef.postExecute();
-			//op.postExecute();
 			dc.postExecute(); 
 			Visualizador.aumentarProgreso(10, "");
-			//Visualizador.terminar();
 			
 			visualizarResultado();
 			System.out.println("Inicio: " + (new Date(System.currentTimeMillis())).toString() + " - FIN: " + fechaInicio.toString());

@@ -305,6 +305,12 @@ public class Objeto {
 		return false;
 	}
 	
+	private boolean igual(int x,int y,Pixel p){
+		if (x == p.getX() && y == p.getY())
+			return true;
+		return false;
+	}
+	
 	public boolean isPerteneceTriangulo(Pixel p){
 		if (getTrianguloActual() != null && getTrianguloActual().isPertenece(p))
 			return true;
@@ -356,13 +362,14 @@ public class Objeto {
 		if (getContorno() != null) {
 
 			double radio = 0;
+			setTrianguloActual(null);
 			
 			if (contorno.size() > 1) {
 				List<Triangulo> triangulos = new ArrayList<Triangulo>();
 				Pixel pixeltrianguloAnt = contorno.get(0);
 				Pixel primero = contorno.get(0);
 				radio = getPixelMedio().distancia(primero);
-				int sizeLado = 3;
+				int sizeLado = 5;
 				for (int i = sizeLado; i < contorno.size(); i= i + sizeLado ) {
 					Pixel ant = contorno.get(i - sizeLado);
 					double dist = getPixelMedio().distancia(ant);

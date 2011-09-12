@@ -23,6 +23,8 @@ public class Clasificador {
 	
 	private List<Clase> clases = null;
 
+	private Integer cantidadObjetos = null;
+	
 	public Clasificador() {
 		super();
 		configuracion = ObjectDao.getInstance().findConfiguracion("MAICES");
@@ -123,6 +125,8 @@ public class Clasificador {
 		List<Clase> clases = dao.qryAllClases(CLASE_INDETERMINADO);
 		clasificacion = new HashMap<EvaluadorClase, List<Objeto>>();
 		
+		this.cantidadObjetos = dao.getCantidadObjetos();
+		
 		for(Clase c: clases){
 			EvaluadorClase ec = createEvaluadorClase(c);
 			getClasificacion().put(ec, new ArrayList<Objeto>());
@@ -208,6 +212,14 @@ public class Clasificador {
 				return getClasificacion().get(ec);
 		}
 		return null;
+	}
+
+	public Integer getCantidadObjetos() {
+		return cantidadObjetos;
+	}
+
+	public void setCantidadObjetos(Integer cantidadObjetos) {
+		this.cantidadObjetos = cantidadObjetos;
 	}
 	
 }
