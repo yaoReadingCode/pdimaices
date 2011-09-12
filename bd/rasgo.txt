@@ -1,7 +1,23 @@
-1,AREA,Area del objeto,procesamiento.clasificacion.Area
+                                                       
 2,ASPECT RADIO,Aspect Radio,procesamiento.clasificacion.AspectRatio
 3,CIRCULARIDAD,Circularidad,procesamiento.clasificacion.Circularidad
 4,CURVATURA,Curvatura,procesamiento.clasificacion.Curvatura
 5,DIAMETRO,Diametro,procesamiento.clasificacion.Diametro
 6,SUMA_ANGULOS,Sumatoria Angulos,procesamiento.clasificacion.SumaAngulos
+                                                                                  
+                                                       
+1,AREA,Area del objeto,procesamiento.clasificacion.Area
+                                                  
+                                                  
+                                                  
 7,HISTOGRAMA_RGB,Histograma RGB,procesamiento.clasificacion.EvaluadorHistogramaRGB
+                                                                       
+                                                                       
+                                                                       
+                                                                       
+                                                                       
+                                   
+                                   
+                          
+                          
+                          
