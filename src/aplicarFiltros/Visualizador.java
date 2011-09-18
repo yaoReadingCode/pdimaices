@@ -46,8 +46,6 @@ public class Visualizador  {
 			e.printStackTrace();
 		}
 		
-		
-		//System.out.println("Es visible: " +progreso.isVisible());
 	}
 
 	

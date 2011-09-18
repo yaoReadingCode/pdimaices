@@ -236,8 +236,6 @@ public class Pixel implements Cloneable {
 		if (ady < 0){
 			ady = 8 + ady;
 		}
-		if (x == 111 && y == 123)
-			System.out.println("");
 		Pixel adyacente = null;
 		if (ady == DIR_N && y - 1 >= 0) {
 			adyacente = new Pixel();
@@ -297,10 +295,10 @@ public class Pixel implements Cloneable {
 	 * @return -1 si esta a la izquierda, 1 si esta a la derercha y 0 si
 	 *         pertenece al segmento
 	 */
-	public static double lado(Pixel p1, Pixel p2, Pixel p0) {
+	public static int lado(Pixel p1, Pixel p2, Pixel p0) {
 		if (p1 != null && p2 != null && p0 != null) {
 			double prodV = (p2.getYCartesiano() - p1.getYCartesiano()) * p0.getX() + (p1.getX() - p2.getX()) * p0.getYCartesiano() + (p2.getX()*p1.getYCartesiano() - p2.getYCartesiano()*p1.getX()) ;
-			return prodV;
+			return (int) prodV;
 		}
 		return 0;
 	}

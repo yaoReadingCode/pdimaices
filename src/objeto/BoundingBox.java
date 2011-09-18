@@ -13,6 +13,18 @@ public class BoundingBox {
 		this.minX = minX;
 		this.minY = minY;
 	}
+	/**
+	 * Crea el Bounding Box entre dos pixeles
+	 * @param p1
+	 * @param p2
+	 */
+	public BoundingBox(Pixel p1, Pixel p2) {
+		super();
+		this.maxX = Math.max(p1.getXDouble(), p2.getXDouble());
+		this.maxY = Math.max(p1.getYDouble(), p2.getYDouble());
+		this.minX = Math.min(p1.getXDouble(), p2.getXDouble());
+		this.minY = Math.min(p1.getYDouble(), p2.getYDouble());
+	}
 	public double getMinX() {
 		return minX;
 	}
@@ -73,6 +85,19 @@ public class BoundingBox {
 		nuevo.setXDouble(p.getX() + this.minX);
 		nuevo.setYDouble(p.getY() + this.minY);
 		return nuevo;
+	}
+	
+	/**
+	 * Devuelve si un pixel esta contenido en el rectangulo
+	 * @param p
+	 * @return
+	 */
+	public boolean isPertenece(Pixel p){
+		if (p.getX() >= this.minX && p.getX() <= this.maxX &&
+			p.getY() >= this.minY && p.getX() <= this.maxY){
+			return true;
+		}
+		return false;
 	}
 
 }

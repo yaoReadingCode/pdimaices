@@ -154,7 +154,6 @@ public class Binarizar extends AbstractImageCommand {
 						}
 					tiledImage.releaseWritableTile(tw, th);
 				}
-			System.out.println("Maximo: " + maxX + " - " + maxY);
 			return tiledImage;
 		}
 		return null;
@@ -189,8 +188,6 @@ public class Binarizar extends AbstractImageCommand {
 						for (int h = 0; h < tHeight; h++) {
 							int x = tw * tWidth + w;
 							int y = th * tHeight + h;
-							if (y == 186)
-								System.out.println("");
 							if (x <= image.getMaxX() && y <= image.getMaxY()) {
 								
 								try {
@@ -302,8 +299,6 @@ public class Binarizar extends AbstractImageCommand {
 	}
 
 	private boolean isBordeImagen(Pixel pixel) {
-		if (pixel.getY() == 186)
-			System.out.println("");
 		if (pixel.getX() <= 0 || pixel.getY() <= 0 || pixel.getX() >= getImage().getMaxX() || pixel.getY() >= getImage().getMaxY())
 			return true;
 		return false;

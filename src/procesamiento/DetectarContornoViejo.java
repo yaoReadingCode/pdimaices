@@ -347,8 +347,6 @@ public class DetectarContornoViejo extends AbstractImageCommand {
 			List<Pixel> interior, Objeto o, PlanarImage ti) {
 		Pixel p = new Pixel(1552,622,null);
 		//limpiarVisitados();
-		if (contorno.contains(p))
-			System.out.println("");
 		for (int dir = 0; dir < 8; dir++) {
 
 			Pixel actual = getAdyacenteNuevo(pixel, dir, getOriginalImage());
@@ -470,7 +468,6 @@ public class DetectarContornoViejo extends AbstractImageCommand {
 
 		Pixel pixel =  convertirPixel(p);
 		if (pixel.equals(p2)){
-			System.out.println("");
 			System.out.println(isVisitado(pixel));
 		}
 			
@@ -535,9 +532,6 @@ public class DetectarContornoViejo extends AbstractImageCommand {
 	 * @return
 	 */
 	public Pixel getNextContorno(Pixel pixel, Pixel pixelAnt, Pixel origen) {
-		if (pixel.getX() == 781 && pixel.getY() == 645)
-			System.out.println("entro");
-
 		List<Pixel> posibles = new ArrayList<Pixel>();
 		for (int dir = 0; dir < 8; dir++) {
 			Pixel actual = getAdyacente(pixel, dir, getImage());

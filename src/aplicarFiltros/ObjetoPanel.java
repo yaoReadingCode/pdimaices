@@ -104,11 +104,9 @@ public class ObjetoPanel extends JPanel {
 	}
 
 	private void comboBoxClaseItemStateChanged(ItemEvent e) {
-		//System.out.println("cambio:" + e.getID() + "-" +e.toString());
 	}
 
 	private void comboBoxClaseActionPerformed(ActionEvent e) {
-		System.out.println("cambio2:" + e.getID() + "-" +((Clase)this.comboBoxClase.getSelectedItem()).getNombre());
 		this.contenedor.changeObjeto(objeto, ((Clase)this.comboBoxClase.getSelectedItem()));
 	}
 

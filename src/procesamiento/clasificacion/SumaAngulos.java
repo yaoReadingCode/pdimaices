@@ -77,8 +77,6 @@ public class SumaAngulos extends EvaluadorRasgo {
 		CoeficientesRecta coefR2 = new CoeficientesRecta();
 		ObjetoUtil.coeficientesRecta(pendiente1, pInicio, coefR1);
 		ObjetoUtil.coeficientesRecta(pendiente2, pFin, coefR2);
-		if (pMedio.getX() == 67 && pMedio.getY() == 32)
-			System.out.println("");
 		Pixel pInterseccion = ObjetoUtil.calcularInterseccionRectas(coefR1.a, coefR1.b, coefR1.c, coefR2.a, coefR2.b, coefR2.c);
 		if (pInterseccion != null){
 			pInterseccion.setMaxX(pInicio.getMaxX());

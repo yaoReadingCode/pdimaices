@@ -149,10 +149,17 @@ public class ObjetoUtil {
 	 * @param b
 	 * @param c
 	 */
-	public static void coeficientesRecta(double pendiente, Pixel punto, CoeficientesRecta coeficientes){
-		coeficientes.a = -1 * pendiente;
-		coeficientes.b = 1;
-		coeficientes.c = pendiente * punto.getXDouble() - punto.getYDouble();
+	public static void coeficientesRecta(Double pendiente, Pixel punto, CoeficientesRecta coeficientes){
+		if (pendiente != null){
+			coeficientes.a = -1 * pendiente;
+			coeficientes.b = 1;
+			coeficientes.c = pendiente * punto.getXDouble() - punto.getYDouble();
+		}
+		else{
+			coeficientes.a = 1;
+			coeficientes.b = 0;
+			coeficientes.c = -1 * punto.getX();
+		}
 	}
 	/**
 	 * Calcula el punto de intersección de dos rectas: <a * x + b * y + c = 0> y <d * x + e * y + f = 0> 
@@ -191,6 +198,35 @@ public class ObjetoUtil {
 		return distancia;
 	}
 
+	/**
+	 * Calcula el punto de interseccion entre dos rectas si existe
+	 * @param pInicio1
+	 * @param pFin1
+	 * @param pInicio2
+	 * @param pFin2
+	 * @return
+	 */
+	public static Pixel calcularPuntoInterseccion(Pixel pInicio1, Pixel pFin1, Pixel pInicio2, Pixel pFin2){
+		Double pendiente1 = null;
+		Double pendiente2 = null;
+		if (pFin1.getXDouble() - pInicio1.getXDouble() != 0)
+			pendiente1 = (pFin1.getYDouble() - pInicio1.getYDouble()) / (pFin1.getXDouble() - pInicio1.getXDouble());
+		if (pFin2.getXDouble() - pInicio2.getXDouble() != 0)
+			pendiente2 = (pFin2.getYDouble() - pInicio2.getYDouble()) / (pFin2.getXDouble() - pInicio2.getXDouble());
+
+		if (pendiente1 == pendiente2){
+			return null;
+		}
+
+		CoeficientesRecta coefR1 = new CoeficientesRecta();
+		CoeficientesRecta coefR2 = new CoeficientesRecta();
+		coeficientesRecta(pendiente1, pInicio1, coefR1);
+		coeficientesRecta(pendiente2, pInicio2, coefR2);
+		Pixel pInterseccion = calcularInterseccionRectas(coefR1.a, coefR1.b, coefR1.c, coefR2.a, coefR2.b, coefR2.c);
+		return pInterseccion;
+	}
+
+	
 	public static Double calcularAngulo(Pixel pInicio, Pixel pMedio, Pixel pFin){
 		Double angulo = null;
 		Double pendiente1 = null;

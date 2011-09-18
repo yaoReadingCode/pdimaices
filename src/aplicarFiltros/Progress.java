@@ -69,7 +69,7 @@ public class Progress extends JPanel {
 
 		//======== window1 ========
 		{
-			window1.setAlwaysOnTop(true);
+			window1.setAlwaysOnTop(false);
 			window1.setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
 			Container window1ContentPane = window1.getContentPane();
 			window1ContentPane.setLayout(null);

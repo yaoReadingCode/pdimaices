@@ -304,13 +304,6 @@ public class SepararObjetosViejo extends AbstractImageCommand {
 			
 			Pixel p = contorno.get(i % contorno.size());
 			
-			if (p.getX() == 47 && p.getY() == 79)
-				System.out.println("");
-			/*
-			if (posPuntoConflicto == null){
-				finVentana2 = contorno.get((i + tamanioSegmento) % contorno.size());	
-			}
-			else*/
 			posFinVentana2 = (posFinVentana + tamanioSegmento) % contorno.size();
 			finVentana2 = contorno.get(posFinVentana2);
 				
@@ -384,9 +377,6 @@ public class SepararObjetosViejo extends AbstractImageCommand {
 	 * @return
 	 */
 	private List<Objeto> separarObjetos(Objeto obj, EvaluadorClase objetoCircular, int nivel, int cantObjetos) {	
-		if (obj.getName().endsWith("52"))
-			System.out.println("");
-		
 		List<Pixel> contorno = obj.getContorno();
 		/*
 		int tamanioSegmento = (int)((double) porcTamanioSegmento * contorno.size() / 100);

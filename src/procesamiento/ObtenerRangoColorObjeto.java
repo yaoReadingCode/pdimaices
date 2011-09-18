@@ -64,10 +64,6 @@ public class ObtenerRangoColorObjeto extends AbstractImageCommand {
 
 									float[] hsv = RgbHsv.RGBtoHSV(r, g, b);
 									if (!rangoFondo.isEnRango(hsv[0],hsv[1],hsv[2])) {
-										
-										if (hsv[0] > 100)
-											System.out.println("entro");
-
 										hValue[(int)hsv[0]]++;
 										sValue[(int)hsv[1]]++;
 										vValue[(int)hsv[2]]++;

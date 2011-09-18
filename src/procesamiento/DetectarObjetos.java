@@ -321,8 +321,6 @@ public class DetectarObjetos extends AbstractImageCommand {
 					//break;
 				}
 			}
-			if (obj.getName().equals("Maiz210"))
-				System.out.println("");	
 			if (sinclasificacion){
 				objetosIndeterminados.add(obj);
 				ClaseObjeto claseObjeto = new ClaseObjeto(indeterminado.getClase());

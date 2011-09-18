@@ -406,8 +406,6 @@ public class DetectarContorno extends AbstractImageCommand {
 		
 		while (nextContorno != null && !pixel.equals(nextContorno)) {
 			
-			if (nextContorno.getX() == 50 && nextContorno.getY() == 74)
-				System.out.println("");
 			/**/
 			nextContorno.setCol(getColorPunto(nextContorno, getOriginalImage()));
 			contorno.add(nextContorno);
@@ -610,8 +608,6 @@ public class DetectarContorno extends AbstractImageCommand {
 	private void unsetVisitado(Pixel p, boolean contorno) {
 		Pixel pixel =  convertirPixel(p);
 		if (pixel != null){
-			if (pixel.getX() == 104 && pixel.getY() == 49)
-				System.out.println("");
 			Matriz[pixel.getX()][pixel.getY()] = 0;
 			if (contorno){
 				MatrizContorno[pixel.getX()][pixel.getY()] = 0;
