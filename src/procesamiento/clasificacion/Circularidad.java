@@ -46,7 +46,7 @@ public class Circularidad extends EvaluadorRasgo {
 		for(Pixel p:objeto.getContorno()){
 			error += Math.sqrt(Math.pow(p.distancia(objeto.getPixelMedio()) - radio, 2));
 		}
-		double circularidad = error / (objeto.getLongitudPerimetro() * radio);
+		double circularidad = 1 - (error / (objeto.getLongitudPerimetro() * radio));
 		return new RasgoObjeto(this.getRasgoClase().getRasgo(),circularidad);
 	}
 
