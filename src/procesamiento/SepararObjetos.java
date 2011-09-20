@@ -75,7 +75,7 @@ public class SepararObjetos extends AbstractImageCommand {
 		rcAspectRadio.setRasgo(new Rasgo("AspectRadio"));
 		
 	
-		Circularidad circularidad = new Circularidad(rcCircularidad, 0.6, 0.4);
+		Circularidad circularidad = new Circularidad(rcCircularidad, 0.125, 0.125);
 		//AspectRatio aspectRadio = new AspectRatio(rcAspectRadio, 0.6, 0.4);
 		//Area area = new Area("Area", 3000.0,2000.0);
 
@@ -599,25 +599,33 @@ public class SepararObjetos extends AbstractImageCommand {
 							huboDivision = true;
 							obj1.setName(obj.getName());
 							obj2.setName("Objeto" + (cantObjetos + 1));
-							completarObjeto(obj1);
-							completarObjeto(obj2);
+							
 							cantObjetos++;
 							puntosDivisionVisitados.add(mejorDivision.origen);
 							puntosDivisionVisitados.add(mejorDivision.fin);
 							List<Objeto> nuevosObjetos = new ArrayList<Objeto>();
 							if (!necesitaDivision(obj1) && isCircularObj1){
+								completarObjeto(obj1);
 								objetosResult.add(obj1);
 							}
 							else{
 								nuevosObjetos = separarObjetosImagenBordes(obj1, puntosDivisionVisitados, nivel + 1, cantObjetos + 1);
+								if (nuevosObjetos.size() == 1){
+									completarObjeto(obj1);
+								}
 								objetosResult.addAll(nuevosObjetos);
+								
 							}
 							if (!necesitaDivision(obj2) && isCircularObj2){
+								completarObjeto(obj2);
 								objetosResult.add(obj2);
 							}
 							else{
 								cantObjetos += nuevosObjetos.size() - 1;
 								nuevosObjetos = separarObjetosImagenBordes(obj2, puntosDivisionVisitados, nivel + 1, cantObjetos + 1);
+								if (nuevosObjetos.size() == 1){
+									completarObjeto(obj2);
+								}
 								objetosResult.addAll(nuevosObjetos);
 							}
 						}

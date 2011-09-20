@@ -104,8 +104,6 @@ public class SumaAngulos extends EvaluadorRasgo {
 	 * Retorna 1 si el Maiz esta quebrado, 0 si no lo está.
 	 */
 	public RasgoObjeto calcularValor(Objeto objeto) {
-		System.out.println("******");
-		System.out.println(objeto.getName());
 		List<Pixel> contorno = objeto.getContorno();
 		int tamanioSegmento = getVentanaPixeles();
 		double sumaAngulos = 0;
@@ -131,9 +129,6 @@ public class SumaAngulos extends EvaluadorRasgo {
 				
 				Pixel p = contorno.get(i % contorno.size());
 				
-				if (p.getX() == 86 && p.getY() == 42)
-					System.out.println("");
-
 				Pixel finVentana2 = contorno.get((i + tamanioSegmento) % contorno.size());
 
 				Double angulo = calcularAngulo(iniVentana, finVentana, finVentana2);
@@ -159,9 +154,6 @@ public class SumaAngulos extends EvaluadorRasgo {
 							posCandidato = null;
 							angulo = null;
 
-							System.out.println(punto);
-							System.out.println(anguloCandidato);
-							
 							sumaAngulos += anguloCandidato;
 							anguloCandidato = 0;
 						/*}*/
@@ -184,13 +176,7 @@ public class SumaAngulos extends EvaluadorRasgo {
 			if (posCandidato != null){
 				Pixel punto = contorno.get(posCandidato % contorno.size());
 				esquinas.add(punto);
-				/*
-				if (isLineaRecta(contorno, i - longitudRecta, i)||
-					isLineaRecta(contorno, i, i + longitudRecta)){*/
-					sumaAngulos += anguloCandidato;
-					System.out.println(punto);
-					System.out.println(anguloCandidato);
-				/*}*/
+				sumaAngulos += anguloCandidato;
 			}
 		}
 		

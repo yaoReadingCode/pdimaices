@@ -1,6 +1,7 @@
 package procesamiento.clasificacion;
 
 import objeto.Objeto;
+import objeto.Pixel;
 import objeto.RasgoClase;
 import objeto.RasgoObjeto;
 
@@ -18,7 +19,8 @@ public class Circularidad extends EvaluadorRasgo {
 
 	 
 	public RasgoObjeto calcularValor(Objeto objeto) {
-		Double circularidad = null;
+		/*Double circularidad = null;
+		
 		if (objeto.getPuntos().size() > 0){
 			double radio = objeto.getRadio();
 			double area = objeto.getArea();
@@ -33,20 +35,18 @@ public class Circularidad extends EvaluadorRasgo {
 			if (radio != 0)
 				circularidad = perimetro / (2 * Math.PI* radio);
 		}
-		
+		*/
 		
 		//Sumatoria de distancia de los puntos al centro del objeto
-		/*
-		double sumDisCentro = 0;
-		double radio = objeto.getLongitudPerimetro() / (2 * Math.PI);
-		double radio2 = objeto.getRadio();
 		
-		System.out.println("Radio: " + radio);
-		System.out.println("Radio2: " + radio2);
+		double radio = objeto.getLongitudPerimetro() / (2 * Math.PI);
+		
+		//System.out.println("Radio: " + radio);
+		double error = 0;
 		for(Pixel p:objeto.getContorno()){
-			sumDisCentro += p.distancia(objeto.getPixelMedio());
+			error += Math.sqrt(Math.pow(p.distancia(objeto.getPixelMedio()) - radio, 2));
 		}
-		double circularidad = sumDisCentro / (objeto.getLongitudPerimetro() * Math.max(radio,radio2));*/
+		double circularidad = error / (objeto.getLongitudPerimetro() * radio);
 		return new RasgoObjeto(this.getRasgoClase().getRasgo(),circularidad);
 	}
 

@@ -4,10 +4,16 @@
 
 package aplicarFiltros;
 
-import java.awt.*;
-import java.util.Date;
+import java.awt.Container;
+import java.awt.Dialog;
+import java.awt.Dimension;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JWindow;
 
 /**
  * @author seba
@@ -69,7 +75,7 @@ public class Progress extends JPanel {
 
 		//======== window1 ========
 		{
-			window1.setAlwaysOnTop(false);
+			window1.setAlwaysOnTop(true);
 			window1.setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
 			Container window1ContentPane = window1.getContentPane();
 			window1ContentPane.setLayout(null);
