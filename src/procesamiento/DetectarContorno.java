@@ -1087,7 +1087,7 @@ public class DetectarContorno extends AbstractImageCommand {
 	 */
 	public List<Objeto> detectarObjetos() {
 		List<Objeto> objetos = new ArrayList<Objeto>();
-		int nombreObjeto = getClasificador().getCantidadObjetos() + 1;
+		//int nombreObjeto = getClasificador().getCantidadObjetos() + 1;
 		if (getImage() != null) {
 			setWidth(getImage().getWidth());
 			setHeight(getImage().getHeight());
@@ -1145,12 +1145,14 @@ public class DetectarContorno extends AbstractImageCommand {
 										o.setOriginalImage(getOriginalImage());
 										o.setContorno(pixelsContorno);
 										if (validarObjeto(o)){
-											o.setName("Objeto"+ nombreObjeto);
 											List<Pixel> interior = new ArrayList<Pixel>();
 											getPixelsInterior(o.getContorno().get(0), o.getContorno(), interior, o, getOriginalImage());
 											o.setPuntos(interior);
 											//completarObjeto(o);
-											nombreObjeto++;
+											
+											int nombreObjeto = getClasificador().getCantidadObjetos() + 1;
+											getClasificador().aumentarCantidadObjetos();
+											o.setName("Objeto"+ nombreObjeto);
 											borrarObjeto(o);
 											initVisitados();
 											objetos.add(o);

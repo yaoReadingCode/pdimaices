@@ -1,6 +1,5 @@
 package aplicarFiltros;
 
-import javax.swing.JFrame;
 
 public class Visualizador  {
 	private static Progress progreso = null;

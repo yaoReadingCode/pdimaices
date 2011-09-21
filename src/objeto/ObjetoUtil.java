@@ -69,7 +69,7 @@ public class ObjetoUtil {
 			ImageUtil.writePixel(width / 2, height / 2, pixel, ti);
 			*/
 			
-			o.setPathImage("image\\" + o.getName() + ".tif");
+			o.setPathImage("image\\" + o.getName() + "_" + System.currentTimeMillis() + ".tif");
 
 			PlanarImage image = ti;
 			if (pixelPunta != null){

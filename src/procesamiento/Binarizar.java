@@ -4,6 +4,7 @@ package procesamiento;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.image.WritableRaster;
+import java.util.List;
 
 import javax.media.jai.JAI;
 import javax.media.jai.PlanarImage;
@@ -206,6 +207,7 @@ public class Binarizar extends AbstractImageCommand {
 									
 									if (isPuntoAislado(aux, tiledImage) || isBordeImagen(aux)){
 										wr.setPixel(x, y, negro);
+										verificarAdyacentesPuntoAislado(aux, tiledImage);
 									}
 								} catch (Exception e) {
 									System.out.println("x: "+x + ", y: "+ y);
@@ -222,6 +224,25 @@ public class Binarizar extends AbstractImageCommand {
 		return null;
 
 	}
+	
+	private void verificarAdyacentesPuntoAislado(Pixel pixel,
+			TiledImage image) {
+		Pixel adyacente = null;
+		for (int i = 0; i < 8; i++){
+			Pixel ady = getPixel(pixel.getAdyacente(i, width, height),image);
+			if (ady != null &&!isFondo(ady)){
+				adyacente = ady;
+				break;
+			}
+			
+		}
+		if (adyacente != null && isPuntoAislado(adyacente, image)){
+			ImageUtil.writePixel(adyacente.getX(), adyacente.getY(), negro, image);
+			verificarAdyacentesPuntoAislado(adyacente, image);
+		}
+		
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see procesamiento.ImageComand#execute()
@@ -275,7 +296,11 @@ public class Binarizar extends AbstractImageCommand {
 	}
 
 	private boolean isPuntoAislado(Pixel pixel, PlanarImage image) {
+		if (isFondo(pixel)){
+			return false;
+		}
 		int countAdyacentes = 0;
+
 		Pixel ady = getPixel(pixel.getAdyacente(Pixel.DIR_N, width, height),image);
 		if (ady != null && !isFondo(ady)) {
 			countAdyacentes++;

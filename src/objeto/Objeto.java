@@ -369,7 +369,7 @@ public class Objeto {
 				Pixel pixeltrianguloAnt = contorno.get(0);
 				Pixel primero = contorno.get(0);
 				radio = getPixelMedio().distancia(primero);
-				int sizeLado = 5;
+				int sizeLado = 2;
 				for (int i = sizeLado; i < contorno.size(); i= i + sizeLado ) {
 					Pixel ant = contorno.get(i - sizeLado);
 					double dist = getPixelMedio().distancia(ant);

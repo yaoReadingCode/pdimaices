@@ -222,4 +222,8 @@ public class Clasificador {
 		this.cantidadObjetos = cantidadObjetos;
 	}
 	
+	public void aumentarCantidadObjetos(){
+		this.cantidadObjetos++;
+	}
+	
 }
