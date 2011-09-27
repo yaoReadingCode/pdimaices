@@ -1,16 +1,13 @@
 package procesamiento;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.Polygon;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import javax.media.jai.JAI;
 import javax.media.jai.PlanarImage;
 import javax.media.jai.TiledImage;
 import javax.swing.JFrame;
@@ -20,7 +17,6 @@ import objeto.Objeto;
 import objeto.Pixel;
 import objeto.Rasgo;
 import objeto.RasgoObjeto;
-import objeto.Triangulo;
 import procesamiento.clasificacion.ClaseObjetoComparator;
 import procesamiento.clasificacion.Clasificador;
 import procesamiento.clasificacion.EvaluadorClase;

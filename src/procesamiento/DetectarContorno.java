@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.media.jai.JAI;
 import javax.media.jai.PlanarImage;
 import javax.media.jai.TiledImage;
 
@@ -21,8 +20,8 @@ import procesamiento.clasificacion.AspectRatio;
 import procesamiento.clasificacion.Circularidad;
 import procesamiento.clasificacion.EvaluadorClase;
 import procesamiento.clasificacion.EvaluadorRasgo;
+import procesamiento.clasificacion.ObjetoReferencia;
 import aplicarFiltros.Visualizador;
-import dataAcces.ObjectDao;
 
 /**
  * Comando que detecta el contorno de 1 pixel exterior de los objetos de una
@@ -114,6 +113,9 @@ public class DetectarContorno extends AbstractImageCommand {
 	 * Rango HSV del color del fondo
 	 */
 	private HSVRange rangeFondo = null;
+	
+	private Objeto valor_MM_Pixel;
+	private double aspectRadioMejor;
 	
 	public Color getColorInterior() {
 		return colorInterior;
@@ -1038,6 +1040,22 @@ public class DetectarContorno extends AbstractImageCommand {
 				separarObjetos.setClasificador(getClasificador());
 				separarObjetos.execute();
 				objetos = separarObjetos.getObjetos();
+				
+				if (valor_MM_Pixel != null){
+					
+					ObjetoReferencia.setObjetoReferencia(valor_MM_Pixel);
+					for (Objeto o : objetos) {
+						System.out
+						.println("**************************************************");
+						System.out.println("Objeto: " + o.getName()
+								+ " - diametro en MM: " + ObjetoReferencia.mayorDiametroEnMM(o));
+						System.out.println("Es maiz quebrado: " + ObjetoReferencia.isGranoQuebrado(o));
+						
+					}
+					System.out.println("Error en MM de la imagen: " + ObjetoReferencia.getErrorCalculos());
+					System.out
+							.println("**************************************************");
+				}
 
 				setObjetos(objetos);
 				for (Objeto obj : objetos) {
@@ -1080,6 +1098,20 @@ public class DetectarContorno extends AbstractImageCommand {
 		 * getImage().getHeight(); j++) this.Matriz[i][j] = 0;
 		 */
 		initVisitados();
+	}
+	
+	public void isObjSpecial(Objeto objeto){
+		double aspectRatio = 0;
+		if (objeto.getAncho() <  objeto.getAlto())
+			aspectRatio = objeto.getAncho() /  objeto.getAlto();
+		else
+			aspectRatio =  objeto.getAlto() / objeto.getAncho();
+		
+		if (aspectRadioMejor < aspectRatio){ 
+			aspectRadioMejor = aspectRatio;
+			valor_MM_Pixel = objeto;
+		}
+		
 	}
 
 	/**
@@ -1153,6 +1185,7 @@ public class DetectarContorno extends AbstractImageCommand {
 											int nombreObjeto = getClasificador().getCantidadObjetos() + 1;
 											getClasificador().aumentarCantidadObjetos();
 											o.setName("Objeto"+ nombreObjeto);
+											this.isObjSpecial(o);
 											borrarObjeto(o);
 											initVisitados();
 											objetos.add(o);
