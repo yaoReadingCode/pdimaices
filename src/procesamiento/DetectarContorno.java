@@ -464,6 +464,59 @@ public class DetectarContorno extends AbstractImageCommand {
 		}
 		
 	}
+
+	/**
+	 * Retorna los pixels que forman el interior del objeto a partir de un pixel
+	 * blanco dado
+	 * 
+	 * @param pixel
+	 *            Pixel blanco
+	 * @param offset
+	 * @return Pixels que forman el contorno de un objeto
+	 */
+	public void getPixelsInteriorNuevo(Pixel pixel, List<Pixel> contorno,
+			List<Pixel> interior, Objeto o, PlanarImage ti) {
+		initVisitados();
+		int cantBordesVisitados = 0;
+		int distanciaCentro = 1;
+		Pixel centro = o.getPixelMedio();
+		while (cantBordesVisitados < contorno.size()){
+			int minX = centro.getX() - distanciaCentro;
+			int minY = centro.getY() - distanciaCentro;
+			int maxX = centro.getX() + distanciaCentro;
+			int maxY = centro.getY() + distanciaCentro;
+			
+			for(int y = minY; y <= maxY; y++){
+				Pixel actual = getPixel(new Pixel(minX, y, null), getOriginalImage());
+				if (o.isPertenece(actual))
+					interior.add(actual);
+				if (isContorno(actual))
+					cantBordesVisitados++;
+			}
+			for(int x = minX; x <= maxX; x++){
+				Pixel actual = getPixel(new Pixel(x, maxY,null), getOriginalImage());
+				if (o.isPertenece(actual))
+					interior.add(actual);
+				if (isContorno(actual))
+					cantBordesVisitados++;
+			}
+			for(int y = maxY; y >= minY; y--){
+				Pixel actual = getPixel(new Pixel(maxX, y,null), getOriginalImage());
+				if (o.isPertenece(actual))
+					interior.add(actual);
+				if (isContorno(actual))
+					cantBordesVisitados++;
+			}
+			for(int x = maxX; x >= minX; x--){
+				Pixel actual = getPixel(new Pixel(x, minY,null), getOriginalImage());
+				if (o.isPertenece(actual))
+					interior.add(actual);
+				if (isContorno(actual))
+					cantBordesVisitados++;
+			}
+			distanciaCentro++;
+		}
+	}	
 	
 	private void getPixelsAllInternal(Pixel[] all, int cantidad,
 			List<Pixel> interior, Objeto o, PlanarImage ti) {
@@ -665,6 +718,8 @@ public class DetectarContorno extends AbstractImageCommand {
 				b = pixel[2];
 			}
 			Color colorPixel = new Color(r, g, b);
+			p.setMaxX(image.getWidth());
+			p.setMaxY(image.getHeight());
 			p.setCol(colorPixel);
 
 		}
