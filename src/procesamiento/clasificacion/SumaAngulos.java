@@ -28,7 +28,7 @@ public class SumaAngulos extends EvaluadorRasgo {
 		// TODO Auto-generated constructor stub
 	}
 	public int getVentanaPixeles() {
-		return ventanaPixeles * getObjetoReferencia().getRelacionPixelCm().intValue();
+		return ventanaPixeles;
 	}
 
 
@@ -121,6 +121,7 @@ public class SumaAngulos extends EvaluadorRasgo {
 			boolean parar = false;
 			int i = posFinVentana;
 			int inicio = i;
+			int fin = inicio + contorno.size();
 			
 			Integer posCandidato = null;
 			double anguloCandidato = 0;
@@ -169,7 +170,8 @@ public class SumaAngulos extends EvaluadorRasgo {
 			
 				i++;
 				
-				if (posFinVentana > contorno.size() && i > inicio)
+				//if (posFinVentana > contorno.size() && i > inicio)
+				if (i >= fin)
 					parar = true;
 			}
 			

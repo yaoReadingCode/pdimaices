@@ -1,6 +1,8 @@
 package objeto;
 
 import java.awt.Color;
+import java.awt.Polygon;
+import java.awt.Shape;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -13,6 +15,11 @@ import procesamiento.RgbHsv;
 public class Objeto {
 	
 	private Long id;
+	
+	/**
+	 * Instancia de Shape que determina la forma del objeto
+	 */
+	private Shape shape;
 	
 	/**
 	 * Lista de rasgos que caracterizan al objeto
@@ -28,29 +35,36 @@ public class Objeto {
 	 * Lista de pixeles del objeto
 	 */
 	private List<Pixel> puntos = new ArrayList<Pixel>();
-
-	/**
-	 * Lista de triángulos que forman el objeto. Se calculan a partir de la
-	 * lista de pixeles del objeto
-	 */
-	private List<Triangulo> triangulosContenedores = new ArrayList<Triangulo>();
 	
-	/**
-	 * Cache que mantiene el triangulo que contuvo al ultimo pixel buscado 
-	 */
-	private Triangulo trianguloActual = null;
+//	/**
+//	 * Lista de triángulos que forman el objeto. Se calculan a partir de la
+//	 * lista de pixeles del objeto
+//	 */
+//	private List<Triangulo> triangulosContenedores = new ArrayList<Triangulo>();
+//	
+//	/**
+//	 * Cache que mantiene el triangulo que contuvo al ultimo pixel buscado 
+//	 */
+//	private Triangulo trianguloActual = null;
 
 	/**
 	 * Lista de pixeles del objeto
 	 */
 	private List<Pixel> contorno = new ArrayList<Pixel>();
 
+	/**
+	 * Radio del objeto
+	 */
 	private double radio;
 
 	private String name = "";
 
 	private BoundingBox boundingBox;
-
+	
+	private double ancho;
+	
+	private double alto;
+	
 	private Color colorPromedio = null;
 
 	private Pixel pixelMedio = null;
@@ -79,7 +93,9 @@ public class Objeto {
 	
 	private Pixel pixelPunta2 = null;
 	
-	private PlanarImage originalImage;	
+	private PlanarImage originalImage;
+	
+	private List<Pixel> puntosDivisionContorno = null;
 	
 	public double[] getAcumuladorR() {
 		if (acumuladorR == null) this.colorPromedio();
@@ -140,13 +156,13 @@ public class Objeto {
 		puntos.add(p);
 	}
 
-	public List<Triangulo> getTriangulosContenedores() {
-		return triangulosContenedores;
-	}
-
-	public void setTriangulosContenedores(List<Triangulo> triangulosContenedores) {
-		this.triangulosContenedores = triangulosContenedores;
-	}
+//	public List<Triangulo> getTriangulosContenedores() {
+//		return triangulosContenedores;
+//	}
+//
+//	public void setTriangulosContenedores(List<Triangulo> triangulosContenedores) {
+//		this.triangulosContenedores = triangulosContenedores;
+//	}
 
 	public List<Pixel> getPuntos() {
 		return puntos;
@@ -250,7 +266,7 @@ public class Objeto {
 		if (contorno != null && contorno.size() >= 3){
 			Pixel inicio = contorno.get(0);
 			Pixel fin = contorno.get(contorno.size() - 1);
-			if (inicio.isAdyacente(fin))
+			if (inicio.isAdyacente(fin) || inicio.equals(fin))
 				return true;
 			else {
 				System.err.println("Contorno de objeto invalido. Los pixels "+ inicio + " y " + fin + " no son adyacentes");
@@ -261,26 +277,35 @@ public class Objeto {
 
 	public void setContorno(List<Pixel> contorno) {
 		this.contorno = contorno;
-		//validarContorno(contorno);
 		if (contorno != null){
+			setPuntosDivisionContorno(null);
 			calcularMedioYBoundingBox();
-			calcularTriangulosContenedores();
+			//calcularTriangulosContenedores();
+			createShape();
 		}
 	}
 	
+	private void createShape() {
+		Polygon shape = new Polygon();
+		for(Pixel p: this.getContorno()){
+			shape.addPoint(p.getX(), p.getY());
+		}
+		this.setShape(shape);
+	}
+
 	/**
 	 * calcula el minimo rectangulo contenedor y lo asigna como bounding box
 	 */
 	public void calcularMRC(){
 		Objeto objAux = this.clonar();
-		double altoMRC = this.getAlto();
-		double anchoMRC = this.getAncho();
+		double altoMRC = objAux.getBoundingBox().height();
+		double anchoMRC = objAux.getBoundingBox().width();
 		double areaMin = altoMRC * anchoMRC;
 		double anguloRot = 3;
 		for (double anguloTot = anguloRot; anguloTot < 360; anguloTot += anguloRot) {
 			objAux.rotarContorno(anguloRot);
-			double alto = objAux.getAlto();
-			double ancho = objAux.getAncho();
+			double alto = objAux.getBoundingBox().height();
+			double ancho = objAux.getBoundingBox().width();
 			double area = alto * ancho;
 			if (area < areaMin) {
 				anchoMRC = ancho;
@@ -288,8 +313,8 @@ public class Objeto {
 				areaMin = ancho * alto;
 			}
 		}
-		
-		this.boundingBox = objAux.getBoundingBox();
+		alto = altoMRC;
+		ancho = anchoMRC;
 	}
 
 	/**
@@ -300,18 +325,19 @@ public class Objeto {
 	 * @return
 	 */
 	public boolean isPertenece(Pixel p) {
-		if (validarContorno())
-			if (isPerteneceTriangulo(p)) return true;
+		if (getShape() != null){
+			return getShape().contains(p.getX(), p.getY());
+		}
 		return false;
 	}
-	
+	/*
 	private boolean igual(int x,int y,Pixel p){
 		if (x == p.getX() && y == p.getY())
 			return true;
 		return false;
-	}
-	
-	public boolean isPerteneceTriangulo(Pixel p){
+	}*/
+	/*
+	protected boolean isPerteneceTriangulo(Pixel p){
 		if (getTrianguloActual() != null && getTrianguloActual().isPertenece(p))
 			return true;
 		for (Triangulo t : getTriangulosContenedores()) {
@@ -321,7 +347,7 @@ public class Objeto {
 			}
 		}
 		return false;
-	}
+	}*/
 
 	/**
 	 * Calcula el punto medio y el bounding box desde el contorno
@@ -352,43 +378,50 @@ public class Objeto {
 		setBoundingBox(new BoundingBox(minX, minY, maxX, maxY));
 		Pixel medio = new Pixel( x / contorno.size(), y / contorno.size(), null,maxXImage, maxYImage);
 		setPixelMedio(medio);
-	}
-
-	/**
-	 * Calcula los triángulos que forman el objeto a partir de la lista de
-	 * pixeles que forman el contorno del objeto
-	 */
-	public void calcularTriangulosContenedores() {
-		if (getContorno() != null) {
-
-			double radio = 0;
-			setTrianguloActual(null);
-			
-			if (contorno.size() > 1) {
-				List<Triangulo> triangulos = new ArrayList<Triangulo>();
-				Pixel pixeltrianguloAnt = contorno.get(0);
-				Pixel primero = contorno.get(0);
-				radio = getPixelMedio().distancia(primero);
-				int sizeLado = 2;
-				for (int i = sizeLado; i < contorno.size(); i= i + sizeLado ) {
-					Pixel ant = contorno.get(i - sizeLado);
-					double dist = getPixelMedio().distancia(ant);
-
-					if (dist > radio)
-						radio = dist;
-					Triangulo t = new Triangulo(getPixelMedio(), pixeltrianguloAnt, ant);
-					if (t.validarTriangulo()) {
-						triangulos.add(t);
-						pixeltrianguloAnt = ant;
-					}
-				}
-				Triangulo t = new Triangulo(getPixelMedio(), pixeltrianguloAnt,	primero);
-				triangulos.add(t);
-				setTriangulosContenedores(triangulos);
-				setRadio(radio);
-			}
+		double radio = 0.0;
+		for (Pixel p : contorno) {
+			double dist = getPixelMedio().distancia(p);
+			if (dist > radio)
+				radio = dist;
 		}
+		setRadio(radio);
 	}
+
+//	/**
+//	 * Calcula los triángulos que forman el objeto a partir de la lista de
+//	 * pixeles que forman el contorno del objeto
+//	 */
+//	public void calcularTriangulosContenedores() {
+//		if (getContorno() != null) {
+//
+//			double radio = 0;
+//			setTrianguloActual(null);
+//			
+//			if (contorno.size() > 1) {
+//				List<Triangulo> triangulos = new ArrayList<Triangulo>();
+//				Pixel pixeltrianguloAnt = contorno.get(0);
+//				Pixel primero = contorno.get(0);
+//				radio = getPixelMedio().distancia(primero);
+//				int sizeLado = 2;
+//				for (int i = sizeLado; i < contorno.size(); i= i + sizeLado ) {
+//					Pixel ant = contorno.get(i - sizeLado);
+//					double dist = getPixelMedio().distancia(ant);
+//
+//					if (dist > radio)
+//						radio = dist;
+//					Triangulo t = new Triangulo(getPixelMedio(), pixeltrianguloAnt, ant);
+//					if (t.validarTriangulo()) {
+//						triangulos.add(t);
+//						pixeltrianguloAnt = ant;
+//					}
+//				}
+//				Triangulo t = new Triangulo(getPixelMedio(), pixeltrianguloAnt,	primero);
+//				triangulos.add(t);
+//				setTriangulosContenedores(triangulos);
+//				setRadio(radio);
+//			}
+//		}
+//	}
 
 	/**
 	 * calcula el area del objeto
@@ -429,15 +462,11 @@ public class Objeto {
 	}
 
 	public double getAlto() {
-		if (getBoundingBox() != null)
-			return getBoundingBox().getMaxX() - getBoundingBox().getMinX();
-		return 0;
+		return alto;
 	}
 
 	public double getAncho() {
-		if (getBoundingBox() != null)
-			return getBoundingBox().getMaxY() - getBoundingBox().getMinY();
-		return 0;
+		return ancho;
 	}
 
 	/**
@@ -477,8 +506,8 @@ public class Objeto {
 		//trasladarMedio(punto);
 		calcularMedioYBoundingBox();
 	}	
-
-	private void trasladarMedio(Pixel punto) {
+	/*
+	public void trasladarMedio(Pixel punto) {
 		getPixelMedio().trasladar(punto);
 		if (getPixelPunta1() != null)
 			getPixelPunta1().trasladar(punto);
@@ -486,7 +515,7 @@ public class Objeto {
 			getPixelPunta2().trasladar(punto);
 		BoundingBox bb = getBoundingBox();
 		bb.trasladar(punto);		
-	}
+	}*/
 
 	private void trasladar(List<Pixel> lista, Pixel punto) {
 		for(Pixel p:lista)
@@ -814,12 +843,28 @@ public class Objeto {
 		this.originalImage = originalImage;
 	}
 
-	public Triangulo getTrianguloActual() {
-		return trianguloActual;
+//	public Triangulo getTrianguloActual() {
+//		return trianguloActual;
+//	}
+//
+//	public void setTrianguloActual(Triangulo trianguloActual) {
+//		this.trianguloActual = trianguloActual;
+//	}
+
+	public List<Pixel> getPuntosDivisionContorno() {
+		return puntosDivisionContorno;
 	}
 
-	public void setTrianguloActual(Triangulo trianguloActual) {
-		this.trianguloActual = trianguloActual;
+	public void setPuntosDivisionContorno(List<Pixel> puntosDivisionContorno) {
+		this.puntosDivisionContorno = puntosDivisionContorno;
 	}
 
+	public Shape getShape() {
+		return shape;
+	}
+
+	public void setShape(Shape shape) {
+		this.shape = shape;
+	}
+	
 }

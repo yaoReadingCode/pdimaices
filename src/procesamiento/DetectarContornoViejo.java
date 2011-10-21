@@ -387,7 +387,7 @@ public class DetectarContornoViejo extends AbstractImageCommand {
 						if (actual != null)
 							if ((actual != null) && (!isVisitado(actual))) {
 								setVisitado(actual);
-								if (o.isPerteneceTriangulo(actual)) {
+								if (o.isPertenece(actual)) {
 									/**/
 									actual.setCol(getColorPunto(pixel,
 											getOriginalImage()));

@@ -56,6 +56,7 @@ public class ObjetoUtil {
 				pintarPunto(p, o, ti, medio, width, height);
 			}
 			for (Pixel p : o.getContorno()) {
+				//p.setCol(Color.red);
 				pintarPunto(p, o, ti, medio, width, height);
 			}
 			
@@ -279,6 +280,47 @@ public class ObjetoUtil {
 		}
 		return angulo;
 	}
+	
+	/**
+	 * Calcula la distancia de un punto a una recta formada por los coeficientes a y b. y = a * x + b
+	 * @param punto
+	 * @param a Coeficiente a de la ecuacion de la recta
+	 * @param b Coeficiente b de la ecuacion de la recta
+	 * @return
+	 */
+	public static double distanciaPuntoARecta(Pixel punto, double a, double b){
+		double distancia = Math.abs(a * punto.getX() - punto.getY() + b) / Math.sqrt(Math.pow(a, 2) + 1);
+		return distancia;
+	}
+	
+	/**
+	 * Calcula la distancia de un punto a una recta formada por el segemento iniRecta - finRecta
+	 * @param punto
+	 * @param iniRecta
+	 * @param finRecta
+	 * @return
+	 */
+	public static double distanciaPuntoARecta(Pixel punto, Pixel iniRecta, Pixel finRecta){
+		Double pendiente = null;
+		if (finRecta.getXDouble() - iniRecta.getXDouble() != 0)
+			pendiente = (finRecta.getYDouble() - iniRecta.getYDouble()) / (finRecta.getXDouble() - iniRecta.getXDouble());
+		if (pendiente == null){
+			return Math.abs(iniRecta.getY()- punto.getY());
+		}
+		else if (pendiente != 0){
+
+			CoeficientesRecta coefRecta = new CoeficientesRecta();
+			coeficientesRecta(pendiente, iniRecta, coefRecta);
+			//Obtenemos los coeficientes de la recta de la forma y = a * x + b
+			double a = - coefRecta.a / coefRecta.b;
+			double b = - coefRecta.c / coefRecta.b;
+			return distanciaPuntoARecta(punto, a, b);
+		}
+		else{
+			return Math.abs(iniRecta.getX()- punto.getX());
+		}
+	}
+
 	/**
 	 * Crea una linea de pixeles que unen dos puntos
 	 * @param p1
@@ -349,7 +391,19 @@ public class ObjetoUtil {
 
 		return lineaPixelesOrd;
 	}
-
+	
+	/**
+	 * Calcula la pendiente de la recta
+	 * @param inicio
+	 * @param fin
+	 * @return
+	 */
+	public static Double calcularPendienteRecta(Pixel inicio, Pixel fin){
+		Double pendiente = null;
+		if (fin.getXDouble() - inicio.getXDouble() != 0)
+			pendiente = (fin.getYDouble() - inicio.getYDouble()) / (fin.getXDouble() - inicio.getXDouble());
+		return pendiente;
+	}
 	
 	public static void main(String[] args) {
 		

@@ -432,8 +432,7 @@ public class Pixel implements Cloneable {
 	}
 
 	public double modulo() {
-		return Math.sqrt(Math.pow(this.getXDouble(), 2)
-				+ Math.pow(this.getYDouble(), 2));
+		return Math.sqrt(Math.pow(this.getXDouble(), 2)	+ Math.pow(this.getYDouble(), 2));
 	}
 
 	public double getXCartesiano() {
@@ -631,7 +630,21 @@ public class Pixel implements Cloneable {
 		for(int i:recorrido){
 			System.out.println(i);
 		}
-		
 
+	}
+	
+	public void normalizar(){
+		double modulo = this.modulo();
+		double x = this.xDouble / modulo;
+		double y = this.yDouble / modulo;
+		this.setXDouble(x);
+		this.setYDouble(y);
+	}
+
+	public void escalar(double valor) {
+		double x = this.xDouble * valor;
+		double y = this.yDouble * valor;
+		this.setXDouble(x);
+		this.setYDouble(y);
 	}
 }

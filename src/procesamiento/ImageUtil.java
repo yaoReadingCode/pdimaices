@@ -182,17 +182,33 @@ public class ImageUtil {
 	 * @param image
 	 */
 	public static void writePixel(int x, int y, int[] pixelValue, TiledImage image) {
-		int xIndex = image.XToTileX(x);
-		int yIndex = image.YToTileY(y);
-		
-		WritableRaster tileRaster = image.getWritableTile(xIndex, yIndex);
-		if (tileRaster != null)
-			//System.out.println("pixel: " + x +" , " + y);
-			tileRaster.setPixel(x, y, pixelValue);
-		//image.releaseWritableTile(xIndex, yIndex);
-		
+		if (x >= image.getMinX() &&
+			x <= image.getMaxX() &&
+			y >= image.getMinY() &&
+			y <= image.getMaxY()){
+			int xIndex = image.XToTileX(x);
+			int yIndex = image.YToTileY(y);
+			
+			WritableRaster tileRaster = image.getWritableTile(xIndex, yIndex);
+			if (tileRaster != null)
+				//System.out.println("pixel: " + x +" , " + y);
+				tileRaster.setPixel(x, y, pixelValue);
+			//image.releaseWritableTile(xIndex, yIndex);
+		}
 	}
 	
+	/**
+	 * Setea el valor de un pixel de un TiledImage
+	 * @param p Pixel
+	 * @param image Imagen
+	 */
+	public static void writePixel(Pixel p, TiledImage image) {
+		if (p.getCol() != null){
+			int[] newPixel = { p.getCol().getRed(), p.getCol().getGreen(), p.getCol().getBlue()};
+			writePixel(p.getX(), p.getY(), newPixel, image);
+		}
+	}
+		
 	/**
 	 * Setea el valor de un pixel de un TiledImage
 	 * @param x
@@ -314,18 +330,36 @@ public class ImageUtil {
 	}
 	
 	public static Color getColorPunto(Pixel pixel, PlanarImage ti) {
-		/**/
-		int[] pix = ImageUtil.readPixel(pixel.getX(), pixel.getY(), ti);
-
-		int r = pix[0];
-		int g = pix[0];
-		int b = pix[0];
-		if (pix.length == 3) {
-			g = pix[1];
-			b = pix[2];
+		if (pixel.getX() >= ti.getMinX() &&
+			pixel.getX() <= ti.getMaxX() &&
+			pixel.getY() >= ti.getMinY() &&
+			pixel.getY() <= ti.getMaxY()){
+			int[] pix = ImageUtil.readPixel(pixel.getX(), pixel.getY(), ti);
+			if (pix != null){
+				int r = pix[0];
+				int g = pix[0];
+				int b = pix[0];
+				if (pix.length == 3) {
+					g = pix[1];
+					b = pix[2];
+				}
+				return new Color(r, g, b);
+			}
 		}
-		return new Color(r, g, b);
-
+		return null;
 	}
-
+	
+	/**
+	 * Inicializa la una imagen con un color de fondo
+	 * @param image
+	 * @param fondo
+	 */
+	public static void inicializarImagen(TiledImage image, Color fondo){
+		int[] color = {fondo.getRed(), fondo.getGreen(), fondo.getBlue()};
+		for(int i = 0; i < image.getWidth(); i++ )
+			for(int j = 0; j < image.getHeight(); j++ ){
+				writePixel(i, j, color, image);
+			}
+		
+	}
 }

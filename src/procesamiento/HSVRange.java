@@ -8,6 +8,15 @@ import java.awt.Color;
  *
  */
 public class HSVRange {
+	
+	public static final Float HMAX_VALUE = 360F;
+	public static final Float HMIN_VALUE = 0F;
+	public static final Float SMAX_VALUE = 100F;
+	public static final Float SMIN_VALUE = 0F;
+	public static final Float VMAX_VALUE = 100F;
+	public static final Float VMIN_VALUE = 0F;
+
+
 	/**
 	 * Valor H mínimo
 	 */
@@ -109,6 +118,23 @@ public class HSVRange {
 		if (getHMin() == null && getHMax() == null && getSMin() == null && getSMax() == null && getVMin() == null && getVMax() == null)
 			return true;
 		return false;
+	}
+	
+	/**
+	 * Devuelve el color RGB promedio del rango.
+	 * @return Color RGB
+	 */
+	public Color getColorMedio(){
+		Float hmin = (getHMin() != null) ? getHMin(): HMIN_VALUE;
+		Float hmax = (getHMax() != null) ? getHMax(): HMAX_VALUE;
+		Float smin = (getSMin() != null) ? getSMin(): SMIN_VALUE;
+		Float smax = (getSMax() != null) ? getSMax(): SMAX_VALUE;
+		Float vmin = (getVMin() != null) ? getVMin(): VMIN_VALUE;
+		Float vmax = (getVMax() != null) ? getVMax(): VMAX_VALUE;
+		float h = (hmax - hmin) / 2f;
+		float s = (smax - smin) / 2f;
+		float v = (vmax - vmin) / 2f;
+		return new Color(RgbHsv.HSVtoRGB(h / HMAX_VALUE, s / SMAX_VALUE, v / VMAX_VALUE));
 	}
 
 }

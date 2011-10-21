@@ -128,16 +128,10 @@ public class DetectarObjetos extends AbstractImageCommand {
 			PlanarImage binaryImage = ef.execute();
 			PlanarImage output = binaryImage;
 			
-			/*
-			Closing c = new Closing(output);
-			output = c.execute();
-			*/
-			
 			Visualizador.aumentarProgreso(15, "Detectando Contorno Grueso...");
 			DetectarContornoGrueso dcg = new DetectarContornoGrueso(output);
 			output = dcg.execute();
 			
-			//output = ImageUtil.createTiledImage(output, ImageUtil.tileWidth, ImageUtil.tileHeight);
 			Visualizador.aumentarProgreso(20, "Detectando Contorno...");
 			DetectarContorno dc = new DetectarContorno(output, getOriginalImage(), new Color(100, 100, 100), Color.RED);
 			dc.setBinaryImage(binaryImage);
@@ -152,18 +146,12 @@ public class DetectarObjetos extends AbstractImageCommand {
 			Visualizador.aumentarProgreso(30, "Clasificando objetos...");
 			clasificarObjetos(dc.getObjetos());
 			
-			/*
-			Visualizador.aumentarProgreso(10, "Pintando interior...");
-			output = pintarInterior(getOriginalImage());*/
-			
 			Visualizador.aumentarProgreso(10, "Pintando contorno...");
 			output = pintarContorno(getOriginalImage());
 			
 			ef.postExecute();
-			//op.postExecute();
 			dc.postExecute(); 
 			Visualizador.aumentarProgreso(10, "");
-			//Visualizador.terminar();
 			
 			visualizarResultado();
 			System.out.println("Inicio: " + (new Date(System.currentTimeMillis())).toString() + " - FIN: " + fechaInicio.toString());
