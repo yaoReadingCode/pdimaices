@@ -21,3 +21,8 @@
                           
                           
                           
+                                                                                       
+                                                                                       
+                                                                                       
+                                                                                       
+8,PUNTOS_DIVISION,Puntos de división,procesamiento.clasificacion.CantidadPuntosDivision
