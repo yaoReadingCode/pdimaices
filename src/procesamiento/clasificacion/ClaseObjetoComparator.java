@@ -19,6 +19,10 @@ public class ClaseObjetoComparator implements Comparator<ClaseObjeto> {
 				return clase1.getClase().getOrdenEvaluacion().compareTo(clase2.getClase().getOrdenEvaluacion());
 				
 		}
+		if (clase1.getDistanciaPromedio() != null)
+			return -1;
+		if (clase2.getDistanciaPromedio() != null)
+			return 1;
 		return 0;
 	}
 

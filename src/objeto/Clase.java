@@ -136,7 +136,7 @@ public class Clase {
 		double acumulador = 0.0;
 		double cantidad = 0;
 		for(RasgoClase r:this.getRasgos()){
-			if (r != null){
+			if (r != null && r.getDeterminante()){
 				RasgoObjeto ro = objeto.getRasgo(r.getRasgo());
 				if(ro != null){
 					double distancia = 0.0;

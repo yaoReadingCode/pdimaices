@@ -23,8 +23,18 @@
                             
                             
                                                          
-1,MAIZ,Maiz,-13369549,0,Maiz
-2,INDETERMINADO,Materia Extraña,-65536,-1,Materia Extraña
-3,GRANO_QUEBRADO,Grano Quebrado,-16750900,1,Grano Quebrado
-4,GRANO_DANIADO,Grano Dañado,-39373,2,Grano Dañado
-5,GRANO_PICADO,Grano Picado,-256,3,Grano Picado
+                            
+                                                         
+                                                          
+                                                  
+                                               
+                            
+                                                       
+                                                       
+                                                  
+                                                           
+1,MAIZ,Maiz,-13369549,3,Maiz
+2,INDETERMINADO,Materia Extraña,-65536,-1,Indeterminado
+3,GRANO_PARTIDO,Grano Partido,-16750900,2,Grano Partido
+4,GRANO_DANIADO,Grano Dañado,-39373,4,Grano Dañado
+5,MATERIA_EXTRANIA,Materia Extraña,-39373,1,Materia Extraña
