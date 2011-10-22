@@ -70,15 +70,15 @@ public class ObjetoReferencia {
 	private static Double errorCalculos;
 
 	/**
-	 * Retorna la relacion entre el area en pixeles y el area en centimetros
+	 * Retorna la relacion entre el area en pixeles y el area en milimetros
 	 * 
 	 * @return
 	 */
-	public static Double getRelacionPixelCm() {
+	public static Double getRelacionPixelMM() {
 		// if (getAreaPixel() != null && getAreaCm() != null && getAreaPixel()
 		// != 0)
 		if (cantPixel != null) {
-			return cantPixel / cantMM;
+			return cantMM /cantPixel;
 		}
 		return 1.0;
 	}

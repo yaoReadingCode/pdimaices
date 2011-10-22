@@ -1038,6 +1038,11 @@ public class DetectarContorno extends AbstractImageCommand {
 				if (isBuscarObjetoReferencia() && valor_MM_Pixel != null){
 					
 					ObjetoReferencia.setObjetoReferencia(valor_MM_Pixel);
+					objetos.remove(valor_MM_Pixel);
+					System.out.println("**************************************************");
+					System.out.println("Objeto Referencia: " + valor_MM_Pixel.getName()
+							+ " - diametro en MM: " + ObjetoReferencia.mayorDiametroEnMM(valor_MM_Pixel));
+					
 					for (Objeto o : objetos) {
 						System.out
 						.println("**************************************************");
@@ -1050,7 +1055,7 @@ public class DetectarContorno extends AbstractImageCommand {
 					System.out
 							.println("**************************************************");
 				}
-
+				
 				setObjetos(objetos);
 				for (Objeto obj : objetos) {
 					ObjetoUtil.save(obj);

@@ -66,7 +66,7 @@ public class SepararObjetosViejo extends AbstractImageCommand {
 
 
 	public int getVentanaPixeles() {
-		return ventanaPixeles * getClasificador().getObjetoReferencia().getRelacionPixelCm().intValue();
+		return ventanaPixeles * getClasificador().getObjetoReferencia().getRelacionPixelMM().intValue();
 	}
 
 
