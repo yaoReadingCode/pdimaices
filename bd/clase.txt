@@ -1,40 +1,30 @@
-
-                                           
-                                       
-                                     
-                                   
                             
-                                                         
                                                      
-                                                
-                                               
-                                                        
-                                                        
-                                                        
-                                                        
-                                               
-                                                
-                                                     
-                                                         
-                            
-                                  
-                                  
-                                                     
-                            
-                            
-                                                         
-                            
-                                                         
-                                                          
-                                                  
-                                               
-                            
                                                        
+                                                  
+                                                           
+                            
+                                                     
+                                                       
+                                                  
+                                                           
+                            
+                                                     
+                                                       
+                                                  
+                                                           
+                            
+                                                     
+                                                       
+                                                  
+                                                           
+                            
+                                                     
                                                        
                                                   
                                                            
 1,MAIZ,Maiz,-13369549,3,Maiz
-2,INDETERMINADO,Materia Extraña,-65536,-1,Indeterminado
+2,INDETERMINADO,Indeterminado,-65536,-1,Indeterminado
 3,GRANO_PARTIDO,Grano Partido,-16750900,2,Grano Partido
 4,GRANO_DANIADO,Grano Dañado,-39373,4,Grano Dañado
 5,MATERIA_EXTRANIA,Materia Extraña,-39373,1,Materia Extraña

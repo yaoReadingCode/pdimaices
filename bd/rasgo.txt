@@ -1,44 +1,45 @@
-                                                       
-                                                                   
-                                                                    
-                                                           
-                                                        
+                                                            
                                                                         
-                                                                                  
-                                                       
-                                                       
-                                                  
-                                                  
-                                                  
-                                                                                  
-                                                                       
-                                                                       
-                                                                       
-                                                                       
-                                                                       
-                                   
-                                   
-                          
-                          
-                          
-                                                                                       
-                                                                                       
-                                                                                       
-                                                                                       
-                                                                                       
-                                                       
-                                                                   
-                                                                    
-                                                           
-                                                        
+                                                                         
+                                                                
+                                                            
                                                                         
-                                                                                  
+                                                                         
+                                                                
+                                                            
+                                                                        
+                                                                         
+                                                                
+                                                             
+                                                                             
                                                                                        
-1,AREA,Area del objeto,procesamiento.clasificacion.Area
-2,ASPECT RADIO,Aspect Radio,procesamiento.clasificacion.AspectRatio
-3,CIRCULARIDAD,Circularidad,procesamiento.clasificacion.Circularidad
-4,CURVATURA,Curvatura,procesamiento.clasificacion.Curvatura
-5,DIAMETRO,Diametro,procesamiento.clasificacion.Diametro
-6,SUMA_ANGULOS,Sumatoria Angulos,procesamiento.clasificacion.SumaAngulos
-7,HISTOGRAMA_RGB,Histograma RGB,procesamiento.clasificacion.EvaluadorHistogramaRGB
-8,PUNTOS_DIVISION,Puntos de división,procesamiento.clasificacion.CantidadPuntosDivision
+                                                                                            
+                                                            
+                                                                        
+                                                                         
+                                                                
+                                                             
+                                                                             
+                                                                                       
+                                                                                            
+                                                            
+                                                                        
+                                                                         
+                                                                
+                                                             
+                                                                             
+                                                                                       
+                                                                                            
+1,AREA,Area del objeto,procesamiento.clasificacion.Area,true
+2,ASPECT RADIO,Aspect Radio,procesamiento.clasificacion.AspectRatio,true
+3,CIRCULARIDAD,Circularidad,procesamiento.clasificacion.Circularidad,true
+4,CURVATURA,Curvatura,procesamiento.clasificacion.Curvatura,true
+5,DIAMETRO,Diametro,procesamiento.clasificacion.Diametro,true
+6,SUMA_ANGULOS,Sumatoria Angulos,procesamiento.clasificacion.SumaAngulos,true
+                                                                                       
+                                                                                            
+8,PUNTOS_DIVISION,Puntos de división,procesamiento.clasificacion.CantidadPuntosDivision,false
+                                                                                        
+                                                                                        
+                                                                                        
+7,HISTOGRAMA_RGB,Histograma RGB,procesamiento.clasificacion.EvaluadorHistogramaRGB,false

@@ -3,8 +3,6 @@ package aplicarFiltros.configuracion.modelmapper;
 import java.util.ArrayList;
 import java.util.List;
 
-import objeto.Rasgo;
-
 import aplicarFiltros.configuracion.exception.ValidationException;
 
 public abstract class ModelMapper<T> {

@@ -12,8 +12,6 @@ import objeto.RasgoObjeto;
  */
 public class EvaluadorRasgo {
 	private RasgoClase rasgoClase;
-	private Double valor;
-	private Double desvioEstandar = 0.0;
 	private Double maximo;
 	private Double minimo;
 	private ObjetoReferencia objetoReferencia;
@@ -23,13 +21,10 @@ public class EvaluadorRasgo {
 		// TODO Auto-generated constructor stub
 	}
 
-	public EvaluadorRasgo(RasgoClase rasgo, Double valor, Double desvioEstandar) {
-		super();
-		this.desvioEstandar = desvioEstandar;
+	public EvaluadorRasgo(RasgoClase rasgo, Double minimo, Double maximo) {
+		this.maximo = maximo;
+		this.minimo = minimo;
 		this.rasgoClase = rasgo;
-		this.valor = valor;
-		this.maximo = valor + desvioEstandar;
-		this.minimo = valor - desvioEstandar;
 	}
 
 	public RasgoClase getRasgoClase() {
@@ -41,19 +36,6 @@ public class EvaluadorRasgo {
 		
 		if (rasgo != null){
 			if (rasgo.getMedia() != null){
-				this.setValor(rasgo.getMedia());
-			}
-			else{
-				this.setValor(rasgo.getMediaDefault());
-			}
-			if (rasgo.getDesvioEstandar() != null){
-				this.setDesvioEstandar(rasgo.getDesvioEstandar());
-			}
-			else{
-				this.setDesvioEstandar(rasgo.getDesvioEstandarDefault());
-			}
-
-			if (rasgo.getMedia() != null){
 				if (rasgo.getCalcularValorMedio()){
 					this.setMinimo(rasgo.getMedia() - 2 * rasgo.getDesvioEstandar());
 					this.setMaximo(rasgo.getMedia() + 2 * rasgo.getDesvioEstandar());
@@ -64,29 +46,11 @@ public class EvaluadorRasgo {
 				}
 			}
 			else{
-				if (rasgo.getMediaDefault() != null && rasgo.getDesvioEstandarDefault() != null){
-					this.setMinimo(rasgo.getMediaDefault() - rasgo.getDesvioEstandarDefault());
-					this.setMaximo(rasgo.getMediaDefault() + rasgo.getDesvioEstandarDefault());
-				}
+				this.setMinimo(rasgo.getMinimo());
+				this.setMaximo(rasgo.getMaximo());
 			}
 			
 		}
-	}
-
-	public Double getValor() {
-		return valor;
-	}
-
-	public void setValor(Double valor) {
-		this.valor = valor;
-	}
-
-	public Double getDesvioEstandar() {
-		return desvioEstandar;
-	}
-
-	public void setDesvioEstandar(Double desvioEstandar) {
-		this.desvioEstandar = desvioEstandar;
 	}
 
 	public Double getMaximo() {
@@ -106,7 +70,10 @@ public class EvaluadorRasgo {
 	}
 
 	public RasgoObjeto calcularValor(Objeto objeto){
-		return new RasgoObjeto(this.getRasgoClase().getRasgo(),getValor());
+		Double valor = null;
+		if (getMaximo() != null && getMinimo() != null)
+			valor = (getMaximo() + getMinimo()) / 2;
+		return new RasgoObjeto(this.getRasgoClase().getRasgo(),valor);
 	}
 
 	public ObjetoReferencia getObjetoReferencia() {

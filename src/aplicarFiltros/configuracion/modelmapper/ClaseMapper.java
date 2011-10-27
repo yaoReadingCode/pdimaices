@@ -3,9 +3,8 @@ package aplicarFiltros.configuracion.modelmapper;
 import java.awt.Color;
 import java.util.List;
 
-import aplicarFiltros.configuracion.exception.ValidationException;
-
 import objeto.Clase;
+import aplicarFiltros.configuracion.exception.ValidationException;
 import dataAcces.ObjectDao;
 
 public class ClaseMapper extends ModelMapper<Clase> {

@@ -13,8 +13,8 @@ public class Diametro extends EvaluadorRasgo {
 		super();
 	}
 
-	public Diametro(RasgoClase rasgo, Double valor, Double desvioEstandar) {
-		super(rasgo, valor, desvioEstandar);
+	public Diametro(RasgoClase rasgo, Double minimo, Double maximo) {
+		super(rasgo, minimo, maximo);
 	}
 
 	public RasgoObjeto calcularValor(Objeto objeto) {

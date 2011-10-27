@@ -8,11 +8,12 @@ import dataAcces.ObjectDao;
 
 public class RasgoMapper extends ModelMapper<Rasgo> {
 	
-	private final String[] columnNames = {"Nombre","Descripción","Evaluador Rasgo"};
+	private final String[] columnNames = {"Nombre","Descripción","Evaluador Rasgo", "Visible"};
 
 	private static final int NOMBRE_INDEX = 0;
 	private static final int DESCRIPCION_INDEX = 1;
 	private static final int EVALUADOR_CLASE_INDEX = 2;
+	private static final int VISIBLE = 3;
 	
 	public RasgoMapper() {
 		super();
@@ -35,12 +36,13 @@ public class RasgoMapper extends ModelMapper<Rasgo> {
 	 * @see aplicarFiltros.configuracion.TableMapper#getData()
 	 */
 	public Object[][] getData() {
-		Object[][] data = new Object[getDataModel().size()][3];
+		Object[][] data = new Object[getDataModel().size()][4];
 		for(int index = 0; index < getDataModel().size(); index++){
 			Rasgo r = getDataModel().get(index);
 			data[index][NOMBRE_INDEX] = r.getNombre();
 			data[index][DESCRIPCION_INDEX] = r.getDescripcion();
 			data[index][EVALUADOR_CLASE_INDEX] = r.getNombreEvaluadorRasgo();
+			data[index][VISIBLE] = r.getVisible();
 		}
 		return data;
 	}
@@ -61,6 +63,9 @@ public class RasgoMapper extends ModelMapper<Rasgo> {
 		case EVALUADOR_CLASE_INDEX:
 			rasgo.setNombreEvaluadorRasgo((String)value);
 			break;
+		case VISIBLE:
+			rasgo.setVisible((Boolean)value);
+			break;
 		default:
 			break;
 		}
@@ -80,6 +85,8 @@ public class RasgoMapper extends ModelMapper<Rasgo> {
 			throw new ValidationException(DESCRIPCION_INDEX, "Debe ingresar una descripción");
 		if (rasgo.getNombreEvaluadorRasgo() == null || rasgo.getNombreEvaluadorRasgo().trim().equals(""))
 			throw new ValidationException(EVALUADOR_CLASE_INDEX, "Debe ingresar un evaluador para el rasgo");
+		if (rasgo.getVisible() == null)
+			throw new ValidationException(VISIBLE, "Debe indicar si el rasgo es visible");
 	}
 
 	public void saveRow(int row) throws ValidationException{

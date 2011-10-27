@@ -11,8 +11,8 @@ public class Area extends EvaluadorRasgo {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Area(RasgoClase rasgo, Double valor, Double desvioEstandar) {
-		super(rasgo, valor, desvioEstandar);
+	public Area(RasgoClase rasgo, Double minimo, Double maximo) {
+		super(rasgo, minimo, maximo);
 	}
 
 	 

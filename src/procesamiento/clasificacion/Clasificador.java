@@ -67,8 +67,10 @@ public class Clasificador {
 				dao.save(obj);
 			}
 			
-			for(EvaluadorRasgo er: c.getRasgos())
-				actualizarRasgoClase(er.getRasgoClase(), objetosClase);
+			for(EvaluadorRasgo er: c.getRasgos()){
+				if (er.getRasgoClase().getRangoVariable() == true)
+					actualizarRasgoClase(er.getRasgoClase(), objetosClase);;
+			}
 		}
 	}
 	
@@ -162,7 +164,7 @@ public class Clasificador {
 						er.setRasgoClase(r);
 
 						rasgos.add(er);
-						System.out.println(r.getRasgo() + ", valor: " + er.getValor() + ", devEst: " + er.getDesvioEstandar());
+						System.out.println(r.getRasgo() + ", minimo: " + er.getMinimo() + ", maximo: " + er.getMaximo());
 					}
 					else{
 						EvaluadorRasgo er = new EvaluadorRasgo();
@@ -170,7 +172,7 @@ public class Clasificador {
 						er.setRasgoClase(r);
 
 						rasgos.add(er);
-						System.out.println(r.getRasgo() + ", valor: " + er.getValor() + ", devEst: " + er.getDesvioEstandar());
+						System.out.println(r.getRasgo() + ", minimo: " + er.getMinimo() + ", maximo: " + er.getMaximo());
 					}
 				}
 			} catch (Exception e) {

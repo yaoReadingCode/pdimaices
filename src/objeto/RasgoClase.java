@@ -20,18 +20,6 @@ public class RasgoClase {
 	private Double desvioEstandar = 0.0;
 	
 	/**
-	 * Valor medio default utilizado inicialmente cuando no hay
-	 * datos previos de los objetos de una clase.
-	 */
-	private Double mediaDefault;
-
-	/**
-	 * Desvio estandar default utilizado inicialmente cuando no hay
-	 * datos previos de los objetos de una clase.
-	 */
-	private Double desvioEstandarDefault;
-	
-	/**
 	 * Sumatoria del valor del rasgo para todos los objetos que pertenecen a la clase
 	 */
 	private Double sumValor;
@@ -76,6 +64,11 @@ public class RasgoClase {
 	 * Indica si el rasgo es determinante para analizar la pertenecia de un objeto a la clase
 	 */
 	private Boolean determinante = true;
+
+	/**
+	 *  Indicar si el valor maximo y minimo de un rasgo puede variar despues de realizar una clasificacion
+	 */
+	private Boolean rangoVariable = true;
 
 	public RasgoClase() {
 		// TODO Auto-generated constructor stub
@@ -123,22 +116,6 @@ public class RasgoClase {
 
 	public void setDesvioEstandar(Double desvioEstandar) {
 		this.desvioEstandar = desvioEstandar;
-	}
-
-	public Double getMediaDefault() {
-		return mediaDefault;
-	}
-
-	public void setMediaDefault(Double mediaDefault) {
-		this.mediaDefault = mediaDefault;
-	}
-
-	public Double getDesvioEstandarDefault() {
-		return desvioEstandarDefault;
-	}
-
-	public void setDesvioEstandarDefault(Double desvioEstandarDefault) {
-		this.desvioEstandarDefault = desvioEstandarDefault;
 	}
 
 	public Double getMaximo() {
@@ -203,6 +180,14 @@ public class RasgoClase {
 
 	public void setCantValores(Integer cantValores) {
 		this.cantValores = cantValores;
+	}
+
+	public Boolean getRangoVariable() {
+		return rangoVariable;
+	}
+
+	public void setRangoVariable(Boolean rangoVariable) {
+		this.rangoVariable = rangoVariable;
 	}
 
 	public boolean equals(Object o) {

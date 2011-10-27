@@ -17,11 +17,10 @@ public class AspectRatio extends EvaluadorRasgo {
 	}
 
 
-	public AspectRatio(RasgoClase rasgo, Double valor, Double desvioEstandar) {
-		super(rasgo, valor, desvioEstandar);
+	public AspectRatio(RasgoClase rasgo, Double minimo, Double maximo) {
+		super(rasgo, minimo, maximo);
 	}
 
-	 
 	public RasgoObjeto calcularValor(Objeto objeto) {
 		double altoMRC = objeto.getAlto();
 		double anchoMRC = objeto.getAncho();

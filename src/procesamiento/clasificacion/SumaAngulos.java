@@ -23,10 +23,11 @@ public class SumaAngulos extends EvaluadorRasgo {
 		// TODO Auto-generated constructor stub
 	}
 
-	public SumaAngulos(RasgoClase rasgo, Double valor, Double desvioEstandar) {
-		super(rasgo, valor, desvioEstandar);
-		// TODO Auto-generated constructor stub
+	public SumaAngulos(RasgoClase rasgo, Double minimo, Double maximo) {
+		super(rasgo, minimo, maximo);
 	}
+	
+	
 	public int getVentanaPixeles() {
 		return ventanaPixeles;
 	}

@@ -9,5 +9,6 @@
 	<property name="nombre" type="string" column="nombre" not-null="true"/>
 	<property name="descripcion" type="string" column="descripcion" not-null="true"/>
 	<property name="nombreEvaluadorRasgo" type="string" column="nombre_evaluador_rasgo" not-null="true"/>
+	<property name="visible" type="boolean" column="visible"/>
   </class>
 </hibernate-mapping>

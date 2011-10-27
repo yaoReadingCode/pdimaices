@@ -19,6 +19,11 @@ public class Rasgo {
 	 */
 	private String nombreEvaluadorRasgo;
 	
+	/**
+	 * Indica si el rasgo se debe mostrar o no
+	 */
+	private Boolean visible;
+	
 
 	public Rasgo() {
 		// TODO Auto-generated constructor stub
@@ -59,6 +64,14 @@ public class Rasgo {
 
 	public void setNombreEvaluadorRasgo(String nombreEvaluadorRasgo) {
 		this.nombreEvaluadorRasgo = nombreEvaluadorRasgo;
+	}
+
+	public Boolean getVisible() {
+		return visible;
+	}
+
+	public void setVisible(Boolean visible) {
+		this.visible = visible;
 	}
 
 	public boolean equals(Object obj){

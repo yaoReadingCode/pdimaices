@@ -1,40 +1,25 @@
 package aplicarFiltros.configuracion;
 
-import java.awt.GridBagLayout;
-import javax.swing.JPanel;
 import java.awt.BorderLayout;
-import javax.swing.BorderFactory;
-import javax.swing.border.TitledBorder;
-
-import java.awt.Component;
+import java.awt.Color;
+import java.awt.ComponentOrientation;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
 import java.awt.SystemColor;
+
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import java.awt.GridBagConstraints;
-import java.util.List;
-
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
+import javax.swing.SwingConstants;
+import javax.swing.border.TitledBorder;
 
 import aplicarFiltros.configuracion.exception.ValidationException;
-import aplicarFiltros.configuracion.modelmapper.RasgoMapper;
-
-import dataAcces.ObjectDao;
-
-import objeto.Rasgo;
-import java.awt.FlowLayout;
-import javax.swing.JButton;
-import java.awt.Dimension;
-import java.awt.ComponentOrientation;
-
-import javax.swing.CellEditor;
-import javax.swing.CellRendererPane;
-import javax.swing.JLabel;
-import javax.swing.BoxLayout;
-import javax.swing.SwingConstants;
-import java.awt.Color;
 
 public class AdminPanel extends JPanel {
 	

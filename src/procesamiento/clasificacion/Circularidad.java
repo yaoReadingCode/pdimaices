@@ -13,10 +13,9 @@ public class Circularidad extends EvaluadorRasgo {
 	}
 
 
-	public Circularidad(RasgoClase rasgo, Double valor, Double desvioEstandar) {
-		super(rasgo, valor, desvioEstandar);
+	public Circularidad(RasgoClase rasgo, Double minimo, Double maximo) {
+		super(rasgo, minimo, maximo);
 	}
-
 	 
 	public RasgoObjeto calcularValor(Objeto objeto) {
 		/*Double circularidad = null;

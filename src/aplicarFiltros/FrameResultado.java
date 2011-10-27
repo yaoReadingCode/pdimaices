@@ -162,7 +162,8 @@ public class FrameResultado extends JFrame {
 		
 		for(int i=0;i<objeto.getRasgos().size();i++){
 			RasgoObjeto rasgo = objeto.getRasgos().get(i);
-			model.addRow(new Object[]{rasgo.getRasgo().getNombre(),rasgo.getValor()});
+			if (rasgo.getRasgo().getVisible())
+				model.addRow(new Object[]{rasgo.getRasgo().getDescripcion(),rasgo.getValor()});
 		}
 		tableRasgos.setModel(model);
 		this.setNombreObjetSeleccionado(objeto.getName());

@@ -77,7 +77,7 @@ public class SepararObjetos extends AbstractImageCommand {
 		rcAspectRadio.setRasgo(new Rasgo("AspectRadio"));
 		
 	
-		Circularidad circularidad = new Circularidad(rcCircularidad, 0.85, 0.15);
+		Circularidad circularidad = new Circularidad(rcCircularidad, 0.7, 1.0);
 		//AspectRatio aspectRadio = new AspectRatio(rcAspectRadio, 0.6, 0.4);
 		//Area area = new Area("Area", 3000.0,2000.0);
 

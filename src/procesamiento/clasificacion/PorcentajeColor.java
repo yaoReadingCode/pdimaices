@@ -8,8 +8,8 @@ import objeto.RasgoObjeto;
 
 public class PorcentajeColor extends EvaluadorRasgo{
 
-	public PorcentajeColor(RasgoClase nombre, Double valor, Double desvioEstandar) {
-		super(nombre, valor, desvioEstandar);
+	public PorcentajeColor(RasgoClase rasgo, Double minimo, Double maximo) {
+		super(rasgo, minimo, maximo);
 	}
 	/**
 	 * 

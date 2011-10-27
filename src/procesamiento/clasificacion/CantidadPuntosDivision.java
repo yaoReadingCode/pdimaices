@@ -10,8 +10,8 @@ public class CantidadPuntosDivision extends EvaluadorRasgo {
 		// TODO Auto-generated constructor stub
 	}
 
-	public CantidadPuntosDivision(RasgoClase rasgo, Double valor, Double desvioEstandar) {
-		super(rasgo, valor, desvioEstandar);
+	public CantidadPuntosDivision(RasgoClase rasgo, Double minimo, Double maximo) {
+		super(rasgo, minimo, maximo);
 	}
 
 	 
