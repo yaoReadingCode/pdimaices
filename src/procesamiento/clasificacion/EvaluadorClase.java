@@ -7,6 +7,7 @@ import java.util.List;
 
 import objeto.Clase;
 import objeto.Objeto;
+import objeto.RasgoObjeto;
 
 /**
  * Clase que define la interfaz necesaria para saber si un objeto
@@ -51,10 +52,47 @@ public class EvaluadorClase {
 	public boolean pertenece(Objeto objeto,boolean addRasgoToObject) {
 		boolean pertenece = true;
 		for (EvaluadorRasgo rasgo : getRasgos()){
-			boolean enRango = rasgo.isEnRango(objeto,addRasgoToObject); 
+			if (rasgo.getRasgoClase().getDeterminante()){
+				RasgoObjeto rasgoObjeto = rasgo.calcularValor(objeto);
+				if (rasgoObjeto != null && addRasgoToObject){
+					objeto.addRasgo(rasgoObjeto);
+				}
+				boolean enRango = rasgo.isEnRango(objeto, rasgoObjeto); 
+				if (!enRango)
+					pertenece = false;
+			}
+			else{
+				if (addRasgoToObject){
+					RasgoObjeto rasgoObjeto = rasgo.calcularValor(objeto);
+					if (rasgoObjeto != null){
+						objeto.addRasgo(rasgoObjeto);
+					}
+				}
+			}
+		}
+		return pertenece;
+	}
+
+	/**
+	 * Indica si un objeto pertenece a la clase
+	 * 
+	 * @param objeto
+	 * @param rasgos Lista con el resultado de la evaluacion de cada rasgo
+	 * @return
+	 */
+	public boolean pertenece(Objeto objeto,boolean addRasgoToObject, List<RasgoObjeto> rasgos) {
+		boolean pertenece = true;
+		for (EvaluadorRasgo rasgo : getRasgos()){
+			RasgoObjeto rasgoObjeto = rasgo.calcularValor(objeto);
+			if (addRasgoToObject){
+				objeto.addRasgo(rasgoObjeto);
+			}
+			if (rasgos != null){
+				rasgos.add(rasgoObjeto);	
+			}
+			boolean enRango = rasgo.isEnRango(objeto, rasgoObjeto); 
 			if (rasgo.getRasgoClase().getDeterminante()&& !enRango)
 				pertenece = false;
-			
 		}
 		return pertenece;
 	}
@@ -103,5 +141,5 @@ public class EvaluadorClase {
 	public void setId(Long id){
 		this.id = id;
 	}
-	
+
 }

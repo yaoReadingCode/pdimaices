@@ -5,7 +5,9 @@ import java.util.List;
 
 import objeto.Clase;
 
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.classic.Session;
@@ -13,6 +15,7 @@ import org.hibernate.classic.Session;
 import procesamiento.clasificacion.Configuracion;
 
 public class ObjectDao {
+	public static final String NULL_VALUE = "null";
 	private SessionFactory sessionFactory;
 	
 	//Session session = null;
@@ -79,27 +82,27 @@ public class ObjectDao {
 	}
 	
 	/**
-	 * Retorna todas las clases excepto la que tiene el nombre pasado como parametro
+	 * Busca clases con los filtros pasados como parámetro
 	 * @return
 	 * @throws SQLException 
-	 * @throws HibernateException 
 	 */
-	public List qryAllClases(String excepClass) throws Exception {
-		if (excepClass != null){
-				Session session = getSessionFactory().openSession();
-				//session.beginTransaction();
-				String queryStr = "from Clase where nombre != '"+excepClass+"' order by ordenEvaluacion";
-				
-				List result = session.createQuery(queryStr).list();
-	
-				//session.getTransaction().commit();
-				session.connection().close();
-				session.close();
-	
-				return result;
+	public List qryClases(String nombreClase, Boolean indeterminado, Boolean objetoReferencia) throws Exception {
+		Session session = getSessionFactory().openSession();
+		//session.beginTransaction();
+		String qryStr = "from Clase where nombre = COALESCE(:nombre, nombre)" 
+			+ "AND indeterminado = COALESCE(:indeterminado, indeterminado) "
+			+ "AND objetoReferencia = COALESCE(:objetoReferencia, objetoReferencia)";
+		Query query = session.createQuery(qryStr);
+		query.setParameter("nombre", nombreClase, Hibernate.STRING);
+		query.setParameter("indeterminado", indeterminado, Hibernate.BOOLEAN);
+		query.setParameter("objetoReferencia", objetoReferencia, Hibernate.BOOLEAN);
+		List result = query.list();
 
-		}
-		return qryAll(Clase.class.getName());
+		//session.getTransaction().commit();
+		session.connection().close();
+		session.close();
+
+		return result;
 	}
 
 	/**
@@ -107,19 +110,13 @@ public class ObjectDao {
 	 * @param nombreClase
 	 * @return
 	 */
-	public Clase findClase(String nombreClase) {
-		try {
-			Session session = getSessionFactory().openSession();
-			//session.beginTransaction();
-
-			Clase result = (Clase) session.createQuery("from Clase where nombre = '" + nombreClase + "'").uniqueResult();
-
-			//session.getTransaction().commit();
-			session.connection().close();
-			session.close();
-
-			return result;
-		} 
+	public Clase findClase(String nombreClase, Boolean indeterminado, Boolean objetoReferencia) {
+		try{
+			List<Clase> clases = qryClases(nombreClase, indeterminado, objetoReferencia);
+			if (clases != null && clases.size() > 0)
+				return clases.get(0);
+			return null;
+		}
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}

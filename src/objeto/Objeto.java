@@ -834,7 +834,7 @@ public class Objeto {
 		}
 		return new Color(r,g,b);
 	}
-
+	
 	public PlanarImage getOriginalImage() {
 		return originalImage;
 	}
@@ -842,14 +842,6 @@ public class Objeto {
 	public void setOriginalImage(PlanarImage originalImage) {
 		this.originalImage = originalImage;
 	}
-
-//	public Triangulo getTrianguloActual() {
-//		return trianguloActual;
-//	}
-//
-//	public void setTrianguloActual(Triangulo trianguloActual) {
-//		this.trianguloActual = trianguloActual;
-//	}
 
 	public List<Pixel> getPuntosDivisionContorno() {
 		return puntosDivisionContorno;

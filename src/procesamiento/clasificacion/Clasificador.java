@@ -124,7 +124,7 @@ public class Clasificador {
 		objetoReferencia = new ObjetoReferencia();
 		
 		ObjectDao dao = ObjectDao.getInstance();
-		List<Clase> clases = dao.qryAllClases(CLASE_INDETERMINADO);
+		List<Clase> clases = dao.qryClases(null,false,false);
 		clasificacion = new HashMap<EvaluadorClase, List<Objeto>>();
 		
 		this.cantidadObjetos = dao.getCantidadObjetos();
@@ -141,7 +141,31 @@ public class Clasificador {
 	 * @return
 	 */
 	public EvaluadorClase getEvaluadorClase(String nombreClase){
-		Clase c = ObjectDao.getInstance().findClase(nombreClase);
+		Clase c = ObjectDao.getInstance().findClase(nombreClase,null,null);
+		EvaluadorClase ec = createEvaluadorClase(c);
+		return ec;
+		
+	}
+	
+	/**
+	 * Recupera el evaluador de una clase
+	 * @param nombreClase
+	 * @return
+	 */
+	public EvaluadorClase getEvaluadorClaseIndeterminado(){
+		Clase c = ObjectDao.getInstance().findClase(null,true,null);
+		EvaluadorClase ec = createEvaluadorClase(c);
+		return ec;
+		
+	}
+
+	/**
+	 * Recupera el evaluador de una clase
+	 * @param nombreClase
+	 * @return
+	 */
+	public EvaluadorClase getEvaluadorClaseObjetoReferencia(){
+		Clase c = ObjectDao.getInstance().findClase(null,null,true);
 		EvaluadorClase ec = createEvaluadorClase(c);
 		return ec;
 		

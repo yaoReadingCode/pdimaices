@@ -19,9 +19,11 @@ import objeto.Pixel;
 import objeto.PixelComparator;
 import objeto.Rasgo;
 import objeto.RasgoClase;
+import objeto.RasgoObjeto;
 import objeto.Triangulo;
 import procesamiento.clasificacion.Circularidad;
 import procesamiento.clasificacion.CoeficientesRecta;
+import procesamiento.clasificacion.DivisionObjeto;
 import procesamiento.clasificacion.EvaluadorClase;
 import procesamiento.clasificacion.EvaluadorRasgo;
 import aplicarFiltros.Visualizador;
@@ -73,8 +75,8 @@ public class SepararObjetos extends AbstractImageCommand {
 		RasgoClase rcCircularidad = new RasgoClase();
 		rcCircularidad.setRasgo(new Rasgo("Circularidad"));
 		
-		RasgoClase rcAspectRadio = new RasgoClase();
-		rcAspectRadio.setRasgo(new Rasgo("AspectRadio"));
+		//RasgoClase rcAspectRadio = new RasgoClase();
+		//rcAspectRadio.setRasgo(new Rasgo("AspectRadio"));
 		
 	
 		Circularidad circularidad = new Circularidad(rcCircularidad, 0.7, 1.0);
@@ -125,6 +127,11 @@ public class SepararObjetos extends AbstractImageCommand {
 					List<Pixel> puntosDivisionVisitados = new ArrayList<Pixel>();
 					List<Objeto> nuevosObjetos = separarObjetosImagenBordes(obj, puntosDivisionVisitados, 0);
 					nuevos.addAll(nuevosObjetos);
+					if (detectarContorno.isBuscarObjetoReferencia()){
+						for(Objeto o:nuevosObjetos){
+							detectarContorno.isObjSpecial(o);
+						}
+					}
 				}
 				else{
 					nuevos.add(obj);	
@@ -408,6 +415,7 @@ public class SepararObjetos extends AbstractImageCommand {
 		if (puntosDivision.size() > 1){
 			initVisitados();
 			List<Division> divisionesPosibles = new ArrayList<Division>();
+			List<DivisionObjeto> divisiones = new ArrayList<DivisionObjeto>();
 			List<Pixel> posiblesVisitados = new ArrayList<Pixel>(puntosDivisionVisitados); 
 			for(int i = 0; i < puntosDivision.size() ; i++){
 				Pixel desvioHorario = puntosDivision.get(i);
@@ -416,9 +424,6 @@ public class SepararObjetos extends AbstractImageCommand {
 					Pixel desvioAntihorario = desviosAntihorarios.get(j);
 					Division division = new Division(desvioHorario, desvioAntihorario, null);
 					if (!divisionesPosibles.contains(division)){
-						//posiblesVisitados.add(desvioHorario);
-						//posiblesVisitados.add(desvioAntihorario);
-						
 						Pixel desvioHorarioAux = getBoundingBoxObjetoInicial().getPixelRelativo(desvioHorario);
 						Pixel desvioAntihorarioAux = getBoundingBoxObjetoInicial().getPixelRelativo(desvioAntihorario);
 						//Marco el par de puntos de division procesado 
@@ -445,78 +450,99 @@ public class SepararObjetos extends AbstractImageCommand {
 							else
 								mejorDivision = caminoRelativo2;
 						}
-						if (mejorDivision != null && mejorDivision.puntos != null)
-							divisionesPosibles.add(mejorDivision);
+						if (mejorDivision != null && mejorDivision.puntos != null){
+							Objeto obj1 = new Objeto();
+							obj1.setOriginalImage(getOriginalImage());
+							Objeto obj2 = new Objeto();
+							obj2.setOriginalImage(getOriginalImage());
+
+							dividirObjeto(obj, mejorDivision.origen, mejorDivision.fin, mejorDivision.puntos, obj1, obj2);
+							if (obj1.validarContorno() && obj2.validarContorno() &&
+								!obj1.getBoundingBox().isIncluido(obj2.getBoundingBox()) &&
+								!obj2.getBoundingBox().isIncluido(obj1.getBoundingBox())){
+								List<RasgoObjeto> rasgosOb1 = new ArrayList<RasgoObjeto>();
+								List<RasgoObjeto> rasgosOb2 = new ArrayList<RasgoObjeto>();
+								boolean isCircularObj1 = getEvaluadorObjetoCircular().pertenece(obj1, false, rasgosOb1);
+								boolean isCircularObj2 = getEvaluadorObjetoCircular().pertenece(obj2, false, rasgosOb2);
+								if (isCircularObj1 || isCircularObj2){
+									Double circularidad1 = rasgosOb1.get(0).getValor();
+									Double circularidad2 = rasgosOb2.get(0).getValor();
+									Double valoracion = Math.max(circularidad1, circularidad2);
+									DivisionObjeto div = new DivisionObjeto(valoracion,obj1, obj2);
+									div.setOrigen(mejorDivision.origen);
+									div.setFin(mejorDivision.fin);
+									div.setCircularObjeto1(isCircularObj1);
+									div.setCircularObjeto2(isCircularObj2);
+									divisiones.add(div);
+									divisionesPosibles.add(mejorDivision);
+								}
+							}
+						}
 					}
 				}
 				
 			}
 			
-			if (divisionesPosibles.size() > 0){
-				Collections.sort(divisionesPosibles);
+			if (divisiones.size() > 0){
+				Collections.sort(divisiones);
 				boolean huboDivision = false;
-				for(int i = 0; i < divisionesPosibles.size() && !huboDivision; i++){
-					Division mejorDivision = divisionesPosibles.get(i);
-					Objeto obj1 = new Objeto();
-					obj1.setOriginalImage(getOriginalImage());
-					Objeto obj2 = new Objeto();
-					obj2.setOriginalImage(getOriginalImage());
+				for(int i = 0; i < divisiones.size() && !huboDivision; i++){
+					huboDivision = true;
+					DivisionObjeto mejorDivision = divisiones.get(i);
+					Objeto obj1 = mejorDivision.getObjeto1();
+					Objeto obj2 = mejorDivision.getObjeto2();
+					completarObjeto(obj1);
+					completarObjeto(obj2);
+					if (isNecesarioAjustarContorno(obj1, mejorDivision))
+						ajustarContornoObjeto(obj1);
+					if (isNecesarioAjustarContorno(obj2, mejorDivision))
+						ajustarContornoObjeto(obj2);
+					
+					obj1.setName(obj.getName());
+					int cantObjetos = getClasificador().getCantidadObjetos() + 1;
+					getClasificador().aumentarCantidadObjetos();
+					obj2.setName("Objeto"+cantObjetos);
+					
+					List<Objeto> nuevos = new ArrayList<Objeto>();
 
-					dividirObjeto(obj, mejorDivision.origen, mejorDivision.fin, mejorDivision.puntos, obj1, obj2);
-					if (obj1.validarContorno() && obj2.validarContorno() &&
-						!obj1.getBoundingBox().isIncluido(obj2.getBoundingBox()) &&
-						!obj2.getBoundingBox().isIncluido(obj1.getBoundingBox())){
-						
-						boolean isCircularObj1 = getEvaluadorObjetoCircular().pertenece(obj1, false);
-						boolean isCircularObj2 = getEvaluadorObjetoCircular().pertenece(obj2, false);
-						if (isCircularObj1 || isCircularObj2){
-							huboDivision = true;
-							
-							
-							completarObjeto(obj1);
-							completarObjeto(obj2);
-							if (isNecesarioAjustarContorno(obj1, mejorDivision))
-								ajustarContornoObjeto(obj1);
-							if (isNecesarioAjustarContorno(obj2, mejorDivision))
-								ajustarContornoObjeto(obj2);
-							
-							obj1.setName(obj.getName());
-							int cantObjetos = getClasificador().getCantidadObjetos() + 1;
-							getClasificador().aumentarCantidadObjetos();
-							obj2.setName("Objeto"+cantObjetos);
-							
-							List<Objeto> nuevos = new ArrayList<Objeto>();
-
-							puntosDivisionVisitados.add(mejorDivision.origen);
-							puntosDivisionVisitados.add(mejorDivision.fin);
-							List<Objeto> nuevosObjetos = new ArrayList<Objeto>();
-							if (!necesitaDivision(obj1) && isCircularObj1){
-								//completarObjeto(obj1);
-								nuevos.add(obj1);
-							}
-							else{
-								nuevosObjetos = separarObjetosImagenBordes(obj1, puntosDivisionVisitados, nivel + 1);
-								if (nuevosObjetos.size() == 1 && !isCircularObj1){
-									huboDivision = false;
-									break;
-								}
-								nuevos.addAll(nuevosObjetos);
-							}
-							if (!necesitaDivision(obj2) && isCircularObj2){
-								//completarObjeto(obj2);
-								nuevos.add(obj2);
-							}
-							else{
-								nuevosObjetos = separarObjetosImagenBordes(obj2, puntosDivisionVisitados, nivel + 1);
-								if (nuevosObjetos.size() == 1 && !isCircularObj2){
-									huboDivision = false;
-									break;
-								}
-								nuevos.addAll(nuevosObjetos);
-							}
-							objetosResult.addAll(nuevos);
-						}
+					puntosDivisionVisitados.add(mejorDivision.getOrigen());
+					puntosDivisionVisitados.add(mejorDivision.getFin());
+					List<Objeto> nuevosObjetos = new ArrayList<Objeto>();
+					if (!necesitaDivision(obj1) && mejorDivision.isCircularObjeto1()){
+						//completarObjeto(obj1);
+						nuevos.add(obj1);
 					}
+					else{
+						nuevosObjetos = separarObjetosImagenBordes(obj1, puntosDivisionVisitados, nivel + 1);
+						if (nuevosObjetos.size() == 1 && !mejorDivision.isCircularObjeto1()){
+							huboDivision = false;
+							break;
+						}
+						nuevos.addAll(nuevosObjetos);
+					}
+					if (!necesitaDivision(obj2) && mejorDivision.isCircularObjeto2()){
+						//completarObjeto(obj2);
+						nuevos.add(obj2);
+					}
+					else{
+						nuevosObjetos = separarObjetosImagenBordes(obj2, puntosDivisionVisitados, nivel + 1);
+						if (nuevosObjetos.size() == 1 && !mejorDivision.isCircularObjeto2()){
+							huboDivision = false;
+							break;
+						}
+						nuevos.addAll(nuevosObjetos);
+					}
+					if (huboDivision){
+						objetosResult.addAll(nuevos);
+						String info = "Objeto catalogado: "
+							+ obj2.getName()
+							+ " - Puntos detectados: "
+							+ obj2.getPuntos().size();
+
+						Visualizador.addLogInfo(info);
+
+					}
+					
 				}
 			}
 		}
@@ -544,13 +570,6 @@ public class SepararObjetos extends AbstractImageCommand {
 		detectarContorno.limpiarVisitados();
 		detectarContorno.completarObjeto(obj);
 		obj.calcularMRC();
-		
-		String info = "Objeto catalogado: "
-			+ obj.getName()
-			+ " - Puntos detectados: "
-			+ obj.getPuntos().size();
-
-		Visualizador.addLogInfo(info);
 	}
 	
 	public String getCommandName() {
@@ -1242,19 +1261,19 @@ public class SepararObjetos extends AbstractImageCommand {
 	 * @param division Puntos de division del contorno
 	 * @return true si la cantidad de pixeles de color de fondo cercanos a la linea de division es mayor que un valor umbral.
 	 */
-	private boolean isNecesarioAjustarContorno(Objeto obj1, Division division){
+	private boolean isNecesarioAjustarContorno(Objeto obj1, DivisionObjeto division){
 		List<Pixel> puntosDivision = obtenerPuntosDeConflicto(obj1);
 		if (puntosDivision.size() > 0){
-			Pixel pMedioDivision = division.origen.clonar();
-			pMedioDivision.sumar(division.fin);
+			Pixel pMedioDivision = division.getOrigen().clonar();
+			pMedioDivision.sumar(division.getFin());
 			pMedioDivision.setX(pMedioDivision.getX() / 2);
 			pMedioDivision.setY(pMedioDivision.getY() / 2);
 			
-			Pixel origen = division.origen;
-			Pixel fin = division.fin;
+			Pixel origen = division.getOrigen();
+			Pixel fin = division.getFin();
 			if (Pixel.lado(origen, fin, obj1.getPixelMedio()) < 0){
-				origen = division.fin;
-				fin = division.origen;
+				origen = division.getFin();
+				fin = division.getOrigen();
 			}
 			
 			Double pendiente = ObjetoUtil.calcularPendienteRecta(origen, fin);

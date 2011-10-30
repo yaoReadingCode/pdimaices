@@ -41,7 +41,7 @@ public class PanelResultado extends JPanel {
 	private DefaultPieDataset datasetCount = new DefaultPieDataset();
 	private DefaultPieDataset datasetPixel = new DefaultPieDataset();
 	
-	private Map<String,Integer> datasetCountModel = new HashMap<String, Integer>();
+	private Map<String,Integer> datasetCountModel = new HashMap<String, Integer>();  //  @jve:decl-index=0:
 	private Map<String,Long> datasetPixelModel = new HashMap<String, Long>();
 	
 	private Integer totalObjetos = 0;

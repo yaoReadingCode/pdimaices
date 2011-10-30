@@ -4,23 +4,37 @@
 
 package aplicarFiltros;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 import javax.media.jai.JAI;
 import javax.media.jai.PlanarImage;
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.table.*;
-
-import com.sun.media.jai.widget.DisplayJAI;
+import javax.swing.BoxLayout;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.UIManager;
+import javax.swing.border.LineBorder;
 
 import objeto.Clase;
 import objeto.ClaseObjeto;
 import objeto.Objeto;
-import objeto.RasgoObjeto;
+import objeto.ObjetoUtil;
 import procesamiento.clasificacion.Clasificador;
+
+import com.sun.media.jai.widget.DisplayJAI;
 
 /**
  * @author User #3
@@ -41,8 +55,12 @@ public class ObjetoPanel extends JPanel {
 		
 		this.objeto = objeto;
 		this.clasificador = clasificador;
+
 		PlanarImage image = JAI.create("fileload", objeto.getPathImage());
-		
+		DisplayJAI dd = new DisplayJAI(image);
+		JScrollPane scrollPanel = new JScrollPane();
+		scrollPanel.setPreferredSize(new Dimension(ObjetoUtil.DEFAULT_IMAGE_WIDTH,ObjetoUtil.DEFAULT_IMAGE_HEIGHT));
+		scrollPanel.setViewportView(dd);
 		this.panelImagen.add(new DisplayJAI(image),BorderLayout.CENTER);
 		
 		this.labelNombre.setText(objeto.getName());

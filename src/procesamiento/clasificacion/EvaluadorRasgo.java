@@ -84,12 +84,8 @@ public class EvaluadorRasgo {
 		this.objetoReferencia = objetoReferencia;
 	}
 
-	public boolean isEnRango(Objeto objeto, boolean addRasgoToObject) {
-		RasgoObjeto rasgoObjeto = calcularValor(objeto);
+	public boolean isEnRango(Objeto objeto, RasgoObjeto rasgoObjeto) {
 		Double valor = rasgoObjeto.getValor();
-		if (addRasgoToObject){
-			objeto.addRasgo(rasgoObjeto);
-		}
 		if (valor != null) {
 			//if (getValor() - getDesvioEstandar() <= valor && getValor() + getDesvioEstandar() >= valor)
 			if (getMinimo() == null && getMaximo() == null)

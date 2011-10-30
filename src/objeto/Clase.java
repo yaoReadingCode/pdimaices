@@ -43,6 +43,16 @@ public class Clase {
 	 * Agrupador que agrupa varias clases
 	 */
 	private String agrupador;
+	
+	/**
+	 * Indica si es la clase que se asigna cuando un objeto no pertenece a ninguna otra clase
+	 */
+	private boolean indeterminado = false;
+	
+	/**
+	 * Indica si el la clase correspondiente al objeto de referencia
+	 */
+	private boolean objetoReferencia = false;
 
 	public Clase() {
 		// TODO Auto-generated constructor stub
@@ -160,6 +170,22 @@ public class Clase {
 
 	public void setAgrupador(String agrupador) {
 		this.agrupador = agrupador;
+	}
+
+	public boolean isIndeterminado() {
+		return indeterminado;
+	}
+
+	public void setIndeterminado(boolean indeterminado) {
+		this.indeterminado = indeterminado;
+	}
+
+	public boolean isObjetoReferencia() {
+		return objetoReferencia;
+	}
+
+	public void setObjetoReferencia(boolean objetoReferencia) {
+		this.objetoReferencia = objetoReferencia;
 	}
 	
 }

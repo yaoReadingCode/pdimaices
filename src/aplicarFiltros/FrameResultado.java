@@ -59,7 +59,8 @@ public class FrameResultado extends JFrame {
 			JPanel container = new JPanel();
 			GridBagLayout gbl = new GridBagLayout();
 			int cant = 0;
-			resultado.addValueCount(c.getClase().getAgrupador(), objetosClase.size());
+			if (!c.getClase().isObjetoReferencia())
+				resultado.addValueCount(c.getClase().getAgrupador(), objetosClase.size());
 			container.setLayout(gbl);
 			//frame.getContentPane().add(new JScrollPane(container),BorderLayout.CENTER);
 			long cantidadPixeles = 0;
@@ -85,7 +86,8 @@ public class FrameResultado extends JFrame {
 				cant++;
 				cantidadPixeles = cantidadPixeles + (obj.getPuntos().size() + obj.getContorno().size()); 
 			}
-			resultado.addValuePixel(c.getClase().getAgrupador(), cantidadPixeles);
+			if (!c.getClase().isObjetoReferencia())
+				resultado.addValuePixel(c.getClase().getAgrupador(), cantidadPixeles);
 			
 			this.addPanel(container, c.getClase().getDescripcion());
 		}

@@ -11,6 +11,8 @@
 	<property name="colorRgb" type="integer" column="color_rgb"/>
 	<property name="ordenEvaluacion" type="integer" column="orden_evaluacion" not-null="true"/>
 	<property name="agrupador" type="string" column="agrupador"/>
+	<property name="indeterminado" type="boolean" column="indeterminado"/>
+	<property name="objetoReferencia" type="boolean" column="objeto_referencia"/>
 	<list name="rasgos" cascade="all-delete-orphan" lazy="false">
 		<key column="ID_CLASE" not-null="true" />
 		<list-index column="INDICE" />

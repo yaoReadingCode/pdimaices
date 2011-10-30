@@ -21,6 +21,7 @@ import procesamiento.clasificacion.ClaseObjetoComparator;
 import procesamiento.clasificacion.Clasificador;
 import procesamiento.clasificacion.EvaluadorClase;
 import procesamiento.clasificacion.EvaluadorClaseComparator;
+import procesamiento.clasificacion.ObjetoReferencia;
 import aplicarFiltros.FrameResultado;
 import aplicarFiltros.Visualizador;
 
@@ -127,11 +128,11 @@ public class DetectarObjetos extends AbstractImageCommand {
 			Binarizar ef = new Binarizar(getOriginalImage(), getHsvRange());
 			PlanarImage binaryImage = ef.execute();
 			PlanarImage output = binaryImage;
-			
+			/*
 			Visualizador.aumentarProgreso(15, "Detectando Contorno Grueso...");
 			DetectarContornoGrueso dcg = new DetectarContornoGrueso(output);
 			output = dcg.execute();
-			
+			*/
 			Visualizador.aumentarProgreso(20, "Detectando Contorno...");
 			DetectarContorno dc = new DetectarContorno(output, getOriginalImage(), new Color(100, 100, 100), Color.RED);
 			dc.setBinaryImage(binaryImage);
@@ -285,7 +286,7 @@ public class DetectarObjetos extends AbstractImageCommand {
 	 * @param objetos
 	 */
 	protected void clasificarObjetos(List<Objeto> objetos) {
-		EvaluadorClase indeterminado = getClasificador().getEvaluadorClase(Clasificador.CLASE_INDETERMINADO);
+		EvaluadorClase indeterminado = getClasificador().getEvaluadorClaseIndeterminado();
 		indeterminado.setColor(Color.RED);
 		List<Objeto> objetosIndeterminados = new ArrayList<Objeto>();
 		
@@ -296,7 +297,7 @@ public class DetectarObjetos extends AbstractImageCommand {
 			Collections.sort(clasesOrdenadas, new EvaluadorClaseComparator());
 			boolean sinclasificacion = true;
 			for(EvaluadorClase c: clasesOrdenadas){
-				if (c.pertenece(obj,true)){
+				if (!c.getClase().isIndeterminado() && !c.getClase().isObjetoReferencia() && c.pertenece(obj,true)){
 					ClaseObjeto claseObjeto = new ClaseObjeto(c.getClase());
 					obj.addClase(claseObjeto);
 					sinclasificacion = false;
@@ -321,6 +322,15 @@ public class DetectarObjetos extends AbstractImageCommand {
 		}
 		
 		getClasificador().getClasificacion().put(indeterminado, objetosIndeterminados);
+		
+		if (ObjetoReferencia.getReferencia() != null){
+			EvaluadorClase objetoReferenciaClase = getClasificador().getEvaluadorClaseObjetoReferencia();
+			objetoReferenciaClase.pertenece(ObjetoReferencia.getReferencia(), true);
+			List<Objeto> objetosReferencia = new ArrayList<Objeto>();
+			objetosReferencia.add(ObjetoReferencia.getReferencia());
+			ObjetoReferencia.getReferencia().addClase(objetoReferenciaClase.getClase());
+			getClasificador().getClasificacion().put(objetoReferenciaClase, objetosReferencia);
+		}
 	}
 	
 	/**

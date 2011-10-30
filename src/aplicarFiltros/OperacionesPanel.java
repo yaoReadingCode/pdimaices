@@ -258,6 +258,7 @@ public class OperacionesPanel extends JPanel {
 					"Error de conexión a la base de datos.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			JOptionPane.showMessageDialog(this,
 					"Ocurrió un error inesperado al clasificar.", "Error",
 					JOptionPane.ERROR_MESSAGE);

@@ -9,17 +9,11 @@ import java.util.List;
 import javax.media.jai.PlanarImage;
 import javax.media.jai.TiledImage;
 
-import objeto.Clase;
 import objeto.Objeto;
 import objeto.ObjetoUtil;
 import objeto.Pixel;
 import objeto.PixelComparator;
-import objeto.Rasgo;
-import objeto.RasgoClase;
-import procesamiento.clasificacion.AspectRatio;
-import procesamiento.clasificacion.Circularidad;
 import procesamiento.clasificacion.EvaluadorClase;
-import procesamiento.clasificacion.EvaluadorRasgo;
 import procesamiento.clasificacion.ObjetoReferencia;
 import aplicarFiltros.Visualizador;
 
@@ -107,15 +101,16 @@ public class DetectarContorno extends AbstractImageCommand {
 
 	private int thGlobal;
 	
-	private EvaluadorClase evalObjetoCircular = null;
-
 	/**
 	 * Rango HSV del color del fondo
 	 */
 	private HSVRange rangeFondo = null;
 	
+	private EvaluadorClase evaluadorObjetoReferencia;
 	private Objeto valor_MM_Pixel;
-	private double aspectRadioMejor;
+	//private double aspectRadioMejor;
+	//private double circularidadMejor;
+	private double areaMejor;
 	
 	/**
 	 * Flag que indica se se debe tratar de separar objetos pegados
@@ -152,28 +147,7 @@ public class DetectarContorno extends AbstractImageCommand {
 		this.colorContorno = colorContorno;
 		this.originalImage = originalImage;
 		
-		RasgoClase rcCircularidad = new RasgoClase();
-		rcCircularidad.setRasgo(new Rasgo("Circularidad"));
 		
-		RasgoClase rcAspectRadio = new RasgoClase();
-		rcAspectRadio.setRasgo(new Rasgo("AspectRadio"));
-		
-	
-		Circularidad circularidad = new Circularidad(rcCircularidad, 1.0, 0.7);
-		AspectRatio aspectRadio = new AspectRatio(rcAspectRadio, 1.0, 0.6);
-
-		List<EvaluadorRasgo> rasgos = new ArrayList<EvaluadorRasgo>();
-		rasgos.add(circularidad);
-		rasgos.add(aspectRadio);
-		
-		Clase claseObjetoCircular = new Clase();
-		claseObjetoCircular.setNombre("Objeto circular");
-		
-		Clase claseEvaluador = new Clase();
-		claseEvaluador.setNombre("Objeto circular");
-
-		EvaluadorClase objetoCircular = new EvaluadorClase(claseObjetoCircular, rasgos);
-		setEvalObjetoCircular(objetoCircular);
 	}
 
 	public PlanarImage getOriginalImage() {
@@ -1060,6 +1034,9 @@ public class DetectarContorno extends AbstractImageCommand {
 				for (Objeto obj : objetos) {
 					ObjetoUtil.save(obj);
 				}
+				if (isBuscarObjetoReferencia() && ObjetoReferencia.getReferencia() != null){
+					ObjetoUtil.save(ObjetoReferencia.getReferencia());
+				}
 
 				objetos = null;
 				return getImage();
@@ -1100,7 +1077,9 @@ public class DetectarContorno extends AbstractImageCommand {
 	}
 	
 	public void isObjSpecial(Objeto objeto){
+		/*
 		double aspectRatio = 0;
+		
 		if (objeto.getAncho() <  objeto.getAlto())
 			aspectRatio = objeto.getAncho() /  objeto.getAlto();
 		else
@@ -1109,6 +1088,14 @@ public class DetectarContorno extends AbstractImageCommand {
 		if (aspectRadioMejor < aspectRatio){ 
 			aspectRadioMejor = aspectRatio;
 			valor_MM_Pixel = objeto;
+		}
+		*/
+
+		if (getEvaluadorObjetoReferencia().pertenece(objeto, false)){
+			if (areaMejor < objeto.getArea()){
+				areaMejor = objeto.getArea();
+				valor_MM_Pixel = objeto;
+			}
 		}
 		
 	}
@@ -1260,14 +1247,6 @@ public class DetectarContorno extends AbstractImageCommand {
 		}
 	}
 
-	public EvaluadorClase getEvalObjetoCircular() {
-		return evalObjetoCircular;
-	}
-
-	public void setEvalObjetoCircular(EvaluadorClase evalObjetoCircular) {
-		this.evalObjetoCircular = evalObjetoCircular;
-	}
-
 	public PlanarImage getBinaryImage() {
 		return binaryImage;
 	}
@@ -1315,6 +1294,18 @@ public class DetectarContorno extends AbstractImageCommand {
 	public void setBuscarObjetoReferencia(boolean buscarObjetoReferencia) {
 		this.buscarObjetoReferencia = buscarObjetoReferencia;
 	}
-	
-	
+
+	public EvaluadorClase getEvaluadorObjetoReferencia() {
+		if (evaluadorObjetoReferencia == null){
+			evaluadorObjetoReferencia = getClasificador().getEvaluadorClaseObjetoReferencia();
+		}
+		return evaluadorObjetoReferencia;
+	}
+
+	public void setEvaluadorObjetoReferencia(EvaluadorClase evaluadorObjetoReferencia) {
+		this.evaluadorObjetoReferencia = evaluadorObjetoReferencia;
+	}
+
 }
+
+

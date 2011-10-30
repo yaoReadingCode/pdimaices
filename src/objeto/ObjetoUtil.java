@@ -23,6 +23,8 @@ import procesamiento.clasificacion.CoeficientesRecta;
 
 public class ObjetoUtil {
 	private static final int ORIENTACION_ABAJO = 90;
+	public static final int DEFAULT_IMAGE_WIDTH = 206;
+	public static final int DEFAULT_IMAGE_HEIGHT = 206;
 	//private static PlanarImage inputImage = JAI.create("fileload", "limpia.tif");
 	//private static int desplazamiento = 50;
 
@@ -37,8 +39,8 @@ public class ObjetoUtil {
 
 	public static void save(Objeto o) {
 		if (o != null) {
-			int width = 206;
-			int height = 206;
+			int width = Math.max((int) o.getBoundingBox().width(),DEFAULT_IMAGE_WIDTH);
+			int height = Math.max((int) o.getBoundingBox().height(),DEFAULT_IMAGE_HEIGHT);
 			byte[] data = new byte[width * height* 3]; // Image data array.
 			DataBufferByte dbuffer = new DataBufferByte(data, width * height * 3);
 			SampleModel sampleModel = RasterFactory.createPixelInterleavedSampleModel(DataBuffer.TYPE_BYTE, width,
