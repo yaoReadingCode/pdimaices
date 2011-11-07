@@ -17,7 +17,7 @@ public class Clasificador {
 
 	private Map<EvaluadorClase, List<Objeto>> clasificacion = new HashMap<EvaluadorClase, List<Objeto>>();
 	
-	private ObjetoReferencia objetoReferencia= null; 
+	//private ObjetoReferencia objetoReferencia= null; 
 	
 	private Configuracion configuracion;
 	
@@ -37,14 +37,14 @@ public class Clasificador {
 	public void setClasificacion(Map<EvaluadorClase, List<Objeto>> clasificacion) {
 		this.clasificacion = clasificacion;
 	}
-	
+	/*
 	public ObjetoReferencia getObjetoReferencia() {
 		return objetoReferencia;
 	}
 
 	public void setObjetoReferencia(ObjetoReferencia objetoReferencia) {
 		this.objetoReferencia = objetoReferencia;
-	}
+	}*/
 
 	public Configuracion getConfiguracion() {
 		return configuracion;
@@ -121,8 +121,8 @@ public class Clasificador {
 	 * @throws Exception 
 	 */
 	public void inicializarClasificacion() throws Exception{
-		objetoReferencia = new ObjetoReferencia();
-		
+		//objetoReferencia = new ObjetoReferencia();
+		ObjetoReferencia.inicializarObjetoReferencia();
 		ObjectDao dao = ObjectDao.getInstance();
 		List<Clase> clases = dao.qryClases(null,false,false);
 		clasificacion = new HashMap<EvaluadorClase, List<Objeto>>();
@@ -184,7 +184,6 @@ public class Clasificador {
 					if (r.getRasgo().getNombreEvaluadorRasgo() != null){
 						Class evaluadorClass = Class.forName(r.getRasgo().getNombreEvaluadorRasgo());
 						EvaluadorRasgo er = (EvaluadorRasgo) evaluadorClass.newInstance();
-						er.setObjetoReferencia(getObjetoReferencia());
 						er.setRasgoClase(r);
 
 						rasgos.add(er);
@@ -192,7 +191,6 @@ public class Clasificador {
 					}
 					else{
 						EvaluadorRasgo er = new EvaluadorRasgo();
-						er.setObjetoReferencia(getObjetoReferencia());
 						er.setRasgoClase(r);
 
 						rasgos.add(er);

@@ -75,6 +75,7 @@ public class DetectarObjetos extends AbstractImageCommand {
 		getClasificador().getClasificacion().put(maizAmarillo, new ArrayList<Objeto>());
 		*/
 		getClasificador().inicializarClasificacion();
+
 	}
 
 	/**
@@ -89,41 +90,8 @@ public class DetectarObjetos extends AbstractImageCommand {
 	 */
 	public PlanarImage execute() {
 		if (getOriginalImage() != null && getHsvRange() != null) {
-			//Visualizador.iniciarProgreso();
-			
 			Date fechaInicio = new Date(System.currentTimeMillis()); 
-			/*
-			//Visualizador.aumentarProgreso(0, "Binarizando...");
-			//Binarizar ef = new Binarizar(getOriginalImage(), getHsvRange());
-			Visualizador.aumentarProgreso(0, "Eliminando Fondo...");
-			EliminarFondo ef = new EliminarFondo(getOriginalImage(), getHsvRange());
-			PlanarImage output = ef.execute();
-			
-			//Visualizador.aumentarProgreso(15, "Detectando Contorno Grueso...");
-			//DetectarContornoGrueso dcg = new DetectarContornoGrueso(output);
-			Visualizador.aumentarProgreso(15, "Convirtiendo a escala de grises...");
-			ConvertEscalaGrises dcg = new ConvertEscalaGrises(output);
-			output = dcg.execute();
-			
-			//Visualizador.aumentarProgreso(20, "Detectando Contorno...");
-			//DetectarContorno dc = new DetectarContorno(output, getOriginalImage(), new Color(100, 100, 100), Color.RED);
-			Visualizador.aumentarProgreso(20, "Aplicando filtro Sobel...");
-			SobelFilter so = new SobelFilter(output);
-			so.setClasificador(getClasificador());
-			output = so.execute();
-			
-			HSVRange range = new HSVRange();
-			range.setVMax(60f);
-			EliminarFondo ef2 = new EliminarFondo(output, range);
-			output = ef2.execute();
-			
-			JAI.create("filestore", output, "sobel.tif", "TIFF");
-			
-			Visualizador.aumentarProgreso(20, "Detectando Contorno...");
-			DetectarContorno dc = new DetectarContorno(output, getOriginalImage(), new Color(100, 100, 100), Color.RED);
-			dc.execute();
-			List<Objeto> objetos = dc.getObjetos();
-			*/
+
 			Visualizador.aumentarProgreso(0, "Binarizando...");
 			Binarizar ef = new Binarizar(getOriginalImage(), getHsvRange());
 			PlanarImage binaryImage = ef.execute();

@@ -467,7 +467,7 @@ public class SepararObjetos extends AbstractImageCommand {
 								if (isCircularObj1 || isCircularObj2){
 									Double circularidad1 = rasgosOb1.get(0).getValor();
 									Double circularidad2 = rasgosOb2.get(0).getValor();
-									Double valoracion = Math.max(circularidad1, circularidad2);
+									Double valoracion = circularidad1 * circularidad2;//Math.max(circularidad1, circularidad2);
 									DivisionObjeto div = new DivisionObjeto(valoracion,obj1, obj2);
 									div.setOrigen(mejorDivision.origen);
 									div.setFin(mejorDivision.fin);
@@ -487,7 +487,7 @@ public class SepararObjetos extends AbstractImageCommand {
 				Collections.sort(divisiones);
 				boolean huboDivision = false;
 				for(int i = 0; i < divisiones.size() && !huboDivision; i++){
-					huboDivision = true;
+					
 					DivisionObjeto mejorDivision = divisiones.get(i);
 					Objeto obj1 = mejorDivision.getObjeto1();
 					Objeto obj2 = mejorDivision.getObjeto2();
@@ -509,40 +509,27 @@ public class SepararObjetos extends AbstractImageCommand {
 					puntosDivisionVisitados.add(mejorDivision.getFin());
 					List<Objeto> nuevosObjetos = new ArrayList<Objeto>();
 					if (!necesitaDivision(obj1) && mejorDivision.isCircularObjeto1()){
-						//completarObjeto(obj1);
 						nuevos.add(obj1);
 					}
 					else{
 						nuevosObjetos = separarObjetosImagenBordes(obj1, puntosDivisionVisitados, nivel + 1);
-						if (nuevosObjetos.size() == 1 && !mejorDivision.isCircularObjeto1()){
-							huboDivision = false;
-							break;
-						}
 						nuevos.addAll(nuevosObjetos);
 					}
 					if (!necesitaDivision(obj2) && mejorDivision.isCircularObjeto2()){
-						//completarObjeto(obj2);
 						nuevos.add(obj2);
 					}
 					else{
 						nuevosObjetos = separarObjetosImagenBordes(obj2, puntosDivisionVisitados, nivel + 1);
-						if (nuevosObjetos.size() == 1 && !mejorDivision.isCircularObjeto2()){
-							huboDivision = false;
-							break;
-						}
 						nuevos.addAll(nuevosObjetos);
 					}
-					if (huboDivision){
-						objetosResult.addAll(nuevos);
-						String info = "Objeto catalogado: "
-							+ obj2.getName()
-							+ " - Puntos detectados: "
-							+ obj2.getPuntos().size();
+					objetosResult.addAll(nuevos);
+					String info = "Objeto catalogado: "
+						+ obj2.getName()
+						+ " - Puntos detectados: "
+						+ obj2.getPuntos().size();
 
-						Visualizador.addLogInfo(info);
-
-					}
-					
+					Visualizador.addLogInfo(info);
+					huboDivision = true;
 				}
 			}
 		}

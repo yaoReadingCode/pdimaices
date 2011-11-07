@@ -14,7 +14,6 @@ public class EvaluadorRasgo {
 	private RasgoClase rasgoClase;
 	private Double maximo;
 	private Double minimo;
-	private ObjetoReferencia objetoReferencia;
 	
 	public EvaluadorRasgo() {
 		super();
@@ -74,14 +73,6 @@ public class EvaluadorRasgo {
 		if (getMaximo() != null && getMinimo() != null)
 			valor = (getMaximo() + getMinimo()) / 2;
 		return new RasgoObjeto(this.getRasgoClase().getRasgo(),valor);
-	}
-
-	public ObjetoReferencia getObjetoReferencia() {
-		return objetoReferencia;
-	}
-
-	public void setObjetoReferencia(ObjetoReferencia objetoReferencia) {
-		this.objetoReferencia = objetoReferencia;
 	}
 
 	public boolean isEnRango(Objeto objeto, RasgoObjeto rasgoObjeto) {

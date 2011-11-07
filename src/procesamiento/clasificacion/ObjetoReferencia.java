@@ -83,6 +83,14 @@ public class ObjetoReferencia {
 		return 1.0;
 	}
 
+	public static void inicializarObjetoReferencia() {
+		
+		cantPixel = 0.0;
+		referencia = null;
+		errorCalculos = 0.0;
+		cant_Pixeles_X_MM = 1.0;
+	}
+	
 	public static void setObjetoReferencia(Objeto obj) {
 		
 		cantPixel = obj.getAlto();

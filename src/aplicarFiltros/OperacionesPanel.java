@@ -46,11 +46,13 @@ import procesamiento.DetectarObjetos;
 import procesamiento.Dilate;
 import procesamiento.EliminarFondo;
 import procesamiento.Erode;
+import procesamiento.GaussianFilter;
 import procesamiento.GradientMagnitud;
 import procesamiento.HSVRange;
 import procesamiento.IImageProcessing;
 import procesamiento.ImageComand;
 import procesamiento.Invert;
+import procesamiento.MedianFilter;
 import procesamiento.ObtenerRangoColorObjeto;
 import procesamiento.Opening;
 import procesamiento.RgbHsv;
@@ -250,7 +252,7 @@ public class OperacionesPanel extends JPanel {
 		// Visualizador.iniciarProgreso();
 		try {
 			DetectarObjetos o = new DetectarObjetos(getImage(),
-					getImageHolder().getOriginalImage(), getHSVRange(),
+					getImageHolder().getImage(), getHSVRange(),
 					getImageHolder().getClasificador());
 			executeCommand(o);
 		} catch (JDBCConnectionException ex) {
@@ -330,6 +332,16 @@ public class OperacionesPanel extends JPanel {
 		getImageHolder().addExecutedCommand(command, command.getInfo());
 	}
 
+	private void buttonMedianFilterActionPerformed(ActionEvent e) {
+		MedianFilter mf = new MedianFilter(getImageHolder().getImage());
+		executeCommand(mf);
+	}
+	
+	private void buttonGaussianFilterActionPerformed(ActionEvent e) {
+		GaussianFilter gf = new GaussianFilter(getImageHolder().getImage(), 5f);
+		executeCommand(gf);
+	}
+	
 	private void buttonGuardarClasificacionActionPerformed(ActionEvent e) {
 
 		try {
@@ -371,6 +383,7 @@ public class OperacionesPanel extends JPanel {
 		textFieldVMin = new JTextField();
 		labelVMax = new JLabel();
 		textFieldVMax = new JTextField();
+		scrollPanel7 = new JScrollPane();
 		panel7 = new JPanel();
 		buttonBinarizar = new JButton();
 		buttonGradientMagnitude = new JButton();
@@ -386,6 +399,8 @@ public class OperacionesPanel extends JPanel {
 		buttonEliminarFondo = new JButton();
 		buttonSkeleton = new JButton();
 		buttonRangoObjeto = new JButton();
+		buttonMedianFilter = new JButton();
+		buttonGaussianFilter = new JButton();
 
 		// ======== this ========
 
@@ -881,7 +896,33 @@ public class OperacionesPanel extends JPanel {
 				panel7.add(buttonRangoObjeto);
 				buttonRangoObjeto.setBounds(30, 355, 270, buttonRangoObjeto
 						.getPreferredSize().height);
+				
+				// ---- buttonMedianFilter ----
+				buttonMedianFilter.setText("Filtro Mediana");
+				buttonMedianFilter.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						buttonMedianFilterActionPerformed(e);
+					}
 
+					
+				});
+				panel7.add(buttonMedianFilter);
+				buttonMedianFilter.setBounds(30, 380, 270, buttonMedianFilter
+						.getPreferredSize().height);
+				// ---- buttonGussianFilter ----
+				buttonGaussianFilter.setText("Filtro Gausiano");
+				buttonGaussianFilter.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						buttonGaussianFilterActionPerformed(e);
+					}
+
+					
+				});
+				panel7.add(buttonGaussianFilter);
+				buttonGaussianFilter.setBounds(30, 405, 270, buttonGaussianFilter
+						.getPreferredSize().height);
+
+				
 				{ // compute preferred size
 					Dimension preferredSize = new Dimension();
 					for (int i = 0; i < panel7.getComponentCount(); i++) {
@@ -899,6 +940,9 @@ public class OperacionesPanel extends JPanel {
 				}
 			}
 		}
+		// scroll panel 7
+		scrollPanel7.setViewportView(panel7);
+		
 		add(tabbedPane1);
 		tabbedPane1.setBounds(13, 5, 409, 442);
 
@@ -924,7 +968,8 @@ public class OperacionesPanel extends JPanel {
 				TitledBorder.LEADING, TitledBorder.TOP, new Font("Dialog",
 						Font.BOLD, 12), SystemColor.textHighlight));
 		this.setSize(new Dimension(436, 452));
-		tabbedPane1.addTab("Operaciones", null, panel7, null);
+		panel7.setPreferredSize(this.getPreferredSize());
+		tabbedPane1.addTab("Operaciones", null, scrollPanel7, null);
 		panel2.add(getObjetoPanel1(), null);
 		fondoPanel.add(getButtonSeleccionarFondo(), null);
 			fondoPanel.add(getButtonEliminarFondo2(), null);
@@ -965,6 +1010,7 @@ public class OperacionesPanel extends JPanel {
 	private JLabel labelVMax;
 	private JTextField textFieldVMax;
 	private JPanel panel7;
+	private JScrollPane scrollPanel7;
 	private JButton buttonBinarizar;
 	private JButton buttonGradientMagnitude;
 	private JButton buttonOpening;
@@ -980,6 +1026,8 @@ public class OperacionesPanel extends JPanel {
 	private JButton buttonSkeleton;
 	private JButton buttonRangoObjeto;
 	private JButton buttonSeleccionarFondo = null;
+	private JButton buttonMedianFilter;
+	private JButton buttonGaussianFilter;
 	private JPanel objetoPanel1 = null;
 	private JPanel panelH2 = null;
 	private JLabel labelHMin1 = null;
