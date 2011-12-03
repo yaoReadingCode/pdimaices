@@ -1,10 +1,28 @@
 package objeto;
 
-import java.util.ArrayList;
-import java.util.List;
 
 
-public class Histograma extends RasgoObjeto {
+
+public class Histograma {
+	public static final String HISTOGRAMA_DELIMITER = ";";
+	public static final String HISTOGRAMA_H = "H";
+	public static final String HISTOGRAMA_S = "S";
+	public static final String HISTOGRAMA_V = "V";
+	public static final String HISTOGRAMA_GRIS = "GRIS";
+	public static final String HISTOGRAMA_R = "R";
+	public static final String HISTOGRAMA_G = "G";
+	public static final String HISTOGRAMA_B = "B";
+	public static final int MAX_VAL_HISTOGRAMA_H = 360;
+	public static final int MAX_VAL_HISTOGRAMA_S = 100;
+	public static final int MAX_VAL_HISTOGRAMA_V = 100;
+	public static final int MAX_VAL_HISTOGRAMA_GRIS = 255;
+	public static final int MAX_VAL_HISTOGRAMA_R = 255;
+	public static final int MAX_VAL_HISTOGRAMA_G = 255;
+	public static final int MAX_VAL_HISTOGRAMA_B = 255;
+
+	
+	private Long id;
+	
 	/**
 	 * Tipo de histograma: R, G, V, H, S, V, etc.
 	 */
@@ -15,21 +33,29 @@ public class Histograma extends RasgoObjeto {
 	 * Ej: para los tipos R, G y B el numero maximo de valores sera 128, 256, etc.
 	 */
 	private Integer maxValores;
+		
+	/**
+	 * Arreglo de valores del histograma
+	 */
+	private double valores[] = null;
 	
 	/**
-	 * Lista que contiene la cantidad de pixeles para cada valor del histograma
+	 * El arreglo de valores del histograma separados por coma
 	 */
-	private List<ValorHistograma> valores = new ArrayList<ValorHistograma>(); 
+	private String valoresString = null;
 
 	public Histograma() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Histograma(Rasgo rasgo, Double valor) {
-		super(rasgo, valor);
-		// TODO Auto-generated constructor stub
+	public Long getId() {
+		return id;
 	}
 
+	public void setId(Long id) {
+		this.id = id;
+	}
+	
 	public String getTipo() {
 		return tipo;
 	}
@@ -46,14 +72,6 @@ public class Histograma extends RasgoObjeto {
 		this.maxValores = maxValores;
 	}
 
-	public List<ValorHistograma> getValores() {
-		return valores;
-	}
-
-	public void setValores(List<ValorHistograma> valores) {
-		this.valores = valores;
-	}
-
 	public boolean equals(Object obj){
 		if (obj == null)
 			return false;
@@ -61,17 +79,50 @@ public class Histograma extends RasgoObjeto {
 			return false;
 		Histograma r = (Histograma) obj;
 		
-		if (this.getRasgo() != null)
-			return this.getRasgo().equals(r.getRasgo()) && this.getTipo().equals(r.getTipo());
-		return false;
+		return this.getTipo().equals(r.getTipo());
 	}
 	
 	public String toString(){
-		if (getRasgo() != null)
-			return getRasgo().getNombre() + " - " + getTipo();
-		return "";
+		return this.getTipo();
 	}
 
-	
+	public double[] getValores() {
+		return valores;
+	}
+
+	public void setValores(double[] values) {
+		if (values != null){
+			StringBuffer buffer = new StringBuffer();
+			for(double val:values){
+	            if (buffer.length() > 0) {
+	                buffer.append(HISTOGRAMA_DELIMITER);
+	            }
+				buffer.append(val);
+	        }
+	        this.valoresString = buffer.toString();
+	        this.maxValores = values.length;
+			
+		}
+		else{
+			this.valoresString = null;
+		}
+		this.valores = values;
+	}
+
+	public String getValoresString() {
+		return valoresString;
+	}
+
+	public void setValoresString(String valuesString) {
+		this.valoresString = valuesString;
+		if (valoresString != null){
+			String values[] = valuesString.split(HISTOGRAMA_DELIMITER);
+			valores = new double[values.length];
+			for(int i = 0; i < values.length; i++){
+				valores[i] = Double.valueOf(values[i]);
+			}
+			this.maxValores = valores.length;
+		}
+	}
 
 }

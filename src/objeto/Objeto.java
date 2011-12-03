@@ -9,10 +9,11 @@ import java.util.List;
 
 import javax.media.jai.PlanarImage;
 
+import procesamiento.HSVRange;
 import procesamiento.ImageUtil;
 import procesamiento.RgbHsv;
 
-public class Objeto {
+public class Objeto implements HistogramaContainer{
 	
 	private Long id;
 	
@@ -89,6 +90,14 @@ public class Objeto {
 
 	private double[] acumuladorB = null;
 	
+	private double[] acumuladorGris = null;
+	
+	private double[] acumuladorH = null;
+
+	private double[] acumuladorS = null;
+
+	private double[] acumuladorV = null;
+
 	private Pixel pixelPunta1 = null;
 	
 	private Pixel pixelPunta2 = null;
@@ -96,6 +105,8 @@ public class Objeto {
 	private PlanarImage originalImage;
 	
 	private List<Pixel> puntosDivisionContorno = null;
+	
+	private List<Histograma> histogramas = new ArrayList<Histograma>();
 	
 	public double[] getAcumuladorR() {
 		if (acumuladorR == null) this.colorPromedio();
@@ -112,6 +123,26 @@ public class Objeto {
 		return acumuladorB;
 	}
 	
+	public double[] getAcumuladorGris() {
+		if (acumuladorGris == null) this.colorPromedio();
+		return acumuladorGris;
+	}
+	
+	public double[] getAcumuladorH() {
+		if (acumuladorH == null) this.colorPromedio();
+		return acumuladorH;
+	}
+
+	public double[] getAcumuladorS() {
+		if (acumuladorS == null) this.colorPromedio();
+		return acumuladorS;
+	}
+
+	public double[] getAcumuladorV() {
+		if (acumuladorV == null) this.colorPromedio();
+		return acumuladorV;
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -219,9 +250,13 @@ public class Objeto {
 			int G = 0;
 			int B = 0;
 			/**Histograma*/
-			double[] acumuladorR = new double[256];
-			double[] acumuladorG = new double[256];
-			double[] acumuladorB = new double[256];
+			double[] acumuladorR = new double[Histograma.MAX_VAL_HISTOGRAMA_R + 1];
+			double[] acumuladorG = new double[Histograma.MAX_VAL_HISTOGRAMA_G + 1];
+			double[] acumuladorB = new double[Histograma.MAX_VAL_HISTOGRAMA_B + 1];
+			double[] acumuladorGris = new double[Histograma.MAX_VAL_HISTOGRAMA_GRIS + 1];
+			double[] acumuladorH = new double[Histograma.MAX_VAL_HISTOGRAMA_H + 1];
+			double[] acumuladorS = new double[Histograma.MAX_VAL_HISTOGRAMA_S + 1];
+			double[] acumuladorV = new double[Histograma.MAX_VAL_HISTOGRAMA_V + 1];
 			
 			Iterator<Pixel> i = puntos.iterator();
 			while (i.hasNext()) {
@@ -232,12 +267,28 @@ public class Objeto {
 				acumuladorR[p.getCol().getRed()]++;
 				acumuladorG[p.getCol().getGreen()]++;
 				acumuladorB[p.getCol().getBlue()]++;
+				int nivelGris = (p.getCol().getRed() + p.getCol().getGreen() + p.getCol().getBlue()) / 3;
+				acumuladorGris[nivelGris]++;
+				float[] hsv = RgbHsv.RGBtoHSV(p.getCol().getRed(), p.getCol().getGreen(), p.getCol().getBlue());
+				int h = (int) hsv[0];
+				int s = (int) hsv[1];
+				int v = (int) hsv[2];
+				acumuladorH[h]++;
+				acumuladorS[s]++;
+				acumuladorV[v]++;
 				
 			}
 			R = (R / puntos.size()) % 255;
 			G = (G / puntos.size()) % 255;
 			B = (B / puntos.size()) % 255;
 			colorPromedio = new Color(R, G, B);
+			this.acumuladorR = acumuladorR;
+			this.acumuladorG = acumuladorG;
+			this.acumuladorB = acumuladorB;
+			this.acumuladorGris = acumuladorGris;
+			this.acumuladorH = acumuladorH;
+			this.acumuladorS = acumuladorS;
+			this.acumuladorV = acumuladorV;
 		}
 		return colorPromedio;
 
@@ -858,5 +909,26 @@ public class Objeto {
 	public void setShape(Shape shape) {
 		this.shape = shape;
 	}
+
+	public List<Histograma> getHistogramas() {
+		return histogramas;
+	}
+
+	public void setHistogramas(List<Histograma> histogramas) {
+		this.histogramas = histogramas;
+	}
 	
+	/**
+	 * Retornan el Histograma de un dado tipo
+	 * @param tipo
+	 * @return
+	 */
+	public Histograma getHistograma(String tipo){
+		Histograma h = new Histograma();
+		h.setTipo(tipo);
+		int index = getHistogramas().indexOf(h);
+		if (index != -1)
+			return getHistogramas().get(index);
+		return null;
+	}
 }

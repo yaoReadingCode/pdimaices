@@ -25,19 +25,8 @@ public class ObjetoUtil {
 	private static final int ORIENTACION_ABAJO = 90;
 	public static final int DEFAULT_IMAGE_WIDTH = 206;
 	public static final int DEFAULT_IMAGE_HEIGHT = 206;
-	//private static PlanarImage inputImage = JAI.create("fileload", "limpia.tif");
-	//private static int desplazamiento = 50;
 
-	/*
-	public PlanarImage getInputImage() {
-		return inputImage;
-	}
-
-	public static void setInputImage(PlanarImage inputImageSet) {
-		inputImage = inputImageSet;
-	}*/
-
-	public static void save(Objeto o) {
+	public static void save(Objeto o, Color fondo) {
 		if (o != null) {
 			int width = Math.max((int) o.getBoundingBox().width(),DEFAULT_IMAGE_WIDTH);
 			int height = Math.max((int) o.getBoundingBox().height(),DEFAULT_IMAGE_HEIGHT);
@@ -49,6 +38,8 @@ public class ObjetoUtil {
 			Raster raster = RasterFactory.createWritableRaster(sampleModel, dbuffer, new Point(0, 0));
 			TiledImage ti = new TiledImage(0, 0, width, height, 0, 0, sampleModel, colorModel);
 			ti.setData(raster);
+			
+			ImageUtil.inicializarImagen(ti, fondo);
 
 			Pixel pixelPunta = o.getPixelPunta();
 			Pixel medio = o.getPixelMedio();
@@ -85,22 +76,16 @@ public class ObjetoUtil {
 					angle = (float)((int)(angle * 100000))/100000.0f;
 					float centerX= width / 2f;
 					float centerY= height / 2f;
+					double[] backgroundColor = {fondo.getRed(), fondo.getGreen(), fondo.getBlue()};
  					ParameterBlock pb= new ParameterBlock();
 					pb.addSource(ti);
 					pb.add(centerX);
 					pb.add(centerY);
 					pb.add(angle);
 					pb.add(new InterpolationBilinear());
+					pb.add(backgroundColor);
 					RenderingHints hints = JAI.getDefaultInstance().getRenderingHints();
 					image =JAI.create("rotate",pb,hints);
-					/*
-					Rectangle rec = new Rectangle();
-					rec.x = (int)centerX - width / 2;
-					//if (rec.x < 0) rec.x = 0;
-					rec.y = (int)centerY - height / 2;
-					//if (rec.y < 0) rec.y = 0;
-					rec.width = width;
-					rec.height = height;*/
 					
 					ParameterBlock pbCrop= new ParameterBlock();
 					pbCrop.addSource(image);
@@ -407,29 +392,91 @@ public class ObjetoUtil {
 		return pendiente;
 	}
 	
+	/**
+	 * Calcula la media del vector de valores pasado como parámetro
+	 * @param vector
+	 * @return Valor medio
+	 */
+	public static double media (double[] vector){
+		double sum = 0;
+		for(double x: vector){
+			sum+=x;
+		}
+		if (vector.length > 0){
+			return sum / vector.length;
+		}
+		return 0;
+	}
+	
+	/**
+	 * Calcula la media del vector de valores pasado como parámetro
+	 * @param vector
+	 * @return Valor medio
+	 */
+	public static double varianza (double[] vector){
+		double sumX = 0;
+		double sumX2 = 0;
+		for(double x: vector){
+			sumX+=x;
+			sumX2+=x*x;
+		}
+		if (vector.length > 0){
+			double media = sumX / vector.length;
+			double mediaCuadrados = sumX2 / vector.length;
+			return mediaCuadrados - Math.pow(media, 2);
+		}
+		return 0;
+	}
+	
+	/**
+	 * Calcula el coeficiente de correlacion entre dos vectores
+	 * @param vector
+	 * @return Valor medio
+	 */
+	public static double coeficienteCorrelacion (double[] vectorX, double[] vectorY){
+		double sumX = 0;
+		double sumX2 = 0;
+		double sumY = 0;
+		double sumY2 = 0;
+		double sumProductoXY = 0;
+		double n = vectorX.length;
+		for(int i = 0; i < n; i++){
+			double x = vectorX[i];
+			double y = vectorY[i];
+			sumX+= x;
+			sumX2+=Math.pow(x, 2);
+			sumY+= y;
+			sumY2+=Math.pow(y, 2);
+			sumProductoXY += x * y;
+		}
+		if (n > 0){
+			double mediaX = sumX / n;
+			double mediaY = sumY / n;
+			double covarianza = sumProductoXY / n - mediaX * mediaY;
+			double desvioX = Math.sqrt(sumX2 / n - Math.pow(mediaX, 2));
+			double desvioY = Math.sqrt(sumY2 / n - Math.pow(mediaY, 2));
+			return covarianza / (desvioX * desvioY);
+		}
+		return 0;
+	}
+	
+	/**
+	 * Calcula la distancia de Bhattacharya entre dos Histogramas
+	 * @return
+	 */
+	public static double distanciaBhattacharya(double[] vectorX, double[] vectorY){
+		double total = 0;
+		for(int i = 0; i < vectorX.length; i++){
+			double valorAuxiliar = Math.sqrt(vectorX[i]) * Math.sqrt(vectorY[i]);
+			total+= valorAuxiliar;
+		}
+		return total;
+	}
 	public static void main(String[] args) {
-		
-		Pixel pInicio = new Pixel(106,77,null,1000,1000);
-		Pixel pMedio = new Pixel(99,87,null,1000,1000);
-		Pixel pFin = new Pixel(91,97,null,1000,1000);
-		Double angulo1 = ObjetoUtil.calcularAngulo(pInicio, pMedio, pFin);
-		System.out.println(angulo1);
-		
-		
-		/*
-		Pixel p = new Pixel(50,37,null);
-		p.rotar(318.50353164478446);
-		System.out.println(p);
-		
-		p = new Pixel(51,37,null);
-		p.rotar(318.50353164478446);
-		System.out.println(p);
-		*/
-		 int a = 2; 
-		 int b = 4; 
-		  
-		 System.out.println((a * b));
-		 System.out.println((++a * b));
-		 System.out.println((a * ++b));
+		double[] X = {1, 2, 3, 4, 5, 6, 7};
+		double[] Y = {7, 6, 5, 4, 3, 2, 1};
+		double correlacion = coeficienteCorrelacion(X, Y);
+		System.out.println(correlacion);
+			
 	}
 }

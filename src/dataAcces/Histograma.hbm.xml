@@ -3,18 +3,16 @@
 	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping package="objeto">
-	<joined-subclass name="Histograma" table="HISTOGRAMA" extends="RasgoObjeto" >
-		<key column="uid" />
+	<class name="Histograma" table="HISTOGRAMA">
+		<id name="id" column="uid" type="long">
+			<generator class="increment" />
+		</id>
 
 		<property name="tipo" type="string" not-null="true"/>
 
 		<property name="maxValores" type="integer" column="MAX_VALORES" not-null="true"/>
 		
-		<list name="valores" cascade="all-delete-orphan">
-			<key column="ID_HISTOGRAMA" not-null="true" />
-			<list-index column="INDICE" />
-			<one-to-many class="objeto.ValorHistograma" />
-		</list>
-			
-	</joined-subclass>
+		<property name="valoresString" type="string" column="VALORES"/>
+		
+	</class>
 </hibernate-mapping>

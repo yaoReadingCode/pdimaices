@@ -52,6 +52,8 @@ public class EvaluadorClase {
 	public boolean pertenece(Objeto objeto,boolean addRasgoToObject) {
 		boolean pertenece = true;
 		for (EvaluadorRasgo rasgo : getRasgos()){
+			if (this.clase.getDescripcion().startsWith("Chamico"))
+				System.out.println("");
 			if (rasgo.getRasgoClase().getDeterminante()){
 				RasgoObjeto rasgoObjeto = rasgo.calcularValor(objeto);
 				if (rasgoObjeto != null && addRasgoToObject){

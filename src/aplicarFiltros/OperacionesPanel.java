@@ -348,6 +348,7 @@ public class OperacionesPanel extends JPanel {
 			getImageHolder().getClasificador().guardarClasificacion();
 			JOptionPane.showMessageDialog(this, "Clasificación guardada.");
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			JOptionPane.showMessageDialog(this,
 					"Ocurrió un error al guardar la clasificación.", "Error",
 					JOptionPane.ERROR_MESSAGE);

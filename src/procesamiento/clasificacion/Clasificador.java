@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import objeto.Clase;
+import objeto.Histograma;
 import objeto.Objeto;
 import objeto.RasgoClase;
 import objeto.RasgoObjeto;
@@ -71,9 +72,50 @@ public class Clasificador {
 				if (er.getRasgoClase().getRangoVariable() == true)
 					actualizarRasgoClase(er.getRasgoClase(), objetosClase);;
 			}
+			Clase clase = c.getClase();
+			actualizarClase(clase,objetosClase);
 		}
 	}
 	
+	/**
+	 * Actualiza los histogramas promedio de la clase con los del objeto
+	 * @param clase
+	 * @param objeto
+	 */
+	private void actualizarHistogramaPromedio(Clase clase, Objeto objeto, int cantObjetos){
+		for(Histograma h: objeto.getHistogramas()){
+			Histograma histoClase = clase.getHistograma(h.getTipo());
+			if (histoClase != null){
+				for(int i = 0; i < histoClase.getValores().length;i++){
+					double valActual = histoClase.getValores()[i];
+					double valNuevo = (valActual * cantObjetos + h.getValores()[i]) / (cantObjetos + 1);
+					histoClase.getValores()[i] = valNuevo;
+				}
+			}
+			else{
+				clase.getHistogramas().add(h);
+			}
+
+		}
+	}
+	
+	/**
+	 * 
+	 * @param clase
+	 * @param objetosClase
+	 */
+	private void actualizarClase(Clase clase, List<Objeto> objetosClase) {
+		int cantObjetos = clase.getCantidadObjetos();
+		for(Objeto obj:objetosClase){
+			actualizarHistogramaPromedio(clase, obj, cantObjetos);
+			cantObjetos++;
+		}
+		cantObjetos = clase.getCantidadObjetos() + objetosClase.size();
+		clase.setCantidadObjetos(cantObjetos);
+		ObjectDao.getInstance().save(clase);
+
+	}
+
 	/**
 	 * Actualiza los valores valor medio, desvio estandar, maximo y minimo del rasgo de una clase
 	 * @param rasgoClase RasgoClase
@@ -132,8 +174,7 @@ public class Clasificador {
 		for(Clase c: clases){
 			EvaluadorClase ec = createEvaluadorClase(c);
 			getClasificacion().put(ec, new ArrayList<Objeto>());
-		}
-		
+		}		
 	}
 	/**
 	 * Recupera el evaluador de una clase

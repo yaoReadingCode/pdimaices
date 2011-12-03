@@ -1,8 +1,9 @@
 package objeto;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class Clase {
+public class Clase implements HistogramaContainer{
 
 	private Long id;
 	
@@ -10,18 +11,6 @@ public class Clase {
 	 * Nombre de la clase
 	 */
 	private String nombre;
-	
-	public Clase(String nombre) {
-		super();
-		this.nombre = nombre;
-	}
-
-	public Clase(String nombre, String descripcion) {
-		super();
-		this.nombre = nombre;
-		this.descripcion = descripcion;
-	}
-
 	/**
 	 * Descripcion de la clase
 	 */
@@ -53,6 +42,25 @@ public class Clase {
 	 * Indica si el la clase correspondiente al objeto de referencia
 	 */
 	private boolean objetoReferencia = false;
+	
+	/**
+	 * Cantidad de objetos que pertenecen a la clase
+	 */
+	private int cantidadObjetos = 0;
+	
+	private List<Histograma> histogramas = new ArrayList<Histograma>();
+	
+	public Clase(String nombre) {
+		super();
+		this.nombre = nombre;
+	}
+
+	public Clase(String nombre, String descripcion) {
+		super();
+		this.nombre = nombre;
+		this.descripcion = descripcion;
+	}
+
 
 	public Clase() {
 		// TODO Auto-generated constructor stub
@@ -90,6 +98,18 @@ public class Clase {
 		this.rasgos = rasgos;
 	}
 
+	public List<RasgoClase> getRasgosDeterminantes() {
+		List<RasgoClase> rasgos = new ArrayList<RasgoClase>();
+		if (getRasgos() != null){
+			for(RasgoClase r:getRasgos()){
+				if (r != null && r.getDeterminante()){
+					rasgos.add(r);
+				}
+			}
+			return rasgos;
+		}
+		return rasgos;
+	}
 	public Integer getColorRgb() {
 		return colorRgb;
 	}
@@ -105,7 +125,7 @@ public class Clase {
 	public void setOrdenEvaluacion(Integer ordenEvaluacion) {
 		this.ordenEvaluacion = ordenEvaluacion;
 	}
-
+	
 	public boolean equals(Object o) {
 		if (o == null)
 			return false;
@@ -148,10 +168,15 @@ public class Clase {
 		for(RasgoClase r:this.getRasgos()){
 			if (r != null && r.getDeterminante()){
 				RasgoObjeto ro = objeto.getRasgo(r.getRasgo());
-				if(ro != null){
+				if(ro != null && ro.getValor() != null){
+					Double media = r.getMedia();
+					if (media == null){
+						double min = (r.getMinimo() != null) ? r.getMinimo():Double.MIN_VALUE;
+						double max = (r.getMaximo() != null) ? r.getMaximo():Double.MAX_VALUE;
+						media = (min + max) / 2;
+					}
 					double distancia = 0.0;
-					if (r.getMedia() != null)
-						distancia = Math.abs(r.getMedia()- ro.getValor());
+					distancia = Math.abs(media- ro.getValor());
 					acumulador += distancia;
 					cantidad++;
 				}
@@ -187,5 +212,34 @@ public class Clase {
 	public void setObjetoReferencia(boolean objetoReferencia) {
 		this.objetoReferencia = objetoReferencia;
 	}
+
+	public int getCantidadObjetos() {
+		return cantidadObjetos;
+	}
+
+	public void setCantidadObjetos(int cantidadObjetos) {
+		this.cantidadObjetos = cantidadObjetos;
+	}
+
+	public List<Histograma> getHistogramas() {
+		return histogramas;
+	}
+
+	public void setHistogramas(List<Histograma> histogramas) {
+		this.histogramas = histogramas;
+	}
 	
+	/**
+	 * Retornan el Histograma de un dado tipo
+	 * @param tipo
+	 * @return
+	 */
+	public Histograma getHistograma(String tipo){
+		Histograma h = new Histograma();
+		h.setTipo(tipo);
+		int index = getHistogramas().indexOf(h);
+		if (index != -1)
+			return getHistogramas().get(index);
+		return null;
+	}
 }

@@ -1032,10 +1032,10 @@ public class DetectarContorno extends AbstractImageCommand {
 				
 				setObjetos(objetos);
 				for (Objeto obj : objetos) {
-					ObjetoUtil.save(obj);
+					ObjetoUtil.save(obj, getRangeFondo().getColorMedio());
 				}
 				if (isBuscarObjetoReferencia() && ObjetoReferencia.getReferencia() != null){
-					ObjetoUtil.save(ObjetoReferencia.getReferencia());
+					ObjetoUtil.save(ObjetoReferencia.getReferencia(), getRangeFondo().getColorMedio());
 				}
 
 				objetos = null;

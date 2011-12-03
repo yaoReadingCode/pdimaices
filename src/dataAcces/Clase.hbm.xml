@@ -13,10 +13,16 @@
 	<property name="agrupador" type="string" column="agrupador"/>
 	<property name="indeterminado" type="boolean" column="indeterminado"/>
 	<property name="objetoReferencia" type="boolean" column="objeto_referencia"/>
+	<property name="cantidadObjetos" type="integer" column="cantidad_objetos"/>
 	<list name="rasgos" cascade="all-delete-orphan" lazy="false">
 		<key column="ID_CLASE" not-null="true" />
 		<list-index column="INDICE" />
 		<one-to-many class="objeto.RasgoClase" />
+	</list>
+	<list name="histogramas" cascade="all-delete-orphan" lazy="false" table="HISTOGRAMA_CLASE">
+		<key column="ID_CLASE" not-null="true" />
+		<list-index column="INDICE" />
+		<many-to-many class="objeto.Histograma" column="ID_HISTOGRAMA" />
 	</list>
 
   </class>

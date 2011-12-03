@@ -7,7 +7,7 @@
 		<id name="id" column="uid" type="long">
 			<generator class="increment" />
 		</id>
-		<property name="valor" type="double" not-null="true"/>
+		<property name="valor" type="double"/>
 
 		<many-to-one lazy="false" name="rasgo"
 			class="objeto.Rasgo" column="ID_RASGO" not-null="true" 

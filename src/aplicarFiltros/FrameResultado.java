@@ -1,14 +1,18 @@
 package aplicarFiltros;
 
-import java.awt.*;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.FocusAdapter;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -25,10 +29,14 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
-import javax.swing.event.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import objeto.Clase;
+import objeto.ClaseObjeto;
 import objeto.Objeto;
 import objeto.RasgoObjeto;
 import procesamiento.clasificacion.Clasificador;
@@ -42,6 +50,9 @@ public class FrameResultado extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private Clasificador clasificador;
 	private int cantidadPaneles = 1;
+	private JFrame frameHistograma = null;
+	private JPanel panelHistograma = null;
+	private Objeto objetoSeleccionado = null;
 	//private int selectedPanel = 0;
 	public void setResultados(){
 		Set<EvaluadorClase> clases = getClasificador().getClasificacion().keySet();
@@ -143,10 +154,9 @@ public class FrameResultado extends JFrame {
 	
 	
 	public void presentarResultados(Objeto objeto){ 
-		
+		setObjetoSeleccionado(objeto);
 		tableRasgos.setModel(new DefaultTableModel(
-				new Object[][] {
-				},
+				new Object[][] {},
 				new String[] {
 					"Rasgo", "Valor"
 				}
@@ -158,20 +168,72 @@ public class FrameResultado extends JFrame {
 				public Class<?> getColumnClass(int columnIndex) {
 					return columnTypes[columnIndex];
 				}
+				
+				public boolean isCellEditable(int row, int column) {
+			        return false;
+			    }
 			});
 		
 		DefaultTableModel model = (DefaultTableModel) tableRasgos.getModel();
 		
 		for(int i=0;i<objeto.getRasgos().size();i++){
 			RasgoObjeto rasgo = objeto.getRasgos().get(i);
-			if (rasgo.getRasgo().getVisible())
+			if (rasgo.getRasgo().getVisible()){
 				model.addRow(new Object[]{rasgo.getRasgo().getDescripcion(),rasgo.getValor()});
+				
+			}
 		}
 		tableRasgos.setModel(model);
+		/*
+		tableRasgos.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
+
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				int first = e.getFirstIndex();
+				int last = e.getLastIndex();
+				if (first == last){
+					int row = tableRasgos.getSelectedRow();
+					String nombreRasgo = (String)tableRasgos.getModel().getValueAt(row, 0);
+					if (nombreRasgo != null && nombreRasgo.toUpperCase().startsWith("HISTOGRAMA")){
+						showPanelHistograma();
+					}
+				}
+				
+			}
+			
+			
+		});*/
+
+		tableRasgos.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 2){
+					int row = tableRasgos.getSelectedRow();
+					String nombreRasgo = (String)tableRasgos.getModel().getValueAt(row, 0);
+					if (nombreRasgo != null && nombreRasgo.toUpperCase().startsWith("HISTOGRAMA")){
+						showPanelHistograma();
+					}
+				}
+			}
+		}); 
 		this.setNombreObjetSeleccionado(objeto.getName());
 	}
 	
-	
+	private void showPanelHistograma(){
+		if (getObjetoSeleccionado() != null){
+			Objeto objeto = getObjetoSeleccionado();
+			Clase clase = ((ClaseObjeto)objeto.getClases().get(0)).getClase();
+			PanelHistogramaContainer panel = new PanelHistogramaContainer(objeto,clase,objeto.getName(), "Clase: " + clase.getDescripcion());
+			if (panelHistograma != null){
+				frameHistograma.remove(panelHistograma);
+			}
+			panelHistograma = panel;
+			frameHistograma.add(panelHistograma);
+			frameHistograma.pack();
+			frameHistograma.setResizable(true);
+			frameHistograma.setVisible(true);
+		}
+		
+	}
 	public FrameResultado() {
 		initComponents();
 	}
@@ -355,6 +417,12 @@ public class FrameResultado extends JFrame {
 		pack();
 		setLocationRelativeTo(getOwner());
 		// JFormDesigner - End of component initialization  //GEN-END:initComponents
+		
+		frameHistograma = new JFrame();
+		frameHistograma.setSize(PanelHistogramaContainer.PANEL_WIDTH, PanelHistogramaContainer.PANEL_HEIGHT);
+		frameHistograma.setTitle("Histrogramas");
+		frameHistograma.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		frameHistograma.setLocationRelativeTo(null);
 	}
 	
 	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
@@ -385,4 +453,13 @@ public class FrameResultado extends JFrame {
 	public boolean isTableIniciada() {
 		return tableIniciada;
 	}
+
+	public Objeto getObjetoSeleccionado() {
+		return objetoSeleccionado;
+	}
+
+	public void setObjetoSeleccionado(Objeto objetoSeleccionado) {
+		this.objetoSeleccionado = objetoSeleccionado;
+	}
+	
 }
