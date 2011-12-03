@@ -5,6 +5,7 @@
                                                              
                                                                              
                                                                                        
+                                                                                                 
                                                                                             
                                                             
                                                                         
@@ -13,6 +14,7 @@
                                                              
                                                                              
                                                                                        
+                                                                                                 
                                                                                             
                                                             
                                                                         
@@ -21,7 +23,9 @@
                                                              
                                                                              
                                                                                        
-                                                                                            
+                                                                                                 
+                                                                                               
+                                                                                             
                                                             
                                                                         
                                                                          
@@ -29,7 +33,55 @@
                                                              
                                                                              
                                                                                        
-                                                                                            
+                                                                                                 
+                                                                                               
+                                                                                             
+                                                            
+                                                                        
+                                                                         
+                                                                
+                                                             
+                                                                             
+                                                                                       
+                                                                                                 
+                                                                                               
+                                                                                             
+                                                            
+                                                                        
+                                                                         
+                                                                
+                                                             
+                                                                             
+                                                                                       
+                                                                                                 
+                                                                                  
+                                                                                   
+                                                                                   
+                                                                                             
+                                                            
+                                                                        
+                                                                         
+                                                                
+                                                             
+                                                                             
+                                                                                       
+                                                                                                 
+                                                                                  
+                                                                                   
+                                                                                   
+                                                                                             
+                                                            
+                                                                        
+                                                                         
+                                                                
+                                                             
+                                                                             
+                                                                                       
+                                                                                                 
+                                                                                  
+                                                                                   
+                                                                                   
+                                                                                             
 1,AREA,Area del objeto,procesamiento.clasificacion.Area,true
 2,ASPECT RADIO,Aspect Radio,procesamiento.clasificacion.AspectRatio,true
 3,CIRCULARIDAD,Circularidad,procesamiento.clasificacion.Circularidad,true
@@ -37,4 +89,8 @@
 5,DIAMETRO,Diametro,procesamiento.clasificacion.Diametro,true
 6,SUMA_ANGULOS,Sumatoria Angulos,procesamiento.clasificacion.SumaAngulos,true
 7,HISTOGRAMA_RGB,Histograma RGB,procesamiento.clasificacion.EvaluadorHistogramaRGB,true
-8,PUNTOS_DIVISION,Puntos de división,procesamiento.clasificacion.CantidadPuntosDivision,true
+8,HISTOGRAMA_GRIS,Histograma Nivel Gris,procesamiento.clasificacion.EvaluadorHistogramaGris,false
+9,HISTOGRAMA_H,Histograma H,procesamiento.clasificacion.EvaluadorHistogramaH,false
+10,HISTOGRAMA_S,Histograma S,procesamiento.clasificacion.EvaluadorHistogramaS,false
+11,HISTOGRAMA_V,Histograma V,procesamiento.clasificacion.EvaluadorHistogramaV,false
+12,PUNTOS_DIVISION,Puntos de división,procesamiento.clasificacion.CantidadPuntosDivision,true

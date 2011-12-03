@@ -1,35 +1,175 @@
-                                        
+                                          
+                                                                    
+                                                                     
                                                                 
-                                                                   
+                                                                       
+                                                                                    
+                                                              
+                                                                        
+                                                                                    
+                                                                      
+                                                              
+                                                                
+                                           
+                                                                    
+                                          
+                                                                    
+                                                                     
+                                                                
+                                                                       
+                                                                                    
+                                                              
+                                                                                    
+                                                                     
+                                                              
+                                                                       
+                                                                
+                                          
+                                                                    
+                                          
+                                                                    
+                                                                                    
+                                                                       
+                                                              
+                                                                
+                                                                     
+                                          
+                                                                    
+                                                                     
+                                                                
+                                                                       
+                                                                                    
+                                                              
+                                                                
+                                                                                    
+                                          
+                                                                     
+                                                                    
+                                                              
+                                                                       
+                                          
+                                                                    
+                                                                     
+                                                                
+                                                                       
+                                                                                    
+                                                              
+                                                                                    
+                                          
+                                                              
+                                                                       
+                                                                
+                                                                     
+                                                                    
+                                          
+                                                                    
+                                                                     
+                                                                
+                                                                       
+                                                                                    
+                                                              
+                                                                                    
+                                                                       
+                                                                
+                                                                    
                                                               
                                                                      
-                                                                                  
-                                                            
-                                        
+                                          
+                                                                    
+                                          
+                                                               
+                                                                       
+                                                                     
+                                                                                    
                                                                 
-                                                                   
+                                                                
+                                                                    
+                                                                     
+                                          
+                                                                                    
+                                                                       
+                                                               
+                                          
+                                                                    
+                                                                     
+                                                                
+                                                                       
+                                                                                    
                                                               
                                                                      
-                                                                                  
-                                                            
-                                        
-                                                                
-                                                                   
                                                               
-                                                                     
-                                                                                  
-                                                            
-                                        
+                                                                                    
+                                                                    
+                                                                       
+                                          
                                                                 
-                                                                   
-                                                              
+                                                                    
+                                          
+                                                                                    
                                                                      
-                                                                                  
-                                                            
-1,MAIZ,Maiz,-13369549,3,Maiz,false,false
-2,INDETERMINADO,Indeterminado,-65536,-1,Indeterminado,true,false
-3,GRANO_PARTIDO,Grano Partido,-16750900,2,Grano Partido,false,false
-4,GRANO_DANIADO,Grano Dañado,-26368,4,Grano Dañado,false,false
-5,MATERIA_EXTRANIA,Materia Extraña,-256,1,Materia Extraña,false,false
-6,OBJETO_REFERENCIA,Objeto de referencia,-39373,-1,Objeto de Referencia,false,true
-7,CHAMICO,Chamico,-16751002,5,Semilla de Chamico,false,false
+                                                               
+                                                                       
+                                                                
+                                          
+                                                                     
+                                                                    
+                                                               
+                                                                
+                                                                       
+                                                                                    
+                                          
+                                                                    
+                                                                                    
+                                                               
+                                                                
+                                                                       
+                                                                      
+                                          
+                                                                    
+                                                                     
+                                                                
+                                                                       
+                                                                                    
+                                                              
+                                          
+                                                                    
+                                                                     
+                                                                
+                                                                       
+                                                                                    
+                                                              
+                                                                       
+                                                              
+                                                                    
+                                          
+                                                                
+                                                                     
+                                                                                    
+                                                              
+                                                                       
+                                                                
+                                          
+                                                                    
+                                                                      
+                                                                                    
+                                                              
+                                                                      
+                                                                    
+                                                                       
+                                                                
+                                                                                    
+                                          
+                                                                                    
+                                                               
+                                                                      
+                                                                       
+                                                                
+                                          
+                                                                    
+1,MAIZ,Maiz,-13369549,5,Maiz,false,false,0
+2,INDETERMINADO,Indeterminado,-65536,-1,Materia Extraña,true,false,0
+3,GRANO_PARTIDO,Grano Partido,-16750900,3,Grano Partido,false,false,0
+4,GRANO_DANIADO,Grano Dañado,-26368,4,Grano Dañado,false,false,0
+5,MATERIA_EXTRANIA,Materia Extraña,-256,2,Materia Extraña,false,false,0
+6,OBJETO_REFERENCIA,Objeto de referencia,-39373,-1,Objeto de Referencia,false,true,0
+7,CHAMICO,Chamico,-16751002,1,Semilla de Chamico,false,false,0
