@@ -97,7 +97,11 @@ public abstract class EvaluadorHistograma extends EvaluadorRasgo {
 		if (hClase == null)
 			return true;
 		double distancia = ObjetoUtil.distanciaBhattacharya(hClase.getValores(), hObjeto.getValores());
-		if (distancia < getDistanciaMinima()){
+		
+		double distanciaMinima = getDistanciaMinima();
+		if (getRasgoClase().getMinimo() != null)
+			distanciaMinima = getRasgoClase().getMinimo();
+		if (distancia < distanciaMinima){
 			return false;
 		}
 		return true;

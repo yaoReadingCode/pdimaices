@@ -12,26 +12,26 @@ public class EvaluadorHistogramaH extends EvaluadorHistograma {
 
 
 	public EvaluadorHistogramaH() {
-		super(Histograma.HISTOGRAMA_H,CORRELACION_MINIMA,DISTANCIA_MINIMA);
+		super(Histograma.HISTOGRAMA_H,DISTANCIA_MINIMA,CORRELACION_MINIMA);
 	}
 
 
 	@Override
 	public List<Histograma> calcularHistogramas(Objeto objeto) {
-		Histograma histoRobjeto = objeto.getHistograma(Histograma.HISTOGRAMA_H);
-		if (histoRobjeto == null){
+		Histograma histoHobjeto = objeto.getHistograma(Histograma.HISTOGRAMA_H);
+		if (histoHobjeto == null){
 			List<Histograma> histogramas = new ArrayList<Histograma>();
 			
-			Histograma histogramaS = new Histograma();
-			histogramaS.setTipo(Histograma.HISTOGRAMA_H);
+			Histograma histogramaH = new Histograma();
+			histogramaH.setTipo(Histograma.HISTOGRAMA_H);
 
 			int cantPuntos = objeto.getPuntos().size();
-			double[] valorS = new double[Histograma.MAX_VAL_HISTOGRAMA_H + 1];
+			double[] valorH = new double[Histograma.MAX_VAL_HISTOGRAMA_H + 1];
 			for(int i = 0; i < Histograma.MAX_VAL_HISTOGRAMA_H + 1; i++){
-				valorS[i] = objeto.getAcumuladorH()[i] / cantPuntos;
+				valorH[i] = objeto.getAcumuladorH()[i] / cantPuntos;
 			}
-			histogramaS.setValores(valorS);
-			histogramas.add(histogramaS);
+			histogramaH.setValores(valorH);
+			histogramas.add(histogramaH);
 			objeto.getHistogramas().addAll(histogramas);
 			return histogramas;
 		}

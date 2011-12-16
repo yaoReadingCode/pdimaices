@@ -12,8 +12,8 @@ import objeto.RasgoObjetoHistograma;
 
 public class EvaluadorHistogramaRGB extends EvaluadorRasgo {
 	
-	public static final double CORRELACION_MINIMA = 0.8;
-	public static final double DISTANCIA_MINIMA = 0.8;
+	public static final double CORRELACION_MINIMA = 0.7;
+	public static final double DISTANCIA_MINIMA = 0.7;
 
 	public EvaluadorHistogramaRGB() {
 		// TODO Auto-generated constructor stub
@@ -114,16 +114,19 @@ public class EvaluadorHistogramaRGB extends EvaluadorRasgo {
 		if (coeficienteCorrelacion < CORRELACION_MINIMA){
 			return false;
 		}*/
+		double distanciaMinima = DISTANCIA_MINIMA;
+		if (getRasgoClase().getMinimo() != null)
+			distanciaMinima = getRasgoClase().getMinimo();
 		double distancia = ObjetoUtil.distanciaBhattacharya(hRClase.getValores(), hRObjeto.getValores());
-		if (distancia < DISTANCIA_MINIMA){
+		if (distancia < distanciaMinima){
 			return false;
 		}
 		distancia = ObjetoUtil.distanciaBhattacharya(hGClase.getValores(), hGObjeto.getValores());
-		if (distancia < DISTANCIA_MINIMA){
+		if (distancia < distanciaMinima){
 			return false;
 		}
 		distancia = ObjetoUtil.distanciaBhattacharya(hBClase.getValores(), hBObjeto.getValores());
-		if (distancia < DISTANCIA_MINIMA){
+		if (distancia < distanciaMinima){
 			return false;
 		}
 

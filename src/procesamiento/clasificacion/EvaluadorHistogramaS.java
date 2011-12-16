@@ -12,14 +12,14 @@ public class EvaluadorHistogramaS extends EvaluadorHistograma {
 
 
 	public EvaluadorHistogramaS() {
-		super(Histograma.HISTOGRAMA_S,CORRELACION_MINIMA,DISTANCIA_MINIMA);
+		super(Histograma.HISTOGRAMA_S,DISTANCIA_MINIMA,CORRELACION_MINIMA);
 	}
 
 
 	@Override
 	public List<Histograma> calcularHistogramas(Objeto objeto) {
-		Histograma histoRobjeto = objeto.getHistograma(Histograma.HISTOGRAMA_S);
-		if (histoRobjeto == null){
+		Histograma histoSobjeto = objeto.getHistograma(Histograma.HISTOGRAMA_S);
+		if (histoSobjeto == null){
 			List<Histograma> histogramas = new ArrayList<Histograma>();
 			
 			Histograma histogramaS = new Histograma();
