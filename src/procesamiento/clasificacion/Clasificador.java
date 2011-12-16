@@ -91,11 +91,11 @@ public class Clasificador {
 					double valNuevo = (valActual * cantObjetos + h.getValores()[i]) / (cantObjetos + 1);
 					histoClase.getValores()[i] = valNuevo;
 				}
+				histoClase.actualizarValoresString();
 			}
 			else{
 				clase.getHistogramas().add(h);
 			}
-
 		}
 	}
 	

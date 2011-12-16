@@ -91,22 +91,28 @@ public class Histograma {
 	}
 
 	public void setValores(double[] values) {
-		if (values != null){
-			StringBuffer buffer = new StringBuffer();
-			for(double val:values){
-	            if (buffer.length() > 0) {
-	                buffer.append(HISTOGRAMA_DELIMITER);
-	            }
-				buffer.append(val);
-	        }
-	        this.valoresString = buffer.toString();
-	        this.maxValores = values.length;
-			
-		}
-		else{
-			this.valoresString = null;
-		}
 		this.valores = values;
+		actualizarValoresString();
+	}
+	
+	public void actualizarValoresString(){
+		if (getValores() != null){
+			if (getValores() != null){
+				StringBuffer buffer = new StringBuffer();
+				for(double val:getValores()){
+		            if (buffer.length() > 0) {
+		                buffer.append(HISTOGRAMA_DELIMITER);
+		            }
+					buffer.append(val);
+		        }
+		        this.valoresString = buffer.toString();
+		        this.maxValores = getValores().length;
+				
+			}
+			else{
+				this.valoresString = null;
+			}
+		}
 	}
 
 	public String getValoresString() {
