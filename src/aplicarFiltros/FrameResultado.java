@@ -59,7 +59,7 @@ public class FrameResultado extends JFrame {
 		List<EvaluadorClase> lClases = new ArrayList<EvaluadorClase>(clases);
 		Collections.sort(lClases,new EvaluadorClaseComparator());
 		
-		PanelResultado resultado = new PanelResultado();
+		PanelResultado resultado = new PanelResultado(getClasificador());
 		resultado.setContenedor(this);
 		this.addPanel(resultado,"Resultado");
 		
@@ -119,6 +119,8 @@ public class FrameResultado extends JFrame {
 				obj.addClase(c.getClase());
 			}
 		}
+		
+		getClasificador().modificarClasificacion(obj);
 		
 		int selectedPanel = tabbedPane1.getSelectedIndex();
 		Component panel = tabbedPane1.getComponentAt(selectedPanel);

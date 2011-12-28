@@ -28,6 +28,8 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.general.DefaultPieDataset;
 
+import procesamiento.clasificacion.Clasificador;
+
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 
 /**
@@ -44,13 +46,22 @@ public class PanelResultado extends JPanel {
 	private Map<String,Integer> datasetCountModel = new HashMap<String, Integer>();  //  @jve:decl-index=0:
 	private Map<String,Long> datasetPixelModel = new HashMap<String, Long>();
 	
-	private Integer totalObjetos = 0;
+	private Integer totalObjetos = 0;  //  @jve:decl-index=0:
+	
+	private Clasificador clasificador;
 	
 	public JFrame getContenedor() {
 		return contenedor;
 	}
 	public void setContenedor(JFrame contenedor) {
 		this.contenedor = contenedor;
+	}
+
+	public Clasificador getClasificador() {
+		return clasificador;
+	}
+	public void setClasificador(Clasificador clasificador) {
+		this.clasificador = clasificador;
 	}
 
 	private JFrame contenedor;
@@ -96,6 +107,17 @@ public class PanelResultado extends JPanel {
 			//Grafico
 			datasetCount.setValue( agrupador,cantidad);
 		}
+		
+		int clasificadosIncorrectamente = getClasificador().getClasificadosIncorrectamente().size();
+		int clasificadosCorrectamente = totalObjetos - clasificadosIncorrectamente;
+		Double porcentajeCorrectamente = 0.0;
+		Double porcentajeIncorrectamente = 0.0;
+		if (totalObjetos != 0){
+			porcentajeCorrectamente = (clasificadosCorrectamente * 100)/ (double) totalObjetos;
+			porcentajeIncorrectamente = (clasificadosIncorrectamente * 100)/ (double) totalObjetos;
+		}
+		model.addRow(new Object[]{"Clasificados Correctamente", clasificadosCorrectamente, formater.format(porcentajeCorrectamente)+"%"});
+		model.addRow(new Object[]{"Clasificados Incorrectamente", clasificadosIncorrectamente, formater.format(porcentajeIncorrectamente)+"%"});
 	}
 
 	public void actualizarDataSetPixel(){
@@ -159,7 +181,8 @@ public class PanelResultado extends JPanel {
 	}
 	
 	
-	public PanelResultado() {
+	public PanelResultado(Clasificador clasificador) {
+		this.clasificador = clasificador;
 		initComponents();
 		
 	}
@@ -398,4 +421,6 @@ public class PanelResultado extends JPanel {
 		panel2.add(panel);
 		panel.setBounds(5, 435, 670, 225);
 	}
+	
+	
 }

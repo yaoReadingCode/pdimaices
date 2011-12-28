@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import objeto.Clase;
+import objeto.ClaseObjeto;
 import objeto.Histograma;
 import objeto.Objeto;
 import objeto.RasgoClase;
@@ -18,6 +19,8 @@ public class Clasificador {
 
 	private Map<EvaluadorClase, List<Objeto>> clasificacion = new HashMap<EvaluadorClase, List<Objeto>>();
 	
+	private List<Objeto> clasificacionInicial = new  ArrayList<Objeto>();
+	
 	//private ObjetoReferencia objetoReferencia= null; 
 	
 	private Configuracion configuracion;
@@ -25,6 +28,8 @@ public class Clasificador {
 	private List<Clase> clases = null;
 
 	private Integer cantidadObjetos = null;
+	
+	private List<Objeto> clasificadosIncorrectamente = new ArrayList<Objeto>();
 	
 	public Clasificador() {
 		super();
@@ -38,18 +43,40 @@ public class Clasificador {
 	public void setClasificacion(Map<EvaluadorClase, List<Objeto>> clasificacion) {
 		this.clasificacion = clasificacion;
 	}
-	/*
-	public ObjetoReferencia getObjetoReferencia() {
-		return objetoReferencia;
+
+	/**
+	 * Obtiene la clasificacion inicial
+	 * @return
+	 */
+	public List<Objeto> getClasificacionInicial() {
+		return clasificacionInicial;
+	}
+	
+	/**
+	 * Crea una copia de la clasificacion para guardarla como clasificacion inicial
+	 * @param clasificacionInicial
+	 */
+	public void setClasificacionInicial(List<Objeto> clasificacion) {
+		this.clasificacionInicial = new ArrayList<Objeto>();
+		this.clasificadosIncorrectamente = new ArrayList<Objeto>();
+		for(Objeto objeto: clasificacion){
+			clasificacionInicial.add(objeto.clonar());
+		}
 	}
 
-	public void setObjetoReferencia(ObjetoReferencia objetoReferencia) {
-		this.objetoReferencia = objetoReferencia;
-	}*/
+	public List<Objeto> getClasificadosIncorrectamente() {
+		return clasificadosIncorrectamente;
+	}
+
+	public void setClasificadosIncorrectamente(
+			List<Objeto> clasificadosIncorrectamente) {
+		this.clasificadosIncorrectamente = clasificadosIncorrectamente;
+	}
 
 	public Configuracion getConfiguracion() {
 		return configuracion;
 	}
+
 
 	public void setConfiguracion(Configuracion configuracion) {
 		this.configuracion = configuracion;
@@ -291,4 +318,24 @@ public class Clasificador {
 		this.cantidadObjetos++;
 	}
 	
+	/**
+	 * Metodo que compara la clase actual del objeto con la clase que se asigno inicialmente
+	 * y actualiza el error de clasificacion en caso de ser necesario.
+	 * @param objeto
+	 */
+	public void modificarClasificacion(Objeto objeto){
+		int indexOriginal = getClasificacionInicial().indexOf(objeto);
+		Objeto original = getClasificacionInicial().get(indexOriginal);
+		ClaseObjeto claseOriginal = original.getClases().get(0);
+		ClaseObjeto claseActual = objeto.getClases().get(0);
+		if (claseActual.getClase().equals(claseOriginal.getClase())){
+			if (getClasificadosIncorrectamente().contains(objeto)){
+				getClasificadosIncorrectamente().remove(objeto);
+			}
+		}else{
+			if (!getClasificadosIncorrectamente().contains(objeto)){
+				getClasificadosIncorrectamente().add(objeto);
+			}
+		}
+	}
 }

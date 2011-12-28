@@ -4,7 +4,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 
-public class RasgoObjeto {
+public class RasgoObjeto implements Cloneable{
 	
 	static NumberFormat numbertFormat = new DecimalFormat();
 	
@@ -79,6 +79,12 @@ public class RasgoObjeto {
 		if (getRasgo() != null)
 			return getRasgo().getNombre() + " : " + numbertFormat.format(getValor());
 		return "";
+	}
+
+	@Override
+	public Object clone(){
+		RasgoObjeto rasgo = new RasgoObjeto(this.getRasgo(), this.getValor());
+		return rasgo;
 	}
 	
 }

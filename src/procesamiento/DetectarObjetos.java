@@ -299,6 +299,8 @@ public class DetectarObjetos extends AbstractImageCommand {
 			ObjetoReferencia.getReferencia().addClase(objetoReferenciaClase.getClase());
 			getClasificador().getClasificacion().put(objetoReferenciaClase, objetosReferencia);
 		}
+		
+		getClasificador().setClasificacionInicial(objetos);
 	}
 	
 	/**

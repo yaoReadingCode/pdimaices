@@ -1,7 +1,7 @@
 package objeto;
 
 
-public class ClaseObjeto {
+public class ClaseObjeto implements Cloneable{
 	private Long id;
 	
 	/**
@@ -76,6 +76,12 @@ public class ClaseObjeto {
 
 	public void setDistanciaPromedio(Double distanciaPromedio) {
 		this.distanciaPromedio = distanciaPromedio;
+	}
+
+	@Override
+	public Object clone(){
+		ClaseObjeto clase = new ClaseObjeto(this.getClase());
+		return clase;
 	}
 	
 }

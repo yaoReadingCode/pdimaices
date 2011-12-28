@@ -177,6 +177,9 @@ public class Clase implements HistogramaContainer{
 					}
 					double distancia = 0.0;
 					distancia = Math.abs(media- ro.getValor());
+					if (r.getPeso() != null && r.getPeso() != 0){
+						distancia = distancia / r.getPeso();
+					}
 					acumulador += distancia;
 					cantidad++;
 				}

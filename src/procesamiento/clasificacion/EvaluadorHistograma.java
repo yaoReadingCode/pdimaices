@@ -61,6 +61,19 @@ public abstract class EvaluadorHistograma extends EvaluadorRasgo {
 		List<Histograma> histogramas = calcularHistogramas(objeto);
 		RasgoObjetoHistograma rasgoObjeto = new RasgoObjetoHistograma(this.getRasgoClase().getRasgo(),null);
 		rasgoObjeto.setHistogramas(histogramas);
+		double distanciaSum = 0;
+		for(Histograma h:histogramas){
+			Histograma hClase = this.getRasgoClase().getClase().getHistograma(h.getTipo());
+			double distancia = -1;
+			if (hClase != null){
+				distancia = ObjetoUtil.distanciaBhattacharya(h.getValores(), hClase.getValores());
+			}
+			distanciaSum += distancia;
+		}
+		if (histogramas.size() > 0){
+			double distanciaProm = distanciaSum / histogramas.size();
+			rasgoObjeto.setValor(distanciaProm);
+		}
 		return rasgoObjeto;
 	}
 	
@@ -77,7 +90,7 @@ public abstract class EvaluadorHistograma extends EvaluadorRasgo {
 	 * @param histogramas
 	 * @return
 	 */
-	private Histograma getHistograma(String tipo, List<Histograma> histogramas){
+	protected Histograma getHistograma(String tipo, List<Histograma> histogramas){
 		for(Histograma h:histogramas){
 			if (h.getTipo().equals(tipo))return h;
 		}
@@ -88,20 +101,13 @@ public abstract class EvaluadorHistograma extends EvaluadorRasgo {
 	 * @see procesamiento.clasificacion.EvaluadorRasgo#isEnRango(objeto.Objeto, objeto.RasgoObjeto)
 	 */
 	public boolean isEnRango(Objeto objeto, RasgoObjeto rasgoObjeto) {
-		List<Histograma> histogramas = ((RasgoObjetoHistograma) rasgoObjeto).getHistogramas();
-		Histograma hObjeto = getHistograma(getTipoHistograma(), histogramas);
-		Histograma hClase = this.getRasgoClase().getClase().getHistograma(getTipoHistograma());
-		
-		if (hObjeto == null)
+		if (rasgoObjeto.getValor() == null)
 			return false;
-		if (hClase == null)
-			return true;
-		double distancia = ObjetoUtil.distanciaBhattacharya(hClase.getValores(), hObjeto.getValores());
-		
 		double distanciaMinima = getDistanciaMinima();
-		if (getRasgoClase().getMinimo() != null)
+		if (getRasgoClase().getMinimo() != null){
 			distanciaMinima = getRasgoClase().getMinimo();
-		if (distancia < distanciaMinima){
+		}
+		if (rasgoObjeto.getValor() < distanciaMinima){
 			return false;
 		}
 		return true;

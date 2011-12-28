@@ -9,11 +9,10 @@ import java.util.List;
 
 import javax.media.jai.PlanarImage;
 
-import procesamiento.HSVRange;
 import procesamiento.ImageUtil;
 import procesamiento.RgbHsv;
 
-public class Objeto implements HistogramaContainer{
+public class Objeto implements HistogramaContainer, Cloneable{
 	
 	private Long id;
 	
@@ -599,14 +598,26 @@ public class Objeto implements HistogramaContainer{
 	public Objeto clonar() {
 		Objeto obj = new Objeto();
 		obj.setOriginalImage(this.getOriginalImage());
+		obj.setName(this.getName());
 		List<Pixel> contorno = new ArrayList<Pixel>();
 		for (Pixel p : getContorno()) {
 			contorno.add(p.clonar());
 		}
 		obj.setContorno(contorno);
+		for(ClaseObjeto clase:getClases()){
+				obj.addClase((ClaseObjeto)clase.clone());
+		}
+		for(RasgoObjeto rasgo:getRasgos()){
+			obj.addRasgo((RasgoObjeto)rasgo.clone());
+		}
 		return obj;
 	}
 	
+	@Override
+	public Object clone() {
+		return this.clonar();
+	}
+
 	public void calcularMaximosMinimos() {
 			Iterator<Pixel> i = contorno.iterator();
 			while (i.hasNext()) {
@@ -750,6 +761,18 @@ public class Objeto implements HistogramaContainer{
 	@Override
 	public String toString() {
 		return this.getName();
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == null)
+			return false;
+		if (!(o instanceof Objeto))
+			return false;
+		Objeto obj = (Objeto) o;
+		if (getName() != null)
+			return getName().equals(obj.getName());
+		return false;
 	}
 
 	public Pixel getPixelPunta(){
