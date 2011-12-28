@@ -154,6 +154,20 @@
                                                                                   
                                                                                   
                                                                                              
+                                                            
+                                                                        
+                                                                         
+                                                                
+                                                             
+                                                                             
+                                                                                     
+                                                                                       
+                                                                                
+                                                                                  
+                                                                                  
+                                                                                             
+                                                                                      
+                                                                                      
 1,AREA,Area del objeto,procesamiento.clasificacion.Area,true
 2,ASPECT RADIO,Aspect Radio,procesamiento.clasificacion.AspectRatio,true
 3,CIRCULARIDAD,Circularidad,procesamiento.clasificacion.Circularidad,true
@@ -165,4 +179,4 @@
 9,HISTOGRAMA_H,Histogramas,procesamiento.clasificacion.EvaluadorHistogramaH,true
 10,HISTOGRAMA_S,Histogramas,procesamiento.clasificacion.EvaluadorHistogramaS,false
 11,HISTOGRAMA_V,Histogramas,procesamiento.clasificacion.EvaluadorHistogramaV,false
-12,PUNTOS_DIVISION,Puntos de división,procesamiento.clasificacion.CantidadPuntosDivision,true
+12,HISTOGRAMA_HSV,Histogramas,procesamiento.clasificacion.EvaluadorHistogramaHSV,true
