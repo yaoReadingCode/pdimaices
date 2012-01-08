@@ -338,10 +338,17 @@
                                                                         
                                                                        
                                                                                     
-3,GRANO_PARTIDO,Grano Partido,-16750900,3,Grano Partido,false,false,173
-7,CHAMICO,Chamico,-16751002,1,Semilla de Chamico,false,false,36
-6,OBJETO_REFERENCIA,Objeto de referencia,-39373,-1,Objeto de Referencia,false,true,5
+                                                                       
+                                                               
+                                                                                    
+                                                                    
+                                                                 
+                                                                         
+                                            
 2,INDETERMINADO,Indeterminado,-65536,-1,Materia Extraña,true,false,1
 4,GRANO_DANIADO,Grano Dañado,-26368,4,Grano Dañado,false,false,10
-5,MATERIA_EXTRANIA,Materia Extraña,-256,2,Materia Extraña,false,false,129
+3,GRANO_PARTIDO,Grano Partido,-16750900,3,Grano Partido,false,false,173
+7,CHAMICO,Chamico,-16751002,1,Semilla de Chamico,false,false,45
+6,OBJETO_REFERENCIA,Objeto de referencia,-39373,-1,Objeto de Referencia,false,true,6
 1,MAIZ,Maiz,-13369549,5,Maiz,false,false,314
+5,MATERIA_EXTRANIA,Materia Extraña,-256,2,Materia Extraña,false,false,129
