@@ -59,7 +59,7 @@ public abstract class EvaluadorHistograma extends EvaluadorRasgo {
 	 */
 	public RasgoObjeto calcularValor(Objeto objeto) {
 		List<Histograma> histogramas = calcularHistogramas(objeto);
-		RasgoObjetoHistograma rasgoObjeto = new RasgoObjetoHistograma(this.getRasgoClase().getRasgo(),null);
+		RasgoObjetoHistograma rasgoObjeto = new RasgoObjetoHistograma(this.getRasgoClase().getRasgo(),null, this.getRasgoClase().getClase());
 		rasgoObjeto.setHistogramas(histogramas);
 		double distanciaSum = 0;
 		for(Histograma h:histogramas){

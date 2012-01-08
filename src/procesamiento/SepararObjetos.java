@@ -130,6 +130,14 @@ public class SepararObjetos extends AbstractImageCommand {
 					if (detectarContorno.isBuscarObjetoReferencia()){
 						for(Objeto o:nuevosObjetos){
 							detectarContorno.isObjSpecial(o);
+							
+							for(Pixel p:o.getContorno()){
+								if (p.getCol() == null || p.getCol().equals(Color.BLACK)){
+									Pixel pColor = getPixel(p, getOriginalImage());
+									if (pColor != null)
+										p.setCol(pColor.getCol());
+								}
+							}
 						}
 					}
 				}
@@ -458,8 +466,8 @@ public class SepararObjetos extends AbstractImageCommand {
 
 							dividirObjeto(obj, mejorDivision.origen, mejorDivision.fin, mejorDivision.puntos, obj1, obj2);
 							if (obj1.validarContorno() && obj2.validarContorno() &&
-								!obj1.getBoundingBox().isIncluido(obj2.getBoundingBox()) &&
-								!obj2.getBoundingBox().isIncluido(obj1.getBoundingBox())){
+								(!obj1.getBoundingBox().isIncluido(obj2.getBoundingBox()) ||
+								!obj2.getBoundingBox().isIncluido(obj1.getBoundingBox()))){
 								List<RasgoObjeto> rasgosOb1 = new ArrayList<RasgoObjeto>();
 								List<RasgoObjeto> rasgosOb2 = new ArrayList<RasgoObjeto>();
 								boolean isCircularObj1 = getEvaluadorObjetoCircular().pertenece(obj1, false, rasgosOb1);

@@ -131,9 +131,9 @@ public class HSVRange {
 		Float smax = (getSMax() != null) ? getSMax(): SMAX_VALUE;
 		Float vmin = (getVMin() != null) ? getVMin(): VMIN_VALUE;
 		Float vmax = (getVMax() != null) ? getVMax(): VMAX_VALUE;
-		float h = (hmax - hmin) / 2f;
-		float s = (smax - smin) / 2f;
-		float v = (vmax - vmin) / 2f;
+		float h = (hmax + hmin) / 2f;
+		float s = (smax + smin) / 2f;
+		float v = (vmax + vmin) / 2f;
 		return new Color(RgbHsv.HSVtoRGB(h / HMAX_VALUE, s / SMAX_VALUE, v / VMAX_VALUE));
 	}
 

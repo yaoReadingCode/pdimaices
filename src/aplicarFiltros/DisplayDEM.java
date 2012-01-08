@@ -1,21 +1,31 @@
 package aplicarFiltros;
 
+import jai.histogram.DisplayHistogramApp;
+import jai.histogram.DisplayHistogramComponent;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
-import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
+import java.awt.image.renderable.ParameterBlock;
 
+import javax.media.jai.Histogram;
+import javax.media.jai.JAI;
 import javax.media.jai.PlanarImage;
 import javax.media.jai.iterator.RandomIter;
 import javax.media.jai.iterator.RandomIterFactory;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import procesamiento.RgbHsv;
 
@@ -28,6 +38,8 @@ public class DisplayDEM extends DisplayJAI implements MouseMotionListener {
 	protected RandomIter readIterator; // a RandomIter that allow us to get
 	// the data of a single pixel.
 	protected PlanarImage surrogateImage; // The surrogate byte image.
+	protected PlanarImage frontImage; // The front byte image.
+	protected Histogram histogramaImagen = null;
 	protected int width, height; // Dimensions of the image
 	protected double minValue, maxValue; // Range of the image values.
 	
@@ -64,18 +76,25 @@ public class DisplayDEM extends DisplayJAI implements MouseMotionListener {
 		display(imageFront, imageBack);
 		pixelInfo = new StringBuffer(50);
 		addMouseMotionListener(this); // Registers the mouse motion listener.
-		addMouseListener(dragAndDrowListener());
+		addMouseListener(getMouseListener());
 	}
 
 	public DisplayDEM() {
 		super();
 		pixelInfo = new StringBuffer(50);
 		addMouseMotionListener(this); // Registers the mouse motion listener.
-		addMouseListener(dragAndDrowListener());
+		addMouseListener(getMouseListener());
 	}
 
-	private MouseListener dragAndDrowListener(){
+	private MouseListener getMouseListener(){
 		MouseListener listener = new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				super.mouseClicked(e);
+				if (e.getClickCount() == 2){
+					showPanelHistograma();
+				}
+			}
+
 			public void mousePressed(MouseEvent evt) {
 				mousePressed = true;
 				xClickOrigen = evt.getX();
@@ -101,16 +120,74 @@ public class DisplayDEM extends DisplayJAI implements MouseMotionListener {
 		return listener;
 	}
 	
+	private void showPanelHistograma() {
+		if (histogramaImagen == null){
+			calculateHistogram();
+		}
+		JFrame frame = new JFrame("Histograms");
+		Container cp = frame.getContentPane();
+		JScrollPane scrollpane = new JScrollPane();
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridLayout(3, 1));
+		double [] mean = histogramaImagen.getMean();
+		double [] varianza = histogramaImagen.getStandardDeviation();
+		if (histogramaImagen.getNumBands() == 3){
+			DisplayHistogramComponent cRed = new DisplayHistogramComponent(histogramaImagen, 0,"Red");
+			DisplayHistogramComponent cGreen = new DisplayHistogramComponent(histogramaImagen, 1,"Green");
+			DisplayHistogramComponent cBlue = new DisplayHistogramComponent(histogramaImagen, 2,"Blue");
+			cRed.setBarColor(Color.RED);
+			cRed.setMarksColor(Color.WHITE);
+			cGreen.setBarColor(Color.GREEN);
+			cGreen.setMarksColor(Color.WHITE);
+			cBlue.setBarColor(Color.BLUE);
+			cBlue.setMarksColor(Color.WHITE);
+			// Use the same scale on the y-axis.
+			int max = Math.max(cRed.getMaxCount(), Math.max(cGreen.getMaxCount(),
+					cBlue.getMaxCount()));
+			cRed.setMaxCount(max);
+			cGreen.setMaxCount(max);
+			cBlue.setMaxCount(max);
+			panel.add(cRed);
+			panel.add(cGreen);
+			panel.add(cBlue);
+		}
+		else{
+			DisplayHistogramComponent cGray = new DisplayHistogramComponent(histogramaImagen, 0,"");
+			cGray.setBarColor(Color.GRAY);
+			cGray.setMarksColor(Color.WHITE);
+			panel.add(cGray);
+		}
+		scrollpane.setViewportView(panel);
+		cp.add(scrollpane);
+		// Set the closing operation so the application is finished.
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.pack(); // Adjust the frame size using preferred dimensions.
+		frame.setVisible(true); // Show the frame.
+	}
+	
+	private void calculateHistogram(){
+		ParameterBlock pb = new ParameterBlock();
+		pb.addSource(frontImage);
+		pb.add(null); // The ROI.
+		pb.add(1); // Samplings.
+		pb.add(1);
+		pb.add(new int[] { 256 }); // Num. bins.
+		pb.add(new double[] { 0 }); // Min value to be considered.
+		pb.add(new double[] { 256 }); // Max value to be considered.
+		// Creates the histogram.
+		PlanarImage temp = JAI.create("histogram", pb);
+		histogramaImagen = (Histogram) temp.getProperty("histogram");
+	}
 	public void display(RenderedImage imageFront, RenderedImage imageBack) {
-
-		
 		readIterator = RandomIterFactory.create(imageBack, null);
 		// Get some facts about the image
 		width = imageBack.getWidth();
 		height = imageBack.getHeight();
 		dpixel = new double[imageBack.getSampleModel().getNumBands()];
 		surrogateImage = PlanarImage.wrapRenderedImage(imageBack);
+		frontImage = PlanarImage.wrapRenderedImage(imageFront);
 		set(imageFront);
+		histogramaImagen = null;
 	}
 
 	// This method is here just to satisfy the MouseMotionListener interface

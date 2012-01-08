@@ -25,7 +25,8 @@ public class ConvertEscalaGrises extends AbstractImageCommand {
 	 */
 	public PlanarImage execute() {
 		if (getImage() != null) {
-			double[][] matrix = { { 1./2 ,1./4, 1./4, 0 } };
+			double[][] matrix = { { 0.3 ,0.5, 0.2, 0 } };
+			//double[][] matrix = { { 1./2 ,1./4, 1./4, 0 } };
 			ParameterBlock pb = new ParameterBlock();
 			pb.addSource(getImage());
 			pb.add(matrix);

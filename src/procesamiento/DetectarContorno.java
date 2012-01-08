@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.media.jai.JAI;
 import javax.media.jai.PlanarImage;
 import javax.media.jai.TiledImage;
 
@@ -670,12 +671,13 @@ public class DetectarContorno extends AbstractImageCommand {
 	 */
 	public List<Pixel> getNextContorno(Pixel pixel, Pixel pixelAnt, Pixel origen, boolean horario) {
 		List<Pixel> posibles = new ArrayList<Pixel>();
+		
 		int dirActual = pixel.getDireccion(pixelAnt);
 		int[] recorrido = null;
 		if (horario)
-			recorrido = Pixel.getRecorridoHorarioAdayacentes(dirActual,2);
+			recorrido = Pixel.getRecorridoHorarioAdayacentes(dirActual,3);
 		else
-			recorrido = Pixel.getRecorridoAntiHorarioAdayacentes(dirActual,2);
+			recorrido = Pixel.getRecorridoAntiHorarioAdayacentes(dirActual,3);
 		int peso = recorrido.length;
 		for (int dir : recorrido) {
 			Pixel actual = getAdyacente(pixel, dir, getImage());
@@ -694,6 +696,8 @@ public class DetectarContorno extends AbstractImageCommand {
 			peso--;
 		}
 		Collections.sort(posibles, new PixelComparator());
+		if (posibles.size() == 0)
+			System.out.println("No hay posibles");
 		return posibles;
 	}
 
@@ -995,6 +999,7 @@ public class DetectarContorno extends AbstractImageCommand {
 	public PlanarImage execute() {
 		if (getImage() != null) {
 			try {
+				JAI.create("filestore", getImage(), "pre_detectar_contorno.tif", "TIFF");
 
 				setImage(ImageUtil.createTiledImage(getImage(),
 						ImageUtil.tileWidth, ImageUtil.tileHeight));
@@ -1169,12 +1174,12 @@ public class DetectarContorno extends AbstractImageCommand {
 											o.setPuntos(interior);
 											*/
 											completarObjeto(o);
-											borrarObjeto((TiledImage)getImage(), o, Color.black);
 											if (isAsignarNombreObjeto()){
 												int nombreObjeto = getClasificador().getCantidadObjetos() + 1;
 												getClasificador().aumentarCantidadObjetos();
 												o.setName("Objeto"+ nombreObjeto);
 											}
+											borrarObjeto((TiledImage)getImage(), o, Color.black);
 											if (isBuscarObjetoReferencia()){
 												this.isObjSpecial(o);
 											}
@@ -1238,6 +1243,7 @@ public class DetectarContorno extends AbstractImageCommand {
 	 * @param objeto
 	 */
 	public void borrarObjeto(TiledImage image, Objeto objeto, Color fondo){
+		//JAI.create("filestore", image, "parcial_antes_"+objeto.getName()+".tif", "TIFF");
 		int[] newPixel = { fondo.getRed(), fondo.getGreen(), fondo.getBlue()};
 		for(Pixel p:objeto.getContorno()){
 			ImageUtil.writePixel(p.getX(), p.getY(), newPixel,image);
@@ -1245,6 +1251,8 @@ public class DetectarContorno extends AbstractImageCommand {
 		for(Pixel p:objeto.getPuntos()){
 			ImageUtil.writePixel(p.getX(), p.getY(), newPixel,image);
 		}
+		//JAI.create("filestore", image, "parcial_desp_"+objeto.getName()+".tif", "TIFF");
+		//ObjetoUtil.save(objeto, Color.black);
 	}
 
 	public PlanarImage getBinaryImage() {

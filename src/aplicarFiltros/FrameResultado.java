@@ -177,11 +177,12 @@ public class FrameResultado extends JFrame {
 			});
 		
 		DefaultTableModel model = (DefaultTableModel) tableRasgos.getModel();
-		
+		Clase clase = ((ClaseObjeto)objeto.getClases().get(0)).getClase();
 		for(int i=0;i<objeto.getRasgos().size();i++){
 			RasgoObjeto rasgo = objeto.getRasgos().get(i);
 			if (rasgo.getRasgo().getVisible()){
-				model.addRow(new Object[]{rasgo.getRasgo().getDescripcion(),rasgo.getValor()});
+				if (rasgo.getClase() == null || rasgo.getClase().equals(clase))
+					model.addRow(new Object[]{rasgo.getRasgo().getDescripcion(),rasgo.getValor()});
 				
 			}
 		}

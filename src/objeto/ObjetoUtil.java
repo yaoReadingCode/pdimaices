@@ -30,13 +30,15 @@ public class ObjetoUtil {
 		if (o != null) {
 			int width = Math.max((int) o.getBoundingBox().width(),DEFAULT_IMAGE_WIDTH);
 			int height = Math.max((int) o.getBoundingBox().height(),DEFAULT_IMAGE_HEIGHT);
+			int widthRotateImage = width + 100;
+			int heightRotateImage = height + 100;
 			byte[] data = new byte[width * height* 3]; // Image data array.
-			DataBufferByte dbuffer = new DataBufferByte(data, width * height * 3);
+			DataBufferByte dbuffer = new DataBufferByte(data, widthRotateImage * heightRotateImage * 3);
 			SampleModel sampleModel = RasterFactory.createPixelInterleavedSampleModel(DataBuffer.TYPE_BYTE, width,
 							height, 3);
 			ColorModel colorModel = PlanarImage.createColorModel(sampleModel);
 			Raster raster = RasterFactory.createWritableRaster(sampleModel, dbuffer, new Point(0, 0));
-			TiledImage ti = new TiledImage(0, 0, width, height, 0, 0, sampleModel, colorModel);
+			TiledImage ti = new TiledImage(0, 0, widthRotateImage, heightRotateImage, 0, 0, sampleModel, colorModel);
 			ti.setData(raster);
 			
 			ImageUtil.inicializarImagen(ti, fondo);
@@ -46,11 +48,11 @@ public class ObjetoUtil {
 
 			o.calcularMaximosMinimos();
 			for (Pixel p : o.getPuntos()) {
-				pintarPunto(p, o, ti, medio, width, height);
+				pintarPunto(p, o, ti, medio, widthRotateImage, heightRotateImage);
 			}
 			for (Pixel p : o.getContorno()) {
 				//p.setCol(Color.red);
-				pintarPunto(p, o, ti, medio, width, height);
+				pintarPunto(p, o, ti, medio, widthRotateImage, heightRotateImage);
 			}
 			
 			/*
@@ -74,9 +76,12 @@ public class ObjetoUtil {
 				if (angulo != null){
 					float angle= (float) Math.toRadians(angulo + ORIENTACION_ABAJO);
 					angle = (float)((int)(angle * 100000))/100000.0f;
-					float centerX= width / 2f;
-					float centerY= height / 2f;
-					double[] backgroundColor = {fondo.getRed(), fondo.getGreen(), fondo.getBlue()};
+					float centerX= widthRotateImage / 2f;
+					float centerY= heightRotateImage / 2f;
+					double r = fondo.getRed();
+					double g = fondo.getGreen();
+					double b = fondo.getBlue();
+					double[] backgroundColor = {r, g, b};
  					ParameterBlock pb= new ParameterBlock();
 					pb.addSource(ti);
 					pb.add(centerX);
@@ -89,15 +94,12 @@ public class ObjetoUtil {
 					
 					ParameterBlock pbCrop= new ParameterBlock();
 					pbCrop.addSource(image);
-					pbCrop.add(new Float(0));
-					pbCrop.add(new Float(0));
+					pbCrop.add(new Float(centerX - width / 2));
+					pbCrop.add(new Float(centerY - height / 2));
 					pbCrop.add(new Float(width));
 					pbCrop.add(new Float(height));
 					image =JAI.create("crop",pbCrop,hints);
 					
-					/*
-					Raster dataRaster = image.getData(rec);
-					ti.setData(dataRaster);*/
 					JAI.create("filestore", image, o.getPathImage(), "TIFF");
 					return;
 				}

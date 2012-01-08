@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import javax.media.jai.JAI;
 import javax.media.jai.PlanarImage;
 import javax.media.jai.TiledImage;
 import javax.swing.JFrame;
@@ -96,6 +97,7 @@ public class DetectarObjetos extends AbstractImageCommand {
 			Binarizar ef = new Binarizar(getOriginalImage(), getHsvRange());
 			PlanarImage binaryImage = ef.execute();
 			PlanarImage output = binaryImage;
+			//JAI.create("filestore", binaryImage, "binary.tif", "TIFF");
 			/*
 			Visualizador.aumentarProgreso(15, "Detectando Contorno Grueso...");
 			DetectarContornoGrueso dcg = new DetectarContornoGrueso(output);

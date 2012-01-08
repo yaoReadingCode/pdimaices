@@ -12,6 +12,10 @@
 		<many-to-one lazy="false" name="rasgo"
 			class="objeto.Rasgo" column="ID_RASGO" not-null="true" 
 			/>
+		<many-to-one lazy="false" name="clase"
+			class="objeto.Clase" column="ID_CLASE" 
+			/>
+
 		<many-to-one lazy="false" name="objeto"
 			class="objeto.Objeto" column="ID_OBJETO" not-null="true" 
 			insert="false" update="false"/>

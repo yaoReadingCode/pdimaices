@@ -1,13 +1,9 @@
 package procesamiento.clasificacion;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import objeto.Histograma;
 import objeto.Objeto;
-import objeto.ObjetoUtil;
-import objeto.RasgoObjeto;
-import objeto.RasgoObjetoHistograma;
 
 public class EvaluadorHistogramaHSV extends EvaluadorHistograma {
 	public static final double CORRELACION_MINIMA = 0.7;
@@ -26,16 +22,16 @@ public class EvaluadorHistogramaHSV extends EvaluadorHistograma {
 
 	@Override
 	public List<Histograma> calcularHistogramas(Objeto objeto) {
-		List<Histograma> histogramas = new ArrayList<Histograma>();
-		histogramas.addAll(evaluadorH.calcularHistogramas(objeto));
-		histogramas.addAll(evaluadorS.calcularHistogramas(objeto));
-		histogramas.addAll(evaluadorV.calcularHistogramas(objeto));
-		return histogramas;
+		evaluadorH.calcularHistogramas(objeto);
+		evaluadorS.calcularHistogramas(objeto);
+		evaluadorV.calcularHistogramas(objeto);
+		return objeto.getHistogramas();
 	}
-
+	
 	/**
 	 * @see procesamiento.clasificacion.EvaluadorRasgo#isEnRango(objeto.Objeto, objeto.RasgoObjeto)
 	 */
+	/*
 	public boolean isEnRango(Objeto objeto, RasgoObjeto rasgoObjeto) {
 		List<Histograma> histogramas = ((RasgoObjetoHistograma) rasgoObjeto).getHistogramas();
 		Histograma hObjeto = getHistograma(evaluadorH.getTipoHistograma(), histogramas);
@@ -70,5 +66,5 @@ public class EvaluadorHistogramaHSV extends EvaluadorHistograma {
 			return false;
 		}
 		return true;
-	}	
+	}	*/
 }

@@ -33,7 +33,7 @@ public class DisplayHistogramApp extends JFrame {
 		dh = new DisplayHistogramComponent(histo, 0, "Histogram of " + name);
 		getContentPane().add(dh, BorderLayout.CENTER);
 		// Set the closing operation so the application is finished.
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		pack(); // Adjust the frame size using preferred dimensions.
 		setVisible(true); // Show the frame.
 	}

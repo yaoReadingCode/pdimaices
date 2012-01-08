@@ -45,6 +45,7 @@ import procesamiento.DetectarContornoGrueso;
 import procesamiento.DetectarObjetos;
 import procesamiento.Dilate;
 import procesamiento.EliminarFondo;
+import procesamiento.EliminarFondoHistograma;
 import procesamiento.Erode;
 import procesamiento.GaussianFilter;
 import procesamiento.GradientMagnitud;
@@ -342,6 +343,13 @@ public class OperacionesPanel extends JPanel {
 		executeCommand(gf);
 	}
 	
+	private void buttonEliminarFondoHistogramaActionPerformed(
+			ActionEvent e) {
+		EliminarFondoHistograma ef = new EliminarFondoHistograma(getImageHolder().getImage());
+		executeCommand(ef);
+		
+	}
+
 	private void buttonGuardarClasificacionActionPerformed(ActionEvent e) {
 
 		try {
@@ -402,6 +410,7 @@ public class OperacionesPanel extends JPanel {
 		buttonRangoObjeto = new JButton();
 		buttonMedianFilter = new JButton();
 		buttonGaussianFilter = new JButton();
+		buttonEliminarFondoHistograma = new JButton();
 
 		// ======== this ========
 
@@ -916,11 +925,21 @@ public class OperacionesPanel extends JPanel {
 					public void actionPerformed(ActionEvent e) {
 						buttonGaussianFilterActionPerformed(e);
 					}
-
-					
 				});
 				panel7.add(buttonGaussianFilter);
 				buttonGaussianFilter.setBounds(30, 405, 270, buttonGaussianFilter
+						.getPreferredSize().height);
+
+				// ---- buttonEliminarFondoHistograma ----
+				buttonEliminarFondoHistograma.setText("Eliminar Fondo Histograma");
+				buttonEliminarFondoHistograma.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						buttonEliminarFondoHistogramaActionPerformed(e);
+					}
+
+				});
+				panel7.add(buttonEliminarFondoHistograma);
+				buttonEliminarFondoHistograma.setBounds(30, 430, 270, buttonEliminarFondoHistograma
 						.getPreferredSize().height);
 
 				
@@ -1029,6 +1048,7 @@ public class OperacionesPanel extends JPanel {
 	private JButton buttonSeleccionarFondo = null;
 	private JButton buttonMedianFilter;
 	private JButton buttonGaussianFilter;
+	private JButton buttonEliminarFondoHistograma;
 	private JPanel objetoPanel1 = null;
 	private JPanel panelH2 = null;
 	private JLabel labelHMin1 = null;

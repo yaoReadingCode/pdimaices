@@ -330,8 +330,6 @@ public class Objeto implements HistogramaContainer, Cloneable{
 		if (contorno != null){
 			setPuntosDivisionContorno(null);
 			calcularMedioYBoundingBox();
-			//calcularTriangulosContenedores();
-			createShape();
 		}
 	}
 	
@@ -435,6 +433,7 @@ public class Objeto implements HistogramaContainer, Cloneable{
 				radio = dist;
 		}
 		setRadio(radio);
+		createShape();
 	}
 
 //	/**
@@ -569,7 +568,7 @@ public class Objeto implements HistogramaContainer, Cloneable{
 
 	private void trasladar(List<Pixel> lista, Pixel punto) {
 		for(Pixel p:lista)
-			p.trasladar(punto);
+			p.sumar(punto);
 		
 	}
 
@@ -661,6 +660,22 @@ public class Objeto implements HistogramaContainer, Cloneable{
 		return null;
 		
 	}
+	/**
+	 * Recupera el rasgo de un rasgo y clase dado
+	 * @param rasgo
+	 * @return
+	 */
+	public RasgoObjeto getRasgo(Rasgo rasgo, Clase clase){
+		RasgoObjeto aux = new RasgoObjeto();
+		aux.setRasgo(rasgo);
+		aux.setClase(clase);
+		int index = getRasgos().indexOf(aux);
+		if (index != -1)
+			return getRasgos().get(index);
+		return null;
+		
+	}
+
 	/**
 	 * Recupera el rasgo de un nombre  dado
 	 * @param rasgo

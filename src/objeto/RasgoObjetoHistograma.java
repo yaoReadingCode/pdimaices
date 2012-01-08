@@ -15,8 +15,8 @@ public class RasgoObjetoHistograma extends RasgoObjeto {
 		super();
 	}
 
-	public RasgoObjetoHistograma(Rasgo rasgo, Double valor) {
-		super(rasgo, valor);
+	public RasgoObjetoHistograma(Rasgo rasgo, Double valor, Clase clase) {
+		super(rasgo, valor, clase);
 	}
 
 	public List<Histograma> getHistogramas() {

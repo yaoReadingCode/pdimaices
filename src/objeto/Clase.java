@@ -167,7 +167,7 @@ public class Clase implements HistogramaContainer{
 		double cantidad = 0;
 		for(RasgoClase r:this.getRasgos()){
 			if (r != null && r.getDeterminante()){
-				RasgoObjeto ro = objeto.getRasgo(r.getRasgo());
+				RasgoObjeto ro = objeto.getRasgo(r.getRasgo(),this);
 				if(ro != null && ro.getValor() != null){
 					Double media = r.getMedia();
 					if (media == null){

@@ -5,8 +5,6 @@ import java.util.List;
 
 import objeto.Histograma;
 import objeto.Objeto;
-import objeto.RasgoObjeto;
-import objeto.RasgoObjetoHistograma;
 
 public class EvaluadorHistogramaGris extends EvaluadorHistograma {
 	public static final double CORRELACION_MINIMA = 0.7;

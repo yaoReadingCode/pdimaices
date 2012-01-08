@@ -12,6 +12,8 @@ public class RasgoObjeto implements Cloneable{
 
 	private Rasgo rasgo;
 	
+	private Clase clase;
+	
 	private Double valor;
 	
 	/**
@@ -29,6 +31,12 @@ public class RasgoObjeto implements Cloneable{
 		this.valor = valor;
 	}
 
+	public RasgoObjeto(Rasgo rasgo, Double valor, Clase clase) {
+		super();
+		this.rasgo = rasgo;
+		this.valor = valor;
+		this.clase = clase;
+	}
 	
 	public Long getId() {
 		return id;
@@ -62,6 +70,14 @@ public class RasgoObjeto implements Cloneable{
 	public void setRasgo(Rasgo rasgo) {
 		this.rasgo = rasgo;
 	}
+	
+	public Clase getClase() {
+		return clase;
+	}
+
+	public void setClase(Clase clase) {
+		this.clase = clase;
+	}
 
 	public boolean equals(Object obj){
 		if (obj == null)
@@ -70,20 +86,22 @@ public class RasgoObjeto implements Cloneable{
 			return false;
 		RasgoObjeto r = (RasgoObjeto) obj;
 		
-		if (this.getRasgo() != null)
+		if (this.getRasgo() != null && this.getClase() == null)
 			return this.getRasgo().equals(r.getRasgo());
+		if (this.getRasgo() != null && this.getClase() != null)
+			return this.getRasgo().equals(r.getRasgo()) && this.getClase().equals(r.getClase());
 		return false;
 	}
 	
 	public String toString(){
 		if (getRasgo() != null)
-			return getRasgo().getNombre() + " : " + numbertFormat.format(getValor());
+			return getRasgo().getNombre() + ((this.getClase() != null)? " - " + this.getClase(): "") + " : " + numbertFormat.format(getValor());
 		return "";
 	}
 
 	@Override
 	public Object clone(){
-		RasgoObjeto rasgo = new RasgoObjeto(this.getRasgo(), this.getValor());
+		RasgoObjeto rasgo = new RasgoObjeto(this.getRasgo(), this.getValor(), this.getClase());
 		return rasgo;
 	}
 	
