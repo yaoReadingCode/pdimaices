@@ -474,6 +474,25 @@ public class ObjetoUtil {
 		}
 		return total;
 	}
+	
+	public double[] ecualizarHistograma(PlanarImage image, double[] histNormFuente, double[] histNormDestino){
+		double[] transformacion = new double[histNormDestino.length];
+		int indiceFuente = 0;
+		int indiceDestino = 0;
+		//Inicializacinndices
+		//Bucle que adapta el histograma destino al origen
+		while(indiceFuente < histNormFuente.length){
+			if (histNormDestino[indiceDestino]> histNormFuente[indiceFuente]){
+				transformacion[indiceFuente] = indiceDestino;
+				indiceFuente++;
+			}
+			else{
+				transformacion[indiceFuente] = transformacion[indiceFuente - 1];
+       			indiceDestino++;				
+			}
+		}
+		return transformacion;
+	}
 	public static void main(String[] args) {
 		double[] X = {1, 2, 3, 4, 5, 6, 7};
 		double[] Y = {7, 6, 5, 4, 3, 2, 1};
