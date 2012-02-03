@@ -288,12 +288,60 @@ public class SepararObjetos extends AbstractImageCommand {
 				if (i >= posPixelFinal)
 					parar = true;
 			}
+			
+			/*
+			if (puntosConflicto.size() == 1){
+				Pixel opuestoMasCercano = findPuntoOpuestoMasCercano(puntosConflicto.get(0), obj.getContorno());
+				if (opuestoMasCercano != null){
+					puntosConflicto.add(opuestoMasCercano);
+				}
+			}*/
 			obj.setPuntosDivisionContorno(puntosConflicto);
 		}
 		return obj.getPuntosDivisionContorno();
 	}
 
 	
+	private Pixel findPuntoOpuestoMasCercano(Pixel pixel, List<Pixel> contorno) {
+		
+		int posPixelInicial = contorno.indexOf(pixel);
+		int posPixelFinal = posPixelInicial + contorno.size();
+		boolean parar = false;
+		int i = posPixelInicial;
+		int ventana = getVentanaPixeles() / 2;
+		int posIniA = posPixelInicial - ventana;
+		if (posIniA < 0)
+			posIniA = contorno.size() + posIniA;
+		Pixel pixelMasCercano = null;
+		Pixel inicioR1 = contorno.get(posIniA);
+		Pixel finR1 = pixel;
+		Pixel dirB = finR1.clonar();
+		dirB.restar(inicioR1);
+
+		double prodEscalarMenor = Double.MAX_VALUE;
+		//BoundingBox bbR1 = new BoundingBox(inicioR1,finR1);
+		while (!parar && contorno.size() > 2 * ventana){
+			
+			Pixel inicioR2 = contorno.get(i % contorno.size());
+			Pixel finR2 = contorno.get((i + ventana) % contorno.size());
+			Pixel dirA = finR2.clonar();
+			dirA.restar(inicioR2);
+			double productoEscalar = Math.abs(dirA.productoEscalar(dirB));
+			
+			BoundingBox bbR2 = new BoundingBox(inicioR2,finR2);
+			Pixel interseccion = ObjetoUtil.calcularPuntoInterseccion(inicioR1, finR1, inicioR2, finR2);
+			if (interseccion != null && bbR2.isPertenece(interseccion) && productoEscalar <= 10 && prodEscalarMenor > productoEscalar){
+				prodEscalarMenor = productoEscalar;
+				pixelMasCercano = inicioR2;
+			}
+			i = i + 1;
+			if (i >= posPixelFinal)
+				parar = true;
+		}
+		return pixelMasCercano;
+	}
+
+
 	private PlanarImage getImagenBordes(Objeto obj){
 		BoundingBox bb = obj.getBoundingBox();
 		setBoundingBoxObjetoInicial(bb);
@@ -516,14 +564,14 @@ public class SepararObjetos extends AbstractImageCommand {
 					puntosDivisionVisitados.add(mejorDivision.getOrigen());
 					puntosDivisionVisitados.add(mejorDivision.getFin());
 					List<Objeto> nuevosObjetos = new ArrayList<Objeto>();
-					if (!necesitaDivision(obj1) && mejorDivision.isCircularObjeto1()){
+					if (!necesitaDivision(obj1) && mejorDivision.isCircularObjeto1() && obj1.getPuntos().size() > 0){
 						nuevos.add(obj1);
 					}
 					else{
 						nuevosObjetos = separarObjetosImagenBordes(obj1, puntosDivisionVisitados, nivel + 1);
 						nuevos.addAll(nuevosObjetos);
 					}
-					if (!necesitaDivision(obj2) && mejorDivision.isCircularObjeto2()){
+					if (!necesitaDivision(obj2) && mejorDivision.isCircularObjeto2() && obj2.getPuntos().size() > 0){
 						nuevos.add(obj2);
 					}
 					else{
@@ -541,7 +589,7 @@ public class SepararObjetos extends AbstractImageCommand {
 				}
 			}
 		}
-		if (objetosResult.size() == 0){
+		if (objetosResult.size() == 0 && obj.getPuntos().size() > 0){
 			objetosResult.add(obj);
 		}
 		return objetosResult;
@@ -1241,7 +1289,7 @@ public class SepararObjetos extends AbstractImageCommand {
 		*/
 		for(Pixel pixel: objeto.getContorno()){
 			Pixel p = bb.getPixelRelativo(pixel);
-			ImageUtil.writePixel(pixel,ti);
+			ImageUtil.writePixel(p,ti);
 		}
 		for(Pixel pixel: objeto.getPuntos()){
 			Pixel p = bb.getPixelRelativo(pixel);

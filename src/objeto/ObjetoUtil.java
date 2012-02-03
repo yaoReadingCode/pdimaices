@@ -19,6 +19,7 @@ import javax.media.jai.RasterFactory;
 import javax.media.jai.TiledImage;
 
 import procesamiento.ImageUtil;
+import procesamiento.RgbHsv;
 import procesamiento.clasificacion.CoeficientesRecta;
 
 public class ObjetoUtil {
@@ -215,7 +216,6 @@ public class ObjetoUtil {
 		Pixel pInterseccion = calcularInterseccionRectas(coefR1.a, coefR1.b, coefR1.c, coefR2.a, coefR2.b, coefR2.c);
 		return pInterseccion;
 	}
-
 	
 	public static Double calcularAngulo(Pixel pInicio, Pixel pMedio, Pixel pFin){
 		Double angulo = null;
@@ -475,24 +475,72 @@ public class ObjetoUtil {
 		return total;
 	}
 	
-	public double[] ecualizarHistograma(PlanarImage image, double[] histNormFuente, double[] histNormDestino){
-		double[] transformacion = new double[histNormDestino.length];
-		int indiceFuente = 0;
-		int indiceDestino = 0;
+	/**
+	 * Obtiene el componente de color segun el tipo de histograma
+	 * @param color
+	 * @param tipoHistograma R, G, B, H, S, V, etc.
+	 * @return -1 si el tipo de histograma no se reconoce
+	 */
+	public static int getComponentColor(Color color, String tipoHistograma){
+		if (Histograma.HISTOGRAMA_R.equals(tipoHistograma)){
+			return color.getRed();
+		}
+		if (Histograma.HISTOGRAMA_G.equals(tipoHistograma)){
+			return color.getGreen();
+		}
+		if (Histograma.HISTOGRAMA_B.equals(tipoHistograma)){
+			return color.getBlue();
+		}
+		if (Histograma.HISTOGRAMA_H.equals(tipoHistograma)){
+			float[] hsv = RgbHsv.RGBtoHSV(color.getRed(), color.getGreen(), color.getBlue());
+			return (int)hsv[0];
+		}
+		if (Histograma.HISTOGRAMA_S.equals(tipoHistograma)){
+			float[] hsv = RgbHsv.RGBtoHSV(color.getRed(), color.getGreen(), color.getBlue());
+			return (int)hsv[1];
+		}
+		if (Histograma.HISTOGRAMA_V.equals(tipoHistograma)){
+			float[] hsv = RgbHsv.RGBtoHSV(color.getRed(), color.getGreen(), color.getBlue());
+			return (int)hsv[2];
+		}
+		return -1;
+
+	}
+	
+	/**
+	 * Obtiene el histograma ecualizado de un objeto en funcion de otro histograma
+	 * @param image
+	 * @param histNormFuente Histograma que se utiliza para ecualizar
+	 * @param histNormDestino Histograma que se desea ecualizar
+	 * @param tipoHistograma Tipo de Histograma a  ecualizar
+	 * @return
+	 */
+	public static double[] ecualizarHistograma(Objeto obj, double[] histNormFuente, double[] histNormDestino, String tipoHistograma){
 		//Inicializacinndices
 		//Bucle que adapta el histograma destino al origen
-		while(indiceFuente < histNormFuente.length){
-			if (histNormDestino[indiceDestino]> histNormFuente[indiceFuente]){
-				transformacion[indiceFuente] = indiceDestino;
-				indiceFuente++;
-			}
-			else{
-				transformacion[indiceFuente] = transformacion[indiceFuente - 1];
-       			indiceDestino++;				
+		double[] histogramaAcumulado = new double[histNormFuente.length];
+		histogramaAcumulado[0] = histNormFuente[0];
+		for(int i =1; i < histNormFuente.length; i++){
+			histogramaAcumulado[i] = histNormFuente[i] + histogramaAcumulado[i - 1];  
+		}
+		
+		double[] histogramaEcualizado = new double[histNormFuente.length]; 
+		int K = histNormDestino.length;
+		int M = obj.getPuntos().size();
+		for(Pixel p: obj.getPuntos()){
+			int indice = getComponentColor(p.getCol(), tipoHistograma);
+			if (indice != -1){
+				int valor = (int) (histogramaAcumulado[indice] * K - 1);
+				if (valor < 0)
+					valor = 0;
+				histogramaEcualizado[valor]++;
 			}
 		}
-		return transformacion;
+		for(int i = 0; i < histNormDestino.length; i++)
+			histogramaEcualizado[i] = histogramaEcualizado[i] / M;
+		return histogramaEcualizado;
 	}
+	
 	public static void main(String[] args) {
 		double[] X = {1, 2, 3, 4, 5, 6, 7};
 		double[] Y = {7, 6, 5, 4, 3, 2, 1};

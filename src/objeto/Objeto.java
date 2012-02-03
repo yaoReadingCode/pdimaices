@@ -244,7 +244,7 @@ public class Objeto implements HistogramaContainer, Cloneable{
 	 * @return
 	 */
 	public Color colorPromedio() {
-		if (colorPromedio == null) {
+		if (colorPromedio == null && getPuntos().size() > 0) {
 			int R = 0;
 			int G = 0;
 			int B = 0;

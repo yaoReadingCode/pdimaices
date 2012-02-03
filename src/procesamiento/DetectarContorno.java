@@ -1184,14 +1184,16 @@ public class DetectarContorno extends AbstractImageCommand {
 												this.isObjSpecial(o);
 											}
 											initVisitados();
-											objetos.add(o);
-											if (isVisualizarInfoLog()){
-												String info = "Objeto catalogado: "
-													+ o.getName()
-													+ " - Puntos detectados: "
-													+ o.getPuntos().size();
-												System.out.println(info);
-												Visualizador.addLogInfo(info);
+											if (o.getPuntos().size() > 0){
+												objetos.add(o);
+												if (isVisualizarInfoLog()){
+													String info = "Objeto catalogado: "
+														+ o.getName()
+														+ " - Puntos detectados: "
+														+ o.getPuntos().size();
+													System.out.println(info);
+													Visualizador.addLogInfo(info);
+												}
 											}
 										}
 									}

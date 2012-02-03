@@ -123,7 +123,7 @@ public class BoundingBox {
 	 */
 	public boolean isPertenece(Pixel p){
 		if (p.getX() >= this.minX && p.getX() <= this.maxX &&
-			p.getY() >= this.minY && p.getX() <= this.maxY){
+			p.getY() >= this.minY && p.getY() <= this.maxY){
 			return true;
 		}
 		return false;

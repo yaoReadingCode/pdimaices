@@ -647,4 +647,13 @@ public class Pixel implements Cloneable {
 		this.setXDouble(x);
 		this.setYDouble(y);
 	}
+	
+	/**
+	 * Retorna el producto escalar de dos vectores
+	 * @param p
+	 * @return
+	 */
+	public Double productoEscalar(Pixel p){
+		return this.getXDouble()*p.getXDouble() + this.getYDouble()*p.getYDouble(); 
+	}
 }
