@@ -107,6 +107,11 @@ public class Objeto implements HistogramaContainer, Cloneable{
 	
 	private List<Histograma> histogramas = new ArrayList<Histograma>();
 	
+	/**
+	 * Padre del objeto si proviene de una division
+	 */
+	private Objeto padre;
+	
 	public double[] getAcumuladorR() {
 		if (acumuladorR == null) this.colorPromedio();
 		return acumuladorR;
@@ -159,6 +164,10 @@ public class Objeto implements HistogramaContainer, Cloneable{
 
 	}
 
+	public Objeto(Objeto padre) {
+		this();
+		this.padre = padre;
+	}
 	public int medida() {
 		return puntos.size();
 	}
@@ -968,5 +977,13 @@ public class Objeto implements HistogramaContainer, Cloneable{
 		if (index != -1)
 			return getHistogramas().get(index);
 		return null;
+	}
+
+	public Objeto getPadre() {
+		return padre;
+	}
+
+	public void setPadre(Objeto padre) {
+		this.padre = padre;
 	}
 }
