@@ -1015,8 +1015,6 @@ public class DetectarContorno extends AbstractImageCommand {
 				}
 				
 				if (isBuscarObjetoReferencia() && valor_MM_Pixel != null){
-					
-					ObjetoReferencia.setObjetoReferencia(valor_MM_Pixel);
 					objetos.remove(valor_MM_Pixel);
 					System.out.println("**************************************************");
 					System.out.println("Objeto Referencia: " + valor_MM_Pixel.getName()
@@ -1082,27 +1080,13 @@ public class DetectarContorno extends AbstractImageCommand {
 	}
 	
 	public void isObjSpecial(Objeto objeto){
-		/*
-		double aspectRatio = 0;
-		
-		if (objeto.getAncho() <  objeto.getAlto())
-			aspectRatio = objeto.getAncho() /  objeto.getAlto();
-		else
-			aspectRatio =  objeto.getAlto() / objeto.getAncho();
-		
-		if (aspectRadioMejor < aspectRatio){ 
-			aspectRadioMejor = aspectRatio;
-			valor_MM_Pixel = objeto;
-		}
-		*/
-
-		if (getEvaluadorObjetoReferencia().pertenece(objeto, false)){
+		if ( isBuscarObjetoReferencia() && getEvaluadorObjetoReferencia().pertenece(objeto, false)){
 			if (areaMejor < objeto.getArea()){
 				areaMejor = objeto.getArea();
 				valor_MM_Pixel = objeto;
+				ObjetoReferencia.setObjetoReferencia(objeto);
 			}
 		}
-		
 	}
 
 	/**

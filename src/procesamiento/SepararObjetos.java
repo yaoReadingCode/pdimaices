@@ -26,6 +26,7 @@ import procesamiento.clasificacion.CoeficientesRecta;
 import procesamiento.clasificacion.DivisionObjeto;
 import procesamiento.clasificacion.EvaluadorClase;
 import procesamiento.clasificacion.EvaluadorRasgo;
+import procesamiento.clasificacion.ObjetoReferencia;
 import aplicarFiltros.Visualizador;
 
 public class SepararObjetos extends AbstractImageCommand {
@@ -120,7 +121,7 @@ public class SepararObjetos extends AbstractImageCommand {
 			List<Objeto> nuevos = new ArrayList<Objeto>();
 			for (Objeto obj : getObjetos()) {
 
-				if (necesitaDivision(obj)){
+				if (necesitaDivision(obj) && !obj.equals(ObjetoReferencia.getReferencia())){
 					setImagenBordes(getImagenBordes(obj));
 					JAI.create("filestore", getImagenBordes(), "sobel.tif", "TIFF");
 					initVisitados();
@@ -288,7 +289,6 @@ public class SepararObjetos extends AbstractImageCommand {
 				if (i >= posPixelFinal)
 					parar = true;
 			}
-			
 			/*
 			if (puntosConflicto.size() == 1){
 				Pixel opuestoMasCercano = findPuntoOpuestoMasCercano(puntosConflicto.get(0), obj.getContorno());
@@ -307,7 +307,7 @@ public class SepararObjetos extends AbstractImageCommand {
 		int posPixelInicial = contorno.indexOf(pixel);
 		int posPixelFinal = posPixelInicial + contorno.size();
 		boolean parar = false;
-		int i = posPixelInicial;
+		int i = posPixelInicial + getVentanaPixeles();
 		int ventana = getVentanaPixeles() / 2;
 		int posIniA = posPixelInicial - ventana;
 		if (posIniA < 0)
@@ -319,7 +319,7 @@ public class SepararObjetos extends AbstractImageCommand {
 		dirB.restar(inicioR1);
 
 		double prodEscalarMenor = Double.MAX_VALUE;
-		//BoundingBox bbR1 = new BoundingBox(inicioR1,finR1);
+		Pixel anteriorDH = getAnterior(pixel, contorno);
 		while (!parar && contorno.size() > 2 * ventana){
 			
 			Pixel inicioR2 = contorno.get(i % contorno.size());
@@ -330,9 +330,13 @@ public class SepararObjetos extends AbstractImageCommand {
 			
 			BoundingBox bbR2 = new BoundingBox(inicioR2,finR2);
 			Pixel interseccion = ObjetoUtil.calcularPuntoInterseccion(inicioR1, finR1, inicioR2, finR2);
-			if (interseccion != null && bbR2.isPertenece(interseccion) && productoEscalar <= 10 && prodEscalarMenor > productoEscalar){
-				prodEscalarMenor = productoEscalar;
-				pixelMasCercano = inicioR2;
+			if (interseccion != null){
+				int posInterseccion = contorno.indexOf(interseccion);
+				double lado = Pixel.lado(anteriorDH, pixel, finR2);
+				if (lado >= 0 && Math.abs(posPixelInicial - posInterseccion)> getVentanaPixeles() && bbR2.isPertenece(interseccion) && productoEscalar <= 10 && prodEscalarMenor > productoEscalar){
+					prodEscalarMenor = productoEscalar;
+					pixelMasCercano = finR2;
+				}
 			}
 			i = i + 1;
 			if (i >= posPixelFinal)
@@ -507,9 +511,9 @@ public class SepararObjetos extends AbstractImageCommand {
 								mejorDivision = caminoRelativo2;
 						}
 						if (mejorDivision != null && mejorDivision.puntos != null){
-							Objeto obj1 = new Objeto();
+							Objeto obj1 = new Objeto(obj);
 							obj1.setOriginalImage(getOriginalImage());
-							Objeto obj2 = new Objeto();
+							Objeto obj2 = new Objeto(obj);
 							obj2.setOriginalImage(getOriginalImage());
 
 							dividirObjeto(obj, mejorDivision.origen, mejorDivision.fin, mejorDivision.puntos, obj1, obj2);
