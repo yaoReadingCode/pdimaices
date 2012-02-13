@@ -96,8 +96,7 @@ public class Clasificador {
 			}
 			
 			for(EvaluadorRasgo er: c.getRasgos()){
-				if (er.getRasgoClase().getRangoVariable() == true)
-					actualizarRasgoClase(er.getRasgoClase(), objetosClase);;
+				actualizarRasgoClase(er.getRasgoClase(), objetosClase);;
 			}
 			Clase clase = c.getClase();
 			actualizarClase(clase,objetosClase);
@@ -168,10 +167,12 @@ public class Clasificador {
 				sumValor += ro.getValor();
 				Double valorCuadrado = Math.pow(ro.getValor(), 2); 
 				sumValorCuadrado += valorCuadrado;
-				if ((maximo != null &&  ro.getValor() > maximo) || maximo == null)
-					maximo = ro.getValor();
-				if ((minimo != null &&  ro.getValor() < minimo) || minimo == null)
-					minimo = ro.getValor();
+				if (rasgoClase.getRangoVariable() == true){
+					if ((maximo != null &&  ro.getValor() > maximo) || maximo == null)
+						maximo = ro.getValor();
+					if ((minimo != null &&  ro.getValor() < minimo) || minimo == null)
+						minimo = ro.getValor();
+				}
 			}
 			cantValores++;
 		}
@@ -245,6 +246,8 @@ public class Clasificador {
 	 * @return
 	 */
 	private EvaluadorClase createEvaluadorClase(Clase c){
+		System.out.println("--------------------------------------------------------");
+		System.out.println("Clase: " + c.getNombre());
 		List<EvaluadorRasgo> rasgos = new ArrayList<EvaluadorRasgo>();
 		for(RasgoClase r: c.getRasgos()){
 			try {
@@ -255,14 +258,14 @@ public class Clasificador {
 						er.setRasgoClase(r);
 
 						rasgos.add(er);
-						System.out.println(r.getRasgo() + ", minimo: " + er.getMinimo() + ", maximo: " + er.getMaximo());
+						System.out.println(r.getRasgo()+ " - minimo: " + er.getMinimo() + ", maximo:" + er.getMaximo() + " [minimo: " + er.getRasgoClase().getMinimo() + ", maximo: " + er.getRasgoClase().getMaximo()+ ", media: " + er.getRasgoClase().getMedia()+ ", Desvio Estandar: " + er.getRasgoClase().getDesvioEstandar() + "]");
 					}
 					else{
 						EvaluadorRasgo er = new EvaluadorRasgo();
 						er.setRasgoClase(r);
 
 						rasgos.add(er);
-						System.out.println(r.getRasgo() + ", minimo: " + er.getMinimo() + ", maximo: " + er.getMaximo());
+						System.out.println(r.getRasgo()+ " - minimo: " + er.getMinimo() + ", maximo:" + er.getMaximo() + " [minimo: " + er.getRasgoClase().getMinimo() + ", maximo: " + er.getRasgoClase().getMaximo()+ ", media: " + er.getRasgoClase().getMedia()+ ", Desvio Estandar: " + er.getRasgoClase().getDesvioEstandar() + "]");
 					}
 				}
 			} catch (Exception e) {
