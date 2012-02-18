@@ -86,9 +86,9 @@ public class RasgoObjeto implements Cloneable{
 			return false;
 		RasgoObjeto r = (RasgoObjeto) obj;
 		
-		if (this.getRasgo() != null && this.getClase() == null)
+		if (this.getRasgo() != null && this.getClase() == null && r.getRasgo() != null && r.getClase() == null)
 			return this.getRasgo().equals(r.getRasgo());
-		if (this.getRasgo() != null && this.getClase() != null)
+		if (this.getRasgo() != null && this.getClase() != null && r.getRasgo() != null && r.getClase() != null)
 			return this.getRasgo().equals(r.getRasgo()) && this.getClase().equals(r.getClase());
 		return false;
 	}

@@ -675,12 +675,14 @@ public class Objeto implements HistogramaContainer, Cloneable{
 	 * @return
 	 */
 	public RasgoObjeto getRasgo(Rasgo rasgo, Clase clase){
-		RasgoObjeto aux = new RasgoObjeto();
-		aux.setRasgo(rasgo);
-		aux.setClase(clase);
-		int index = getRasgos().indexOf(aux);
-		if (index != -1)
-			return getRasgos().get(index);
+		for(RasgoObjeto ro:getRasgos()){
+			if (ro.getRasgo().equals(rasgo)){
+				if (ro.getClase() == null)
+					return ro;
+				if (ro.getClase() != null && ro.getClase().equals(clase))
+					return ro;
+			}
+		}
 		return null;
 		
 	}
