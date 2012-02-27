@@ -28,6 +28,9 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.general.DefaultPieDataset;
 
+import procesamiento.Norma;
+import procesamiento.Rebaja;
+import procesamiento.Standar;
 import procesamiento.clasificacion.Clasificador;
 
 import com.jgoodies.forms.factories.DefaultComponentFactory;
@@ -43,7 +46,9 @@ public class PanelResultado extends JPanel {
 	private DefaultPieDataset datasetCount = new DefaultPieDataset();
 	private DefaultPieDataset datasetPixel = new DefaultPieDataset();
 	
-	private Map<String,Integer> datasetCountModel = new HashMap<String, Integer>();  //  @jve:decl-index=0:
+	private Map<String,Integer> datasetCountModel = new HashMap<String, Integer>();  
+	private Map<String,Float> datasetCountPorc = new HashMap<String, Float>(); //  @jve:decl-index=0:
+	
 	private Map<String,Long> datasetPixelModel = new HashMap<String, Long>();
 	
 	private Integer totalObjetos = 0;  //  @jve:decl-index=0:
@@ -95,6 +100,7 @@ public class PanelResultado extends JPanel {
 	}
 	
 	public void actualizarDataSetCount(){
+		Standar stan = new Standar();
 		DefaultTableModel model = (DefaultTableModel) tableRasgos2.getModel();
 		DecimalFormat formater = new DecimalFormat("0.00");
 
@@ -104,6 +110,7 @@ public class PanelResultado extends JPanel {
 			if (totalObjetos != 0)
 				porcentaje = (cantidad * 100)/ (double) totalObjetos;
 			model.addRow(new Object[]{agrupador, cantidad, formater.format(porcentaje)+"%"});
+			datasetCountPorc.put(agrupador, porcentaje.floatValue());
 			//Grafico
 			datasetCount.setValue( agrupador,cantidad);
 		}
@@ -118,6 +125,10 @@ public class PanelResultado extends JPanel {
 		}
 		model.addRow(new Object[]{"Clasificados Correctamente", clasificadosCorrectamente, formater.format(porcentajeCorrectamente)+"%"});
 		model.addRow(new Object[]{"Clasificados Incorrectamente", clasificadosIncorrectamente, formater.format(porcentajeIncorrectamente)+"%"});
+		Rebaja rebaja = stan.getNorma(datasetCountPorc);
+		Norma norma = rebaja.getNorma();
+		this.resultado.setText(norma.getName());
+		this.Descuento.setText(rebaja.getDescuento()+"");
 	}
 
 	public void actualizarDataSetPixel(){
@@ -189,7 +200,7 @@ public class PanelResultado extends JPanel {
 
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-		// Generated using JFormDesigner Evaluation license - oscar giorgetti
+		// Generated using JFormDesigner Evaluation license - Sebastian Colavita
 		DefaultComponentFactory compFactory = DefaultComponentFactory.getInstance();
 		panel2 = new JPanel();
 		panel1 = new JPanel();
@@ -201,6 +212,11 @@ public class PanelResultado extends JPanel {
 		panelGrafico = new JPanel();
 		separator2 = new JSeparator();
 		panelGraficoPixel = new JPanel();
+		panel4 = new JPanel();
+		label1 = new JLabel();
+		resultado = new JLabel();
+		label2 = new JLabel();
+		Descuento = new JLabel();
 
 		//======== this ========
 
@@ -321,7 +337,55 @@ public class PanelResultado extends JPanel {
 				panel3.add(panelGraficoPixel);
 			}
 			panel2.add(panel3);
-			panel3.setBounds(5, 190, 670, 350);
+			panel3.setBounds(5, 235, 670, 350);
+
+			//======== panel4 ========
+			{
+				panel4.setBorder(new BevelBorder(BevelBorder.RAISED));
+				panel4.setLayout(null);
+
+				//---- label1 ----
+				label1.setText("Resultado:");
+				label1.setFont(new Font("Times New Roman", Font.BOLD, 16));
+				panel4.add(label1);
+				label1.setBounds(9, 9, 105, label1.getPreferredSize().height);
+
+				//---- resultado ----
+				resultado.setText("Grado A");
+				resultado.setFont(new Font("Times New Roman", Font.BOLD, 16));
+				resultado.setForeground(Color.red);
+				panel4.add(resultado);
+				resultado.setBounds(90, 10, 65, 19);
+
+				//---- label2 ----
+				label2.setText(" -  Descuento:");
+				label2.setFont(new Font("Times New Roman", Font.BOLD, 16));
+				panel4.add(label2);
+				label2.setBounds(155, 10, 105, 19);
+
+				//---- Descuento ----
+				Descuento.setText("10%");
+				Descuento.setFont(new Font("Times New Roman", Font.BOLD, 16));
+				Descuento.setForeground(Color.red);
+				panel4.add(Descuento);
+				Descuento.setBounds(255, 10, 65, Descuento.getPreferredSize().height);
+
+				{ // compute preferred size
+					Dimension preferredSize = new Dimension();
+					for(int i = 0; i < panel4.getComponentCount(); i++) {
+						Rectangle bounds = panel4.getComponent(i).getBounds();
+						preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
+						preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
+					}
+					Insets insets = panel4.getInsets();
+					preferredSize.width += insets.right;
+					preferredSize.height += insets.bottom;
+					panel4.setMinimumSize(preferredSize);
+					panel4.setPreferredSize(preferredSize);
+				}
+			}
+			panel2.add(panel4);
+			panel4.setBounds(5, 190, 670, 40);
 
 			{ // compute preferred size
 				Dimension preferredSize = new Dimension();
@@ -338,7 +402,7 @@ public class PanelResultado extends JPanel {
 			}
 		}
 		add(panel2);
-		panel2.setBounds(5, 5, 680, 550);
+		panel2.setBounds(5, 5, 680, 610);
 
 		{ // compute preferred size
 			Dimension preferredSize = new Dimension();
@@ -359,7 +423,7 @@ public class PanelResultado extends JPanel {
 	}
 
 	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
-	// Generated using JFormDesigner Evaluation license - oscar giorgetti
+	// Generated using JFormDesigner Evaluation license - Sebastian Colavita
 	private JPanel panel2;
 	private JPanel panel1;
 	private JScrollPane scrollPaneRasgos2;
@@ -370,6 +434,11 @@ public class PanelResultado extends JPanel {
 	private JPanel panelGrafico;
 	private JSeparator separator2;
 	private JPanel panelGraficoPixel;
+	private JPanel panel4;
+	private JLabel label1;
+	private JLabel resultado;
+	private JLabel label2;
+	private JLabel Descuento;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
 	
 	private JPanel panel = new JPanel();

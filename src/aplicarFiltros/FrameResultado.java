@@ -10,7 +10,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.FocusAdapter;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -31,8 +30,6 @@ import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import objeto.Clase;
@@ -251,7 +248,7 @@ public class FrameResultado extends JFrame {
 
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-		// Generated using JFormDesigner Evaluation license - oscar giorgetti
+		// Generated using JFormDesigner Evaluation license - Sebastian Colavita
 		menuBar1 = new JMenuBar();
 		menu1 = new JMenu();
 		menuItem1 = new JMenuItem();
@@ -291,7 +288,7 @@ public class FrameResultado extends JFrame {
 			// JFormDesigner evaluation mark
 			panel1.setBorder(new javax.swing.border.CompoundBorder(
 				new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
-					"", javax.swing.border.TitledBorder.CENTER,
+					"JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
 					javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
 					java.awt.Color.red), panel1.getBorder())); panel1.addPropertyChangeListener(new java.beans.PropertyChangeListener(){public void propertyChange(java.beans.PropertyChangeEvent e){if("border".equals(e.getPropertyName()))throw new RuntimeException();}});
 
@@ -312,7 +309,7 @@ public class FrameResultado extends JFrame {
 					});
 				}
 				panel3.add(tabbedPane1);
-				tabbedPane1.setBounds(5, 5, 785, 625);
+				tabbedPane1.setBounds(5, 5, 785, 615);
 
 				{ // compute preferred size
 					Dimension preferredSize = new Dimension();
@@ -329,7 +326,7 @@ public class FrameResultado extends JFrame {
 				}
 			}
 			panel1.add(panel3);
-			panel3.setBounds(5, 5, 795, 635);
+			panel3.setBounds(5, 5, 795, 625);
 
 			//======== panel2 ========
 			{
@@ -361,14 +358,14 @@ public class FrameResultado extends JFrame {
 					scrollPaneRasgos.setViewportView(tableRasgos);
 				}
 				panel2.add(scrollPaneRasgos);
-				scrollPaneRasgos.setBounds(5, 35, 225, 235);
+				scrollPaneRasgos.setBounds(5, 25, 225, 245);
 
 				//---- label1 ----
 				label1.setText("Nombre: No se ha seleccionado maiz");
 				label1.setForeground(Color.white);
 				label1.setFont(new Font("Tahoma", Font.BOLD, 12));
 				panel2.add(label1);
-				label1.setBounds(7, 15, 220, label1.getPreferredSize().height);
+				label1.setBounds(7, 9, 220, label1.getPreferredSize().height);
 
 				{ // compute preferred size
 					Dimension preferredSize = new Dimension();
@@ -385,7 +382,7 @@ public class FrameResultado extends JFrame {
 				}
 			}
 			panel1.add(panel2);
-			panel2.setBounds(820, 30, 235, 275);
+			panel2.setBounds(820, 5, 235, 275);
 
 			{ // compute preferred size
 				Dimension preferredSize = new Dimension();
@@ -429,7 +426,7 @@ public class FrameResultado extends JFrame {
 	}
 	
 	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
-	// Generated using JFormDesigner Evaluation license - oscar giorgetti
+	// Generated using JFormDesigner Evaluation license - Sebastian Colavita
 	private JMenuBar menuBar1;
 	private JMenu menu1;
 	private JMenuItem menuItem1;

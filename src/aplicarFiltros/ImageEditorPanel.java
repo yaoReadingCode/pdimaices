@@ -450,6 +450,7 @@ public class ImageEditorPanel extends JPanel implements IImageProcessing,
 		frame.setSize(1000, 600);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
+		//new BrowserJava("http://www.google.com");
 	}
 
 	public PlanarImage getModifiedImage() {
