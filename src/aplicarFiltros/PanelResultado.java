@@ -128,7 +128,7 @@ public class PanelResultado extends JPanel {
 		Rebaja rebaja = stan.getNorma(datasetCountPorc);
 		Norma norma = rebaja.getNorma();
 		this.resultado.setText(norma.getName());
-		this.Descuento.setText(rebaja.getDescuento()+"");
+		this.Descuento.setText(rebaja.getDescuento()+"%");
 	}
 
 	public void actualizarDataSetPixel(){
@@ -264,12 +264,12 @@ public class PanelResultado extends JPanel {
 					scrollPaneRasgos2.setViewportView(tableRasgos2);
 				}
 				panel1.add(scrollPaneRasgos2);
-				scrollPaneRasgos2.setBounds(10, 25, 375, 145);
+				scrollPaneRasgos2.setBounds(10, 25, 440, 145);
 
 				//---- button1 ----
 				button1.setIcon(new ImageIcon("\\\\img\\\\maiz_mon810_al.jpg"));
 				panel1.add(button1);
-				button1.setBounds(390, 25, 270, 145);
+				button1.setBounds(455, 25, 205, 145);
 				panel1.add(separator1);
 				separator1.setBounds(10, 5, 650, separator1.getPreferredSize().height);
 
@@ -348,27 +348,27 @@ public class PanelResultado extends JPanel {
 				label1.setText("Resultado:");
 				label1.setFont(new Font("Times New Roman", Font.BOLD, 16));
 				panel4.add(label1);
-				label1.setBounds(9, 9, 105, label1.getPreferredSize().height);
+				label1.setBounds(13, 9, 105, label1.getPreferredSize().height);
 
 				//---- resultado ----
 				resultado.setText("Grado A");
 				resultado.setFont(new Font("Times New Roman", Font.BOLD, 16));
 				resultado.setForeground(Color.red);
 				panel4.add(resultado);
-				resultado.setBounds(90, 10, 65, 19);
+				resultado.setBounds(94, 10, 271, 19);
 
 				//---- label2 ----
-				label2.setText(" -  Descuento:");
+				label2.setText(" Descuento:");
 				label2.setFont(new Font("Times New Roman", Font.BOLD, 16));
 				panel4.add(label2);
-				label2.setBounds(155, 10, 105, 19);
+				label2.setBounds(369, 10, 86, 19);
 
 				//---- Descuento ----
 				Descuento.setText("10%");
 				Descuento.setFont(new Font("Times New Roman", Font.BOLD, 16));
 				Descuento.setForeground(Color.red);
 				panel4.add(Descuento);
-				Descuento.setBounds(255, 10, 65, Descuento.getPreferredSize().height);
+				Descuento.setBounds(455, 10, 205, Descuento.getPreferredSize().height);
 
 				{ // compute preferred size
 					Dimension preferredSize = new Dimension();

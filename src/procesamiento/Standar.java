@@ -4,19 +4,39 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
+/**
+ * The Class Standar.
+ */
 public class Standar {
+	
+	/** The normas. */
 	private List<Norma> normas = new ArrayList<Norma>();
+	
+	/** The fuera standard. */
+	private Norma fueraStandard= new Norma("FUERA DE STANDARD");
 
+	/**
+	 * Gets the normas.
+	 *
+	 * @return the normas
+	 */
 	public List<Norma> getNormas() {
 		return normas;
 	}
 
+	/**
+	 * Sets the normas.
+	 *
+	 * @param normas the new normas
+	 */
 	public void setNormas(List<Norma> normas) {
 		this.normas = normas;
 	}
 
+	/**
+	 * Instantiates a new standar.
+	 */
 	public Standar(){
 		//Hacer esto desde archivo
 		Norma nor= new Norma("Grado 1");
@@ -24,7 +44,7 @@ public class Standar {
 		nor.addGrado("Grano Partido", 2);
 		nor.addGrado("Materia Extraña", 1);
 		nor.addGrado("Semilla de Chamico", 2);
-		nor.setRebaja(1.5f);
+		nor.setRebaja(101); //Grado 1 = 1%
 		
 		normas.add(nor);
 		
@@ -33,6 +53,7 @@ public class Standar {
 		nor2.addGrado("Grano Partido", 3);
 		nor2.addGrado("Materia Extraña", 1.5f);
 		nor2.addGrado("Semilla de Chamico", 2);
+		nor2.setRebaja(100); //Grado 1 = 0%
 		
 		normas.add(nor2);
 		
@@ -41,10 +62,24 @@ public class Standar {
 		nor3.addGrado("Grano Partido", 5);
 		nor3.addGrado("Materia Extraña", 2f);
 		nor3.addGrado("Semilla de Chamico", 2);
+		nor3.setRebaja(98.5f); //Grado 1 = -1,5%
+		
+		//Es una copia de Grado 3
+		fueraStandard.addGrado("Grano Dañado", 8);
+		fueraStandard.addGrado("Grano Partido", 5);
+		fueraStandard.addGrado("Materia Extraña", 2f);
+		fueraStandard.addGrado("Semilla de Chamico", 2);
+		
 		
 		normas.add(nor3);
 	}
 	
+	/**
+	 * Gets the norma.
+	 *
+	 * @param valores the valores
+	 * @return the norma
+	 */
 	public Rebaja getNorma(Map<String,Float> valores){
 		Rebaja result;
 		for(Iterator<Norma> n = normas.iterator();n.hasNext();){
@@ -55,8 +90,8 @@ public class Standar {
 				return result;
 			}
 		}
-		Norma nor4= new Norma("FUERA DE STANDARD");
-		result = new Rebaja(nor4, nor4.calcularDescuento(valores));
+		//Si no se encuentra dentro del estandar, se calcula el valor de Fuera del Standard
+		result = new Rebaja(fueraStandard, fueraStandard.calcularDescuento(valores));
 		return result;
 	}
 
