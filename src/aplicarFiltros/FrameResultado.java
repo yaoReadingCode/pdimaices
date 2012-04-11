@@ -19,9 +19,6 @@ import java.util.Set;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -61,6 +58,7 @@ public class FrameResultado extends JFrame {
 		this.addPanel(resultado,"Resultado");
 		
 		resultado.initDataSetModels();
+		int cantObjPage = 4;
 		
 		for(EvaluadorClase c: lClases){
 			List<Objeto> objetosClase = getClasificador().getClasificacion().get(c);
@@ -80,8 +78,8 @@ public class FrameResultado extends JFrame {
 
 				// Place a component at cell location (1,1)
 				GridBagConstraints gbc = new GridBagConstraints();
-				gbc.gridy = cant / 3;// GridBagConstraints.RELATIVE;
-				gbc.gridx = cant % 3;// GridBagConstraints.RELATIVE;
+				gbc.gridy = cant / cantObjPage;// GridBagConstraints.RELATIVE;
+				gbc.gridx = cant % cantObjPage;// GridBagConstraints.RELATIVE;
 				gbc.gridheight = 1;
 				gbc.gridwidth = 1;
 				gbc.fill = GridBagConstraints.BOTH;
@@ -254,9 +252,6 @@ public class FrameResultado extends JFrame {
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
 		// Generated using JFormDesigner Evaluation license - Sebastian Colavita
-		menuBar1 = new JMenuBar();
-		menu1 = new JMenu();
-		menuItem1 = new JMenuItem();
 		panel1 = new JPanel();
 		panel3 = new JPanel();
 		tabbedPane1 = new JTabbedPane();
@@ -269,21 +264,6 @@ public class FrameResultado extends JFrame {
 		setBackground(new Color(5, 21, 64));
 		Container contentPane = getContentPane();
 		contentPane.setLayout(null);
-
-		//======== menuBar1 ========
-		{
-
-			//======== menu1 ========
-			{
-				menu1.setText("Archivo");
-
-				//---- menuItem1 ----
-				menuItem1.setText("Salir");
-				menu1.add(menuItem1);
-			}
-			menuBar1.add(menu1);
-		}
-		setJMenuBar(menuBar1);
 
 		//======== panel1 ========
 		{
@@ -314,7 +294,7 @@ public class FrameResultado extends JFrame {
 					});
 				}
 				panel3.add(tabbedPane1);
-				tabbedPane1.setBounds(5, 5, 785, 615);
+				tabbedPane1.setBounds(5, 5, 910, 650);
 
 				{ // compute preferred size
 					Dimension preferredSize = new Dimension();
@@ -331,7 +311,7 @@ public class FrameResultado extends JFrame {
 				}
 			}
 			panel1.add(panel3);
-			panel3.setBounds(5, 5, 795, 625);
+			panel3.setBounds(5, 5, 920, 660);
 
 			//======== panel2 ========
 			{
@@ -363,14 +343,14 @@ public class FrameResultado extends JFrame {
 					scrollPaneRasgos.setViewportView(tableRasgos);
 				}
 				panel2.add(scrollPaneRasgos);
-				scrollPaneRasgos.setBounds(5, 25, 225, 245);
+				scrollPaneRasgos.setBounds(5, 25, 235, 628);
 
 				//---- label1 ----
-				label1.setText("Nombre: No se ha seleccionado maiz");
+				label1.setText("Nombre: ...");
 				label1.setForeground(Color.white);
-				label1.setFont(new Font("Tahoma", Font.PLAIN, 10));
+				label1.setFont(new Font("Tahoma", Font.BOLD, 12));
 				panel2.add(label1);
-				label1.setBounds(7, 9, 220, label1.getPreferredSize().height);
+				label1.setBounds(15, 10, 185, label1.getPreferredSize().height);
 
 				{ // compute preferred size
 					Dimension preferredSize = new Dimension();
@@ -387,7 +367,7 @@ public class FrameResultado extends JFrame {
 				}
 			}
 			panel1.add(panel2);
-			panel2.setBounds(820, 5, 235, 275);
+			panel2.setBounds(930, 5, 245, 660);
 
 			{ // compute preferred size
 				Dimension preferredSize = new Dimension();
@@ -404,7 +384,7 @@ public class FrameResultado extends JFrame {
 			}
 		}
 		contentPane.add(panel1);
-		panel1.setBounds(5, 10, 1080, 645);
+		panel1.setBounds(0, 0, 1175, 670);
 
 		{ // compute preferred size
 			Dimension preferredSize = new Dimension();
@@ -432,9 +412,6 @@ public class FrameResultado extends JFrame {
 	
 	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
 	// Generated using JFormDesigner Evaluation license - Sebastian Colavita
-	private JMenuBar menuBar1;
-	private JMenu menu1;
-	private JMenuItem menuItem1;
 	private JPanel panel1;
 	private JPanel panel3;
 	private JTabbedPane tabbedPane1;

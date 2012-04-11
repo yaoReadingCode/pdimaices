@@ -340,7 +340,7 @@ public class OperacionesPanel extends JPanel {
 		MedianFilter mf = new MedianFilter(getImageHolder().getImage());
 		executeCommand(mf);
 	}
-	
+	  
 	private void buttonGaussianFilterActionPerformed(ActionEvent e) {
 		GaussianFilter gf = new GaussianFilter(getImageHolder().getImage(), 5f);
 		executeCommand(gf);
@@ -376,7 +376,7 @@ public class OperacionesPanel extends JPanel {
 
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY
-		// //GEN-BEGIN:initComponents
+		// GEN-BEGIN:initComponents
 		// Generated using JFormDesigner Evaluation license - seba cola
 		tabbedPane1 = new JTabbedPane();
 		panel1 = new JPanel();
@@ -429,7 +429,7 @@ public class OperacionesPanel extends JPanel {
 		// setBorder(new javax.swing.border.CompoundBorder(
 		// new javax.swing.border.TitledBorder(new
 		// javax.swing.border.EmptyBorder(0, 0, 0, 0),
-		// "JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
+		// "", javax.swing.border.TitledBorder.CENTER,
 		// javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog",
 		// java.awt.Font.BOLD, 12),
 		// java.awt.Color.red), getBorder())); addPropertyChangeListener(new
@@ -1007,7 +1007,7 @@ public class OperacionesPanel extends JPanel {
 	}
 
 	// JFormDesigner - Variables declaration - DO NOT MODIFY
-	// //GEN-BEGIN:variables
+	// GEN-BEGIN:variables
 	// Generated using JFormDesigner Evaluation license - seba cola
 	private JTabbedPane tabbedPane1;
 	private JPanel panel1;
@@ -1425,4 +1425,4 @@ public class OperacionesPanel extends JPanel {
 		}
 	}
 
-} // @jve:decl-index=0:visual-constraint="10,10"
+} 

@@ -208,15 +208,14 @@ public class PanelResultado extends JPanel {
 		tableRasgos2 = new JTable();
 		button1 = new JButton();
 		separator1 = compFactory.createSeparator("Clasificaci\u00f3n");
-		panel3 = new JPanel();
-		panelGrafico = new JPanel();
-		separator2 = new JSeparator();
-		panelGraficoPixel = new JPanel();
-		panel4 = new JPanel();
 		label1 = new JLabel();
 		resultado = new JLabel();
 		label2 = new JLabel();
 		Descuento = new JLabel();
+		panel3 = new JPanel();
+		panelGrafico = new JPanel();
+		separator2 = new JSeparator();
+		panelGraficoPixel = new JPanel();
 
 		//======== this ========
 
@@ -231,7 +230,7 @@ public class PanelResultado extends JPanel {
 
 		//======== panel2 ========
 		{
-			panel2.setBackground(new Color(51, 0, 255));
+			panel2.setBackground(Color.blue);
 			panel2.setLayout(null);
 
 			//======== panel1 ========
@@ -264,14 +263,40 @@ public class PanelResultado extends JPanel {
 					scrollPaneRasgos2.setViewportView(tableRasgos2);
 				}
 				panel1.add(scrollPaneRasgos2);
-				scrollPaneRasgos2.setBounds(10, 25, 440, 145);
+				scrollPaneRasgos2.setBounds(10, 60, 590, 155);
 
 				//---- button1 ----
 				button1.setIcon(new ImageIcon("\\\\img\\\\maiz_mon810_al.jpg"));
 				panel1.add(button1);
-				button1.setBounds(455, 25, 205, 145);
+				button1.setBounds(610, 25, 235, 190);
 				panel1.add(separator1);
-				separator1.setBounds(10, 5, 650, separator1.getPreferredSize().height);
+				separator1.setBounds(10, 5, 835, separator1.getPreferredSize().height);
+
+				//---- label1 ----
+				label1.setText("Resultado:");
+				label1.setFont(new Font("Times New Roman", Font.BOLD, 13));
+				panel1.add(label1);
+				label1.setBounds(10, 35, 67, label1.getPreferredSize().height);
+
+				//---- resultado ----
+				resultado.setText("Grado A");
+				resultado.setFont(new Font("Times New Roman", Font.BOLD, 13));
+				resultado.setForeground(Color.blue);
+				panel1.add(resultado);
+				resultado.setBounds(79, 33, 182, 19);
+
+				//---- label2 ----
+				label2.setText(" Descuento:");
+				label2.setFont(new Font("Times New Roman", Font.BOLD, 13));
+				panel1.add(label2);
+				label2.setBounds(345, 34, 72, 19);
+
+				//---- Descuento ----
+				Descuento.setText("10%");
+				Descuento.setFont(new Font("Times New Roman", Font.BOLD, 13));
+				Descuento.setForeground(Color.blue);
+				panel1.add(Descuento);
+				Descuento.setBounds(419, 35, 140, Descuento.getPreferredSize().height);
 
 				{ // compute preferred size
 					Dimension preferredSize = new Dimension();
@@ -288,7 +313,7 @@ public class PanelResultado extends JPanel {
 				}
 			}
 			panel2.add(panel1);
-			panel1.setBounds(5, 5, 670, 180);
+			panel1.setBounds(14, 10, 856, 225);
 
 			//======== panel3 ========
 			{
@@ -337,55 +362,7 @@ public class PanelResultado extends JPanel {
 				panel3.add(panelGraficoPixel);
 			}
 			panel2.add(panel3);
-			panel3.setBounds(5, 235, 670, 350);
-
-			//======== panel4 ========
-			{
-				panel4.setBorder(new BevelBorder(BevelBorder.RAISED));
-				panel4.setLayout(null);
-
-				//---- label1 ----
-				label1.setText("Resultado:");
-				label1.setFont(new Font("Times New Roman", Font.BOLD, 16));
-				panel4.add(label1);
-				label1.setBounds(13, 9, 105, label1.getPreferredSize().height);
-
-				//---- resultado ----
-				resultado.setText("Grado A");
-				resultado.setFont(new Font("Times New Roman", Font.BOLD, 16));
-				resultado.setForeground(Color.red);
-				panel4.add(resultado);
-				resultado.setBounds(94, 10, 271, 19);
-
-				//---- label2 ----
-				label2.setText(" Descuento:");
-				label2.setFont(new Font("Times New Roman", Font.BOLD, 16));
-				panel4.add(label2);
-				label2.setBounds(369, 10, 86, 19);
-
-				//---- Descuento ----
-				Descuento.setText("10%");
-				Descuento.setFont(new Font("Times New Roman", Font.BOLD, 16));
-				Descuento.setForeground(Color.red);
-				panel4.add(Descuento);
-				Descuento.setBounds(455, 10, 205, Descuento.getPreferredSize().height);
-
-				{ // compute preferred size
-					Dimension preferredSize = new Dimension();
-					for(int i = 0; i < panel4.getComponentCount(); i++) {
-						Rectangle bounds = panel4.getComponent(i).getBounds();
-						preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
-						preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
-					}
-					Insets insets = panel4.getInsets();
-					preferredSize.width += insets.right;
-					preferredSize.height += insets.bottom;
-					panel4.setMinimumSize(preferredSize);
-					panel4.setPreferredSize(preferredSize);
-				}
-			}
-			panel2.add(panel4);
-			panel4.setBounds(5, 190, 670, 40);
+			panel3.setBounds(13, 245, 857, 355);
 
 			{ // compute preferred size
 				Dimension preferredSize = new Dimension();
@@ -402,7 +379,7 @@ public class PanelResultado extends JPanel {
 			}
 		}
 		add(panel2);
-		panel2.setBounds(5, 5, 680, 610);
+		panel2.setBounds(12, 5, 883, 610);
 
 		{ // compute preferred size
 			Dimension preferredSize = new Dimension();
@@ -430,15 +407,14 @@ public class PanelResultado extends JPanel {
 	private JTable tableRasgos2;
 	private JButton button1;
 	private JComponent separator1;
-	private JPanel panel3;
-	private JPanel panelGrafico;
-	private JSeparator separator2;
-	private JPanel panelGraficoPixel;
-	private JPanel panel4;
 	private JLabel label1;
 	private JLabel resultado;
 	private JLabel label2;
 	private JLabel Descuento;
+	private JPanel panel3;
+	private JPanel panelGrafico;
+	private JSeparator separator2;
+	private JPanel panelGraficoPixel;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
 	
 	private JPanel panel = new JPanel();

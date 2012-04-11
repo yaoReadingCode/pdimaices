@@ -130,7 +130,7 @@ public class ObjetoPanel extends JPanel {
 
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-		// Generated using JFormDesigner Evaluation license - seba cola
+		// Generated using JFormDesigner Evaluation license - Sebastian Colavita
 		panel1 = new JPanel();
 		labelNro = new JLabel();
 		labelNombre = new JLabel();
@@ -142,11 +142,11 @@ public class ObjetoPanel extends JPanel {
 		setBorder(new LineBorder(new Color(153, 204, 255)));
 
 		// JFormDesigner evaluation mark
-//		setBorder(new javax.swing.border.CompoundBorder(
-//			new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
-//				"", javax.swing.border.TitledBorder.CENTER,
-//				javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
-//				java.awt.Color.red), getBorder())); addPropertyChangeListener(new java.beans.PropertyChangeListener(){public void propertyChange(java.beans.PropertyChangeEvent e){if("border".equals(e.getPropertyName()))throw new RuntimeException();}});
+		setBorder(new javax.swing.border.CompoundBorder(
+			new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
+				"", javax.swing.border.TitledBorder.CENTER,
+				javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
+				java.awt.Color.red), getBorder())); addPropertyChangeListener(new java.beans.PropertyChangeListener(){public void propertyChange(java.beans.PropertyChangeEvent e){if("border".equals(e.getPropertyName()))throw new RuntimeException();}});
 
 		setLayout(new BorderLayout());
 
@@ -184,11 +184,13 @@ public class ObjetoPanel extends JPanel {
 
 			//---- comboBoxClase ----
 			comboBoxClase.addItemListener(new ItemListener() {
+				@Override
 				public void itemStateChanged(ItemEvent e) {
 					comboBoxClaseItemStateChanged(e);
 				}
 			});
 			comboBoxClase.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					comboBoxClaseActionPerformed(e);
 				}
@@ -200,7 +202,7 @@ public class ObjetoPanel extends JPanel {
 	}
 
 	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
-	// Generated using JFormDesigner Evaluation license - seba cola
+	// Generated using JFormDesigner Evaluation license - Sebastian Colavita
 	private JPanel panel1;
 	private JLabel labelNro;
 	private JLabel labelNombre;

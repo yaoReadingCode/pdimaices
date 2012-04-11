@@ -101,11 +101,11 @@
             </void> 
             <void method="setProperty"> 
              <string>width</string> 
-             <int>785</int> 
+             <int>910</int> 
             </void> 
             <void method="setProperty"> 
              <string>height</string> 
-             <int>615</int> 
+             <int>650</int> 
             </void> 
            </object> 
           </void> 
@@ -114,11 +114,11 @@
           <class>com.jformdesigner.runtime.NullConstraints</class> 
           <void method="setProperty"> 
            <string>width</string> 
-           <int>795</int> 
+           <int>920</int> 
           </void> 
           <void method="setProperty"> 
            <string>height</string> 
-           <int>625</int> 
+           <int>660</int> 
           </void> 
           <void method="setProperty"> 
            <string>x</string> 
@@ -225,7 +225,7 @@
             <class>com.jformdesigner.runtime.NullConstraints</class> 
             <void method="setProperty"> 
              <string>height</string> 
-             <int>245</int> 
+             <int>628</int> 
             </void> 
             <void method="setProperty"> 
              <string>x</string> 
@@ -237,7 +237,7 @@
             </void> 
             <void method="setProperty"> 
              <string>width</string> 
-             <int>225</int> 
+             <int>235</int> 
             </void> 
            </object> 
           </void> 
@@ -246,7 +246,7 @@
             <string>javax.swing.JLabel</string> 
             <void method="setProperty"> 
              <string>text</string> 
-             <string>Nombre: No se ha seleccionado maiz</string> 
+             <string>Nombre: ...</string> 
             </void> 
             <void method="setProperty"> 
              <string>foreground</string> 
@@ -268,15 +268,15 @@
             <class>com.jformdesigner.runtime.NullConstraints</class> 
             <void method="setProperty"> 
              <string>x</string> 
-             <int>7</int> 
+             <int>15</int> 
             </void> 
             <void method="setProperty"> 
              <string>y</string> 
-             <int>9</int> 
+             <int>10</int> 
             </void> 
             <void method="setProperty"> 
              <string>width</string> 
-             <int>220</int> 
+             <int>185</int> 
             </void> 
            </object> 
           </void> 
@@ -285,7 +285,7 @@
           <class>com.jformdesigner.runtime.NullConstraints</class> 
           <void method="setProperty"> 
            <string>x</string> 
-           <int>820</int> 
+           <int>930</int> 
           </void> 
           <void method="setProperty"> 
            <string>y</string> 
@@ -293,11 +293,11 @@
           </void> 
           <void method="setProperty"> 
            <string>height</string> 
-           <int>275</int> 
+           <int>660</int> 
           </void> 
           <void method="setProperty"> 
            <string>width</string> 
-           <int>235</int> 
+           <int>245</int> 
           </void> 
          </object> 
         </void> 
@@ -306,57 +306,19 @@
         <class>com.jformdesigner.runtime.NullConstraints</class> 
         <void method="setProperty"> 
          <string>x</string> 
-         <int>5</int> 
+         <int>0</int> 
         </void> 
         <void method="setProperty"> 
          <string>y</string> 
-         <int>10</int> 
+         <int>0</int> 
         </void> 
         <void method="setProperty"> 
          <string>width</string> 
-         <int>1080</int> 
+         <int>1175</int> 
         </void> 
         <void method="setProperty"> 
          <string>height</string> 
-         <int>645</int> 
-        </void> 
-       </object> 
-      </void> 
-      <void property="menuBar"> 
-       <object class="com.jformdesigner.model.FormContainer"> 
-        <string>javax.swing.JMenuBar</string> 
-        <object class="com.jformdesigner.model.FormLayoutManager"> 
-         <class>javax.swing.JMenuBar</class> 
-        </object> 
-        <void property="name"> 
-         <string>menuBar1</string> 
-        </void> 
-        <void method="add"> 
-         <object class="com.jformdesigner.model.FormContainer"> 
-          <string>javax.swing.JMenu</string> 
-          <object class="com.jformdesigner.model.FormLayoutManager"> 
-           <class>javax.swing.JMenu</class> 
-          </object> 
-          <void method="setProperty"> 
-           <string>text</string> 
-           <string>Archivo</string> 
-          </void> 
-          <void property="name"> 
-           <string>menu1</string> 
-          </void> 
-          <void method="add"> 
-           <object class="com.jformdesigner.model.FormComponent"> 
-            <string>javax.swing.JMenuItem</string> 
-            <void method="setProperty"> 
-             <string>text</string> 
-             <string>Salir</string> 
-            </void> 
-            <void property="name"> 
-             <string>menuItem1</string> 
-            </void> 
-           </object> 
-          </void> 
-         </object> 
+         <int>670</int> 
         </void> 
        </object> 
       </void> 
@@ -376,7 +338,7 @@
       <void method="setProperty"> 
        <string>size</string> 
        <object class="java.awt.Dimension"> 
-        <int>1100</int> 
+        <int>1190</int> 
         <int>705</int> 
        </object> 
       </void> 
