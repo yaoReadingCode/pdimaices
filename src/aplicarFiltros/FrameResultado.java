@@ -350,7 +350,7 @@ public class FrameResultado extends JFrame {
 				label1.setForeground(Color.white);
 				label1.setFont(new Font("Tahoma", Font.BOLD, 12));
 				panel2.add(label1);
-				label1.setBounds(15, 10, 185, label1.getPreferredSize().height);
+				label1.setBounds(7, 5, 185, label1.getPreferredSize().height);
 
 				{ // compute preferred size
 					Dimension preferredSize = new Dimension();
