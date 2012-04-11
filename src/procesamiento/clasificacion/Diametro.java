@@ -19,7 +19,7 @@ public class Diametro extends EvaluadorRasgo {
 
 	public RasgoObjeto calcularValor(Objeto objeto) {
 		try {
-			Double diametro = Math.max(objeto.getAlto(), objeto.getAncho()) * ObjetoReferencia.getRelacionPixelMM();
+			Double diametro = objeto.getDiametro() * ObjetoReferencia.getRelacionPixelMM();
 			return new RasgoObjeto(this.getRasgoClase().getRasgo(),diametro);
 		}
 		catch(Exception e){

@@ -61,9 +61,7 @@ public class Objeto implements HistogramaContainer, Cloneable{
 
 	private BoundingBox boundingBox;
 	
-	private double ancho;
-	
-	private double alto;
+	private BoundingBox minimoRecContenedor;
 	
 	private Color colorPromedio = null;
 
@@ -339,6 +337,7 @@ public class Objeto implements HistogramaContainer, Cloneable{
 		if (contorno != null){
 			setPuntosDivisionContorno(null);
 			calcularMedioYBoundingBox();
+			setMinimoRecContenedor(null);
 		}
 	}
 	
@@ -359,6 +358,7 @@ public class Objeto implements HistogramaContainer, Cloneable{
 		double anchoMRC = objAux.getBoundingBox().width();
 		double areaMin = altoMRC * anchoMRC;
 		double anguloRot = 3;
+		BoundingBox MRC = objAux.getBoundingBox();
 		for (double anguloTot = anguloRot; anguloTot < 360; anguloTot += anguloRot) {
 			objAux.rotarContorno(anguloRot);
 			double alto = objAux.getBoundingBox().height();
@@ -368,10 +368,10 @@ public class Objeto implements HistogramaContainer, Cloneable{
 				anchoMRC = ancho;
 				altoMRC = alto;
 				areaMin = ancho * alto;
+				MRC = objAux.getBoundingBox();
 			}
 		}
-		alto = altoMRC;
-		ancho = anchoMRC;
+		setMinimoRecContenedor(MRC);
 	}
 
 	/**
@@ -488,7 +488,7 @@ public class Objeto implements HistogramaContainer, Cloneable{
 	 */
 	public int getArea() {
 		if (getPuntos() != null)
-			return getPuntos().size();
+			return getPuntos().size() + getContorno().size();
 		return 0;
 	}
 
@@ -520,11 +520,11 @@ public class Objeto implements HistogramaContainer, Cloneable{
 	}
 
 	public double getAlto() {
-		return alto;
+		return getMinimoRecContenedor().height();
 	}
 
 	public double getAncho() {
-		return ancho;
+		return getMinimoRecContenedor().width();
 	}
 
 	/**
@@ -987,5 +987,19 @@ public class Objeto implements HistogramaContainer, Cloneable{
 
 	public void setPadre(Objeto padre) {
 		this.padre = padre;
+	}
+	
+	public double getDiametro(){
+		return Math.max(getAlto(), getAncho());
+	}
+
+	public BoundingBox getMinimoRecContenedor() {
+		if (minimoRecContenedor == null)
+			calcularMRC();
+		return minimoRecContenedor;
+	}
+
+	public void setMinimoRecContenedor(BoundingBox minimoRecContenedor) {
+		this.minimoRecContenedor = minimoRecContenedor;
 	}
 }

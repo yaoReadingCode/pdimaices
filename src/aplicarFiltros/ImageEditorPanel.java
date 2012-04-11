@@ -14,6 +14,7 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.SystemColor;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -38,6 +39,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import procesamiento.IImageProcessing;
@@ -73,7 +75,7 @@ public class ImageEditorPanel extends JPanel implements IImageProcessing,
 	private PlanarImage inputImage = null;
 	private PlanarImage modifiedImage = null;
 	private DisplayDEM dd;
-	private List<ImageComand> executedCommands = new ArrayList<ImageComand>();
+	private List<ImageComand> executedCommands = new ArrayList<ImageComand>();  //  @jve:decl-index=0:
 	private OperacionesPanel panelEliminarFondo;
 	
 	private Clasificador clasificador;
@@ -123,22 +125,8 @@ public class ImageEditorPanel extends JPanel implements IImageProcessing,
 		// Process the results.
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			logPantalla("Attaching file: " + file.getName() + "." );
-
-
-			try {
-				inputImage = ImageUtil.loadImage(file.getAbsolutePath(), ImageUtil.tileWidth, ImageUtil.tileHeight);
-			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-
-			//inputImage = new TiledImage(inputImage, false);
-			inputImage = ImageUtil.reformatImage(inputImage, new Dimension(ImageUtil.tileWidth, ImageUtil.tileHeight));
-			setModifiedImage(inputImage);
-			updateImage();
-			// labelImage.invalidate();
-			// labelImage.repaint();
+			logPantalla("Cargando archivo: " + file.getName() + "..." );
+			loadFile(file.getAbsolutePath());
 		} else {
 			logPantalla("Carga de imagen cancelada por el usuario.");
 		}
@@ -148,6 +136,42 @@ public class ImageEditorPanel extends JPanel implements IImageProcessing,
 		fc.setSelectedFile(null);
 
 	}
+	
+	/**
+	 * Carga la imagen del disco
+	 * @param absolutePath
+	 */
+	private void loadFile(final String absolutePath) {
+		final Window window = this.getMainWindow();
+		Runnable runnable = new Runnable() {
+			public void run() {
+				long startTime = System.currentTimeMillis();
+				try {
+					Visualizador.iniciarProgreso(window);
+					Visualizador.aumentarProgreso(0, "Cargando archivo...");
+					inputImage = ImageUtil.loadImage(absolutePath, ImageUtil.tileWidth, ImageUtil.tileHeight);
+					//inputImage = ImageUtil.loadTIFFImage(absolutePath, ImageUtil.tileWidth, ImageUtil.tileHeight);
+
+					//inputImage = new TiledImage(inputImage, false);
+					//inputImage = ImageUtil.reformatImage(inputImage, new Dimension(ImageUtil.tileWidth, ImageUtil.tileHeight));
+					setModifiedImage(inputImage);
+					updateImage();
+					long endTime = System.currentTimeMillis();
+					logPantalla("Tiempo de carga de archivo: " + (endTime - startTime)/1000);
+					Visualizador.terminar();
+					// labelImage.invalidate();
+					// labelImage.repaint();
+				} catch (Exception e1) {
+					e1.printStackTrace();
+					Visualizador.terminar();
+					logPantalla("Ocurrió un error al intentar abrir el archivo");
+				}	
+			}
+		};
+		Thread thread = new Thread(runnable);
+		thread.start();		
+	}
+
 
 	private void guardarMenuItemActionPerformed(ActionEvent e) {
 		// Set up the file chooser.
@@ -174,7 +198,10 @@ public class ImageEditorPanel extends JPanel implements IImageProcessing,
 			File file = fc.getSelectedFile();
 			String path = file.getAbsolutePath();
 			int indexType = path.lastIndexOf(".");
-			String newPath = path.substring(0, indexType) + ".tif";
+			String fileName = path;
+			if (indexType != -1)
+				fileName = path.substring(0, indexType);
+			String newPath =  fileName + ".tif";
 			if (modifiedImage != null) {
 
 				JAI.create("filestore", modifiedImage, newPath, "TIFF");
@@ -491,7 +518,7 @@ public class ImageEditorPanel extends JPanel implements IImageProcessing,
 		this.executedCommands = executedCommands;
 	}
 
-	public void addExecutedCommand(ImageComand comand, String info) {
+	public void addExecutedCommand(ImageComand comand, String info, long executeTime) {
 		if (comand != null) {
 			getExecutedCommands().add(comand);
 			
@@ -499,6 +526,7 @@ public class ImageEditorPanel extends JPanel implements IImageProcessing,
 					);
 			if (info != null && !info.trim().equals(""))
 				logPantalla("\n" + info );
+			logPantalla("Tiempo de ejecucion: " + executeTime / 1000);
 		}
 
 	}
@@ -524,6 +552,12 @@ public class ImageEditorPanel extends JPanel implements IImageProcessing,
 
 	public BufferedImage getSelectedRectangle() {
 		return dd.getSelectedRectangle();
+	}
+
+
+	@Override
+	public Window getMainWindow() {
+		return SwingUtilities.getWindowAncestor(this);
 	}
 
 }

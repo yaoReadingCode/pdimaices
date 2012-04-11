@@ -215,7 +215,12 @@ public class FrameResultado extends JFrame {
 				}
 			}
 		}); 
-		this.setNombreObjetSeleccionado(objeto.getName());
+		if(objeto.getPadre() == null){
+			this.setNombreObjetSeleccionado(objeto.getName());
+		}
+		else{
+			this.setNombreObjetSeleccionado(objeto.getName() + " - Padre: " + objeto.getPadre().getName());
+		}
 	}
 	
 	private void showPanelHistograma(){
@@ -363,7 +368,7 @@ public class FrameResultado extends JFrame {
 				//---- label1 ----
 				label1.setText("Nombre: No se ha seleccionado maiz");
 				label1.setForeground(Color.white);
-				label1.setFont(new Font("Tahoma", Font.BOLD, 12));
+				label1.setFont(new Font("Tahoma", Font.PLAIN, 10));
 				panel2.add(label1);
 				label1.setBounds(7, 9, 220, label1.getPreferredSize().height);
 

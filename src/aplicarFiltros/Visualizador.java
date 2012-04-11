@@ -1,5 +1,8 @@
 package aplicarFiltros;
 
+import java.awt.Component;
+import java.awt.Window;
+
 
 public class Visualizador  {
 	private static Progress progreso = null;
@@ -9,12 +12,16 @@ public class Visualizador  {
 	 */
 	
 	
-	public static void iniciarProgreso(){
-		progreso = new Progress();
+	public static void iniciarProgreso(Window owner){
+		progreso = new Progress(owner);
 		progreso.inicializarProgressBar();
 		progreso.dibujar();
 		System.out.println("Inicio ProgressBar");
 		
+	}
+	
+	public static void setFocusOwner(Component focusOwner){
+		progreso.setFocusOwner(focusOwner);
 	}
 	
 	public static void aumentarProgreso(int valor, String texto){

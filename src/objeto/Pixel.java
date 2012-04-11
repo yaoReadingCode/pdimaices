@@ -68,8 +68,8 @@ public class Pixel implements Cloneable {
 		xDouble = i;
 		yDouble = j;
 		col = c;
-		this.maxX = maxX;
-		this.maxY = maxY;
+		setMaxX(maxX);
+		setMaxY(maxY);
 	}
 
 	public Pixel(double i, double j, int R, int G, int B) {
@@ -83,8 +83,8 @@ public class Pixel implements Cloneable {
 
 	public Pixel(int x, int y, Color c, int maxX, int maxY) {
 		this(x, y, c);
-		this.maxX = maxX;
-		this.maxY = maxY;
+		setMaxX(maxX);
+		setMaxY(maxY);
 	}
 
 	public Color getCol() {
@@ -214,16 +214,72 @@ public class Pixel implements Cloneable {
 	public int getDireccion(Pixel p) {
 		if (x == p.x && y < p.y)
 			return DIR_N;
-		if (x > p.x && y < p.y)
-			return DIR_NE;
-		if (x < p.x && y < p.y)
-			return DIR_NO;
+		if (x > p.x && y < p.y){
+			double distancia = this.distancia(p);
+			if (distancia <= 1){
+				return DIR_NE;
+			}
+			else{
+				int distanciaX = Math.abs(x - p.x);
+				int distanciaY = Math.abs(y - p.y);
+				if (distanciaX == distanciaY)
+					return DIR_NE;
+				else if (distanciaX > distanciaY)
+					return DIR_E;
+				else 
+					return DIR_N;
+			}
+		}
+		if (x < p.x && y < p.y){
+			double distancia = this.distancia(p);
+			if (distancia <= 1){
+				return DIR_NO;
+			}
+			else{
+				int distanciaX = Math.abs(x - p.x);
+				int distanciaY = Math.abs(y - p.y);
+				if (distanciaX == distanciaY)
+					return DIR_NO;
+				else if (distanciaX > distanciaY)
+					return DIR_O;
+				else 
+					return DIR_N;
+			}
+		}
 		if (x == p.x && y > p.y)
 			return DIR_S;
-		if (x > p.x && y > p.y)
-			return DIR_SE;
-		if (x < p.x && y > p.y)
-			return DIR_SO;
+		if (x > p.x && y > p.y){
+			double distancia = this.distancia(p);
+			if (distancia <= 1){
+				return DIR_SE;
+			}
+			else{
+				int distanciaX = Math.abs(x - p.x);
+				int distanciaY = Math.abs(y - p.y);
+				if (distanciaX == distanciaY)
+					return DIR_SE;
+				else if (distanciaX > distanciaY)
+					return DIR_E;
+				else 
+					return DIR_S;
+			}
+		}
+		if (x < p.x && y > p.y){
+			double distancia = this.distancia(p);
+			if (distancia <= 1){
+				return DIR_SO;
+			}
+			else{
+				int distanciaX = Math.abs(x - p.x);
+				int distanciaY = Math.abs(y - p.y);
+				if (distanciaX == distanciaY)
+					return DIR_SO;
+				else if (distanciaX > distanciaY)
+					return DIR_O;
+				else 
+					return DIR_S;
+			}
+		}
 		if (x > p.x && y == p.y)
 			return DIR_E;
 		if (x < p.x && y == p.y)
@@ -302,7 +358,16 @@ public class Pixel implements Cloneable {
 		}
 		return 0;
 	}
-
+	
+	/**
+	 * Retorna de que lado esta un Pixel b con respecto a una recta formada
+	 * entre el Pixel a y c.
+	 * 
+	 * @param a
+	 * @param b
+	 * @param c
+	 * @return > a 0 si b esta a la izquierda, < a 0 si b esta a la derercha y 0 si pertenece al segmento
+	 */
 	public static double lado2(Pixel a, Pixel b, Pixel c) {
 		Pixel a2 = a.clonar();
 		a2.setY(a2.maxY - a2.y);
@@ -312,9 +377,9 @@ public class Pixel implements Cloneable {
 		c2.setY(c2.maxY - c2.y);
 		Pixel ab = b2.clonar();
 		ab.restar(a2);
-		Pixel bc = c2.clonar();
-		bc.restar(b2);
-		double pv = ab.productoVectorial2(bc);
+		Pixel ac = c2.clonar();
+		ac.restar(a2);
+		double pv = ac.productoVectorial2(ab);
 		return pv;
 	}
 
@@ -358,8 +423,8 @@ public class Pixel implements Cloneable {
 	}
 
 	public void restar(Pixel pixel) {
-		double PX = x - pixel.x;
-		double PY = y - pixel.y;
+		double PX = xDouble - pixel.xDouble;
+		double PY = yDouble - pixel.yDouble;
 		xDouble = PX;
 		yDouble = PY;
 		x = (int) xDouble;
@@ -367,8 +432,8 @@ public class Pixel implements Cloneable {
 	};
 
 	public void sumar(Pixel pixel) {
-		double PX = x + pixel.x;
-		double PY = y + pixel.y;
+		double PX = xDouble + pixel.xDouble;
+		double PY = yDouble + pixel.yDouble;
 		xDouble = PX;
 		yDouble = PY;
 		x = (int) xDouble;
@@ -378,8 +443,8 @@ public class Pixel implements Cloneable {
 	public void rotar(double angulo) {
 		double coseno = Math.cos(Math.toRadians(angulo));
 		double seno = Math.sin(Math.toRadians(angulo));
-		double PX = x * coseno - y * seno;
-		double PY = x * seno + y * coseno;
+		double PX = xDouble * coseno - yDouble * seno;
+		double PY = xDouble * seno + yDouble * coseno;
 		xDouble = PX;
 		yDouble = PY;
 		x = (int) Math.rint(xDouble);
@@ -421,6 +486,15 @@ public class Pixel implements Cloneable {
 
 	public String toString() {
 		return x + " - " + y;
+	}
+	
+	
+
+	@Override
+	public int hashCode() {
+		if (this.toString() != null)
+			return this.toString().hashCode();
+		return super.hashCode();
 	}
 
 	public Pixel clonar() {
@@ -581,19 +655,28 @@ public class Pixel implements Cloneable {
 		return false;
 	}
 	public static void main(String[] args) {
-		Pixel inicio = new Pixel(97,131,null,500,500);
-		Pixel medio = new Pixel(100,122,null,500,500);
-		Pixel fin = new Pixel(94,115,null,500,500);
-		double lado = Pixel.lado(inicio, medio, fin);
-		if (lado < 0)
+		Pixel inicio = new Pixel(112,42,null,500,500);
+		Pixel medio = new Pixel(119,51,null,500,500);
+		Pixel fin = new Pixel(116,61,null,500,500);
+		double lado = Pixel.lado2(inicio, medio, fin);
+		if (lado > 0)
 			System.out.println("Correcto");
 		else
 			System.out.println("Incorrecto");
 
+		inicio = new Pixel(97,131,null,500,500);
+		medio = new Pixel(100,122,null,500,500);
+		fin = new Pixel(94,115,null,500,500);
+		lado = Pixel.lado2(inicio, medio, fin);
+		if (lado < 0)
+			System.out.println("Correcto");
+		else
+			System.out.println("Incorrecto");
+			
 		inicio = new Pixel(110,114,null,500,500);
 		medio = new Pixel(100,122,null,500,500);
 		fin = new Pixel(94,115,null,500,500);
-		lado = Pixel.lado(inicio, medio, fin);
+		lado = Pixel.lado2(inicio, medio, fin);
 		if (lado > 0)
 			System.out.println("Correcto");
 		else
@@ -611,7 +694,7 @@ public class Pixel implements Cloneable {
 		inicio = new Pixel(165,80,null,500,500);
 		medio = new Pixel(173,84,null,500,500);
 		fin = new Pixel(168,91,null,500,500);
-		lado = Pixel.lado(inicio, medio, fin);
+		lado = Pixel.lado2(inicio, medio, fin);
 		if (lado > 0)
 			System.out.println("Correcto");
 		else
@@ -620,17 +703,16 @@ public class Pixel implements Cloneable {
 		inicio = new Pixel(25,44,null,500,500);
 		medio = new Pixel(26,44,null,500,500);
 		fin = new Pixel(27,43,null,500,500);
-		lado = Pixel.lado(inicio, medio, fin);
+		lado = Pixel.lado2(inicio, medio, fin);
 		if (lado < 0)
 			System.out.println("Correcto");
 		else
 			System.out.println("Incorrecto");
-		
+		/*
 		int[] recorrido = Pixel.getRecorridoAntiHorarioAdayacentes(7, 2);
 		for(int i:recorrido){
 			System.out.println(i);
-		}
-
+		}*/
 	}
 	
 	public void normalizar(){
@@ -656,4 +738,5 @@ public class Pixel implements Cloneable {
 	public Double productoEscalar(Pixel p){
 		return this.getXDouble()*p.getXDouble() + this.getYDouble()*p.getYDouble(); 
 	}
+	
 }

@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import javax.media.jai.JAI;
 import javax.media.jai.PlanarImage;
 import javax.media.jai.TiledImage;
 import javax.swing.JFrame;
@@ -16,8 +15,6 @@ import javax.swing.JFrame;
 import objeto.ClaseObjeto;
 import objeto.Objeto;
 import objeto.Pixel;
-import objeto.Rasgo;
-import objeto.RasgoObjeto;
 import procesamiento.clasificacion.ClaseObjetoComparator;
 import procesamiento.clasificacion.Clasificador;
 import procesamiento.clasificacion.EvaluadorClase;
@@ -114,15 +111,14 @@ public class DetectarObjetos extends AbstractImageCommand {
 			
 			setObjetos(objetos);
 			
-			Visualizador.aumentarProgreso(30, "Clasificando objetos...");
+			Visualizador.aumentarProgreso(60, "Clasificando objetos...");
 			clasificarObjetos(dc.getObjetos());
 			
-			Visualizador.aumentarProgreso(10, "Pintando contorno...");
+			Visualizador.aumentarProgreso(15, "Visualizar resultado...");
 			output = pintarContorno(getOriginalImage());
 			
 			ef.postExecute();
 			dc.postExecute(); 
-			Visualizador.aumentarProgreso(10, "");
 			
 			visualizarResultado();
 			System.out.println("Inicio: " + (new Date(System.currentTimeMillis())).toString() + " - FIN: " + fechaInicio.toString());
@@ -144,7 +140,9 @@ public class DetectarObjetos extends AbstractImageCommand {
 		//frame.setModal(true);
 		frame.pack();
 		frame.setResizable(true);
+		
 		frame.setVisible(true);
+		Visualizador.setFocusOwner(frame);
 		
 		//JOptionPane.showInputDialog(frame);
 		
@@ -182,35 +180,9 @@ public class DetectarObjetos extends AbstractImageCommand {
 							pintarPixel(ti, p.getX(), p.getY(), c.getColor());
 						}
 					
-					Rasgo r = new Rasgo();
-					r.setNombre("AREA");
-					RasgoObjeto areaRasgo = obj.getRasgo(r);
-					
-					/*
-					g.setColor(Color.green);
-					if (obj.getName().endsWith("1")){
-						for (Triangulo t: obj.getTriangulosContenedores()){
-							Polygon pol = new Polygon();
-							pol.addPoint(t.getP1().getX(), t.getP1().getY());
-							pol.addPoint(t.getP2().getX(), t.getP2().getY());
-							pol.addPoint(t.getP3().getX(), t.getP3().getY());
-							g.drawPolygon(pol);
-						}
-					}
-					*/
 					Pixel medio = obj.getPixelMedio();
-					g.drawString(obj.getName(),(int) medio.getX()-15,(int)medio.getY()-15);
-					/*
-					if (areaRasgo != null){
-						
-						Font f = new Font("Helvetica",Font.PLAIN,12);
-						g.setColor(Color.white);
-						g.setFont(f);
-						
-						g.drawString(areaRasgo.toString(),(int) medio.getX()-15,(int)medio.getY());
-						//g.drawString(circularidadRasgo.toString(),(int) medio.getX()-15,(int)medio.getY()+15);
-						//g.drawString(aspectRatioRasgo.toString(),(int) medio.getX()-15,(int)medio.getY()+30);
-					}*/
+					g.setColor(Color.red);
+					g.drawString(obj.getName(),(int) medio.getX()-10,(int)medio.getY()-10);
 				}
 
 			}

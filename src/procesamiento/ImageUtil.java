@@ -27,6 +27,7 @@ import objeto.Pixel;
 import aplicarFiltros.Matriz;
 
 import com.sun.imageio.plugins.jpeg.JPEGImageReaderSpi;
+import com.sun.media.jai.codec.TIFFEncodeParam;
 
 public class ImageUtil {
 	public static final int tileWidth = 256;
@@ -292,6 +293,14 @@ public class ImageUtil {
 		return ti;
 	}
 	
+	/**
+	 * Carga una imagen en formato JPG
+	 * @param absolutePath Path absoluto de la imagen a cargar
+	 * @param tileWidth Ancho que deben tener los tiles de la imagen
+	 * @param tileHeight Alto que deben tener los tiles de la imagen
+	 * @return
+	 * @throws Exception
+	 */
 	public static PlanarImage loadImage(String absolutePath, int tileWidth, int tileHeight) throws Exception{
 		
 			//setting cache
@@ -300,7 +309,7 @@ public class ImageUtil {
 			ImageLayout tileLayout = new ImageLayout();
 			tileLayout.setTileWidth(tileWidth);
 			tileLayout.setTileHeight(tileHeight);
-	
+			
 			HashMap map = new HashMap();
 			map.put(JAI.KEY_IMAGE_LAYOUT, tileLayout);
 			map.put(JAI.KEY_TILE_CACHE, cache);
@@ -316,19 +325,33 @@ public class ImageUtil {
 			 final ParameterBlock pbjRead = new ParameterBlock();
 			 pbjRead.add(absolutePath);
 			 pbjRead.add(0);
-			 pbjRead.add(Boolean.FALSE);
-			 pbjRead.add(Boolean.FALSE);
-			 pbjRead.add(Boolean.FALSE);
+			 pbjRead.add(Boolean.TRUE);
+			 pbjRead.add(Boolean.TRUE);
+			 pbjRead.add(Boolean.TRUE);
 			 pbjRead.add(null);
 			 pbjRead.add(null);
 			 pbjRead.add(readP);
 			 pbjRead.add(readerJPEGSpi.createReaderInstance());
 			 
 			 PlanarImage image = JAI.create("imageread",pbjRead,tileHints);
-
 			 return image;
 	}
 	
+	/**
+	 * Carga una imagen en formato JPG y la transforma a formato TIFF
+	 * @param absolutePath Path absoluto de la imagen a cargar
+	 * @param tileWidth Ancho de los tiles para crear la imagen TIFF
+	 * @param tileHeight Alto de los tiles para crear la imagen TIFF
+	 * @return
+	 * @throws Exception
+	 */
+	public static PlanarImage loadTIFFImage(String absolutePath, int tileWidth, int tileHeight) throws Exception{
+		
+		 PlanarImage image = loadImage(absolutePath, tileWidth, tileHeight);
+		 saveTIFFImage(image, "loadedImage.tiff");
+		 PlanarImage imageOut = JAI.create("fileload","loadedImage.tiff");
+		 return imageOut;
+	}
 	public static Color getColorPunto(Pixel pixel, PlanarImage ti) {
 		if (pixel.getX() >= ti.getMinX() &&
 			pixel.getX() <= ti.getMaxX() &&
@@ -360,6 +383,24 @@ public class ImageUtil {
 			for(int j = 0; j < image.getHeight(); j++ ){
 				writePixel(i, j, color, image);
 			}
+	}
+	
+	/**
+	 * Guarda imagen en formato tiff en el disco
+	 * @param image
+	 * @param fileName
+	 */
+	public static void saveTIFFImage(PlanarImage image, String fileName){
+		TIFFEncodeParam param = new TIFFEncodeParam();
+		param.setTileSize(ImageUtil.tileWidth, ImageUtil.tileHeight);
+		param.setWriteTiled(true);
 		
+		ParameterBlock pb = new ParameterBlock();
+        pb.addSource(image);
+        pb.add(fileName);
+        pb.add("tiff");
+        pb.add(param);
+        RenderedOp r = JAI.create("filestore",pb);
+        r.dispose();
 	}
 }

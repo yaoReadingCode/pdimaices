@@ -12,6 +12,7 @@ import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.SystemColor;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -22,8 +23,10 @@ import java.text.DecimalFormat;
 
 import javax.media.jai.PlanarImage;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -56,6 +59,7 @@ import procesamiento.Invert;
 import procesamiento.MedianFilter;
 import procesamiento.ObtenerRangoColorObjeto;
 import procesamiento.Opening;
+import procesamiento.RealzarImagen;
 import procesamiento.RgbHsv;
 import procesamiento.Skeleton;
 import procesamiento.SobelFilter;
@@ -98,16 +102,18 @@ public class OperacionesPanel extends JPanel {
 	}
 
 	private void executeCommand(final ImageComand command) {
-
+		final Window window = this.getImageHolder().getMainWindow();
 		Runnable runnable = new Runnable() {
 			public void run() {
-				Visualizador.iniciarProgreso();
+				long startTime = System.currentTimeMillis();
+				Visualizador.iniciarProgreso(window);
 
 				getImageHolder().setImage(command.execute());
 
 				Visualizador.terminar();
 				command.postExecute();
-				getImageHolder().addExecutedCommand(command, command.getInfo());
+				long endTime = System.currentTimeMillis();
+				getImageHolder().addExecutedCommand(command, command.getInfo(), endTime - startTime);
 			}
 		};
 		Thread thread = new Thread(runnable);
@@ -327,10 +333,7 @@ public class OperacionesPanel extends JPanel {
 	private void buttonRangoObjetoActionPerformed(ActionEvent e) {
 		ObtenerRangoColorObjeto command = new ObtenerRangoColorObjeto(
 				getImageHolder().getImage(), getHSVRange());
-		getImageHolder().setImage(command.execute());
-		setHSVRangeObjeto(command.getRangoObjeto());
-		command.postExecute();
-		getImageHolder().addExecutedCommand(command, command.getInfo());
+		executeCommand(command);
 	}
 
 	private void buttonMedianFilterActionPerformed(ActionEvent e) {
@@ -347,6 +350,13 @@ public class OperacionesPanel extends JPanel {
 			ActionEvent e) {
 		EliminarFondoHistograma ef = new EliminarFondoHistograma(getImageHolder().getImage());
 		executeCommand(ef);
+		
+	}
+	
+	private void buttonRealzarImagenPerformed(
+			ActionEvent e) {
+		RealzarImagen ri = new RealzarImagen(getImageHolder().getImage());
+		executeCommand(ri);
 		
 	}
 
@@ -411,6 +421,7 @@ public class OperacionesPanel extends JPanel {
 		buttonMedianFilter = new JButton();
 		buttonGaussianFilter = new JButton();
 		buttonEliminarFondoHistograma = new JButton();
+		buttonRealzarImagen = new JButton();
 
 		// ======== this ========
 
@@ -757,158 +768,127 @@ public class OperacionesPanel extends JPanel {
 			}
 			// ======== panel7 ========
 			{
-				panel7.setLayout(null);
+				panel7.setLayout(new BorderLayout());
 
 				// ---- buttonBinarizar ----
 				buttonBinarizar.setText("Binarizar");
+				buttonBinarizar.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+				buttonBinarizar.setPreferredSize(new Dimension(270, 30));
 				buttonBinarizar.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						buttonBinarizarActionPerformed(e);
 					}
 				});
-				panel7.add(buttonBinarizar);
-				buttonBinarizar.setBounds(30, 30, 270, buttonBinarizar
-						.getPreferredSize().height);
-
 				// ---- buttonGradientMagnitude ----
 				buttonGradientMagnitude.setText("GradientMagnitude");
+				buttonGradientMagnitude.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 				buttonGradientMagnitude.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						buttonGradientMagnitudActionPerformed(e);
 					}
 				});
-				panel7.add(buttonGradientMagnitude);
-				buttonGradientMagnitude.setBounds(30, 55, 270,
-						buttonGradientMagnitude.getPreferredSize().height);
-
 				// ---- buttonOpening ----
 				buttonOpening.setText("Opening");
+				buttonOpening.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 				buttonOpening.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						buttonOpeningActionPerformed(e);
 					}
 				});
-				panel7.add(buttonOpening);
-				buttonOpening.setBounds(30, 80, 270, 23);
-
 				// ---- buttonClosing ----
 				buttonClosing.setText("Closing");
+				buttonClosing.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 				buttonClosing.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						buttonClosingActionPerformed(e);
 					}
 				});
-				panel7.add(buttonClosing);
-				buttonClosing.setBounds(30, 105, 270, 23);
-
 				// ---- buttonErosion ----
 				buttonErosion.setText("Erosi\u00f3n");
+				buttonErosion.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 				buttonErosion.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						buttonErosionActionPerformed(e);
 					}
 				});
-				panel7.add(buttonErosion);
-				buttonErosion.setBounds(30, 130, 270, buttonErosion
-						.getPreferredSize().height);
-
 				// ---- buttonDilatacion ----
 				buttonDilatacion.setText("Dilataci\u00f3n");
+				buttonDilatacion.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 				buttonDilatacion.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						buttonDilatacionActionPerformed(e);
 					}
 				});
-				panel7.add(buttonDilatacion);
-				buttonDilatacion.setBounds(30, 155, 270, 23);
-
 				// ---- buttonContornoActual ----
 				buttonContornoActual.setText("Contorno Imagen Actual");
+				buttonContornoActual.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 				buttonContornoActual.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						buttonContornoActualActionPerformed(e);
 					}
 				});
-				panel7.add(buttonContornoActual);
-				buttonContornoActual.setBounds(30, 180, 270, 25);
-
 				// ---- buttonToGraySscale ----
 				buttonToGraySscale.setText("Convertir a escala de grises");
+				buttonToGraySscale.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 				buttonToGraySscale.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						buttonToGraySscaleActionPerformed(e);
 					}
 				});
-				panel7.add(buttonToGraySscale);
-				buttonToGraySscale.setBounds(30, 205, 270, 25);
-
 				// ---- buttonDetectarContorno2 ----
 				buttonDetectarContorno2.setText("Detectar contorno grueso");
+				buttonDetectarContorno2.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 				buttonDetectarContorno2.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						buttonDetectarContorno2ActionPerformed(e);
 					}
 				});
-				panel7.add(buttonDetectarContorno2);
-				buttonDetectarContorno2.setBounds(30, 230, 270, 25);
-
 				// ---- buttonInvert ----
 				buttonInvert.setText("Invertir");
+				buttonInvert.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 				buttonInvert.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						buttonInvertActionPerformed(e);
 					}
 				});
-				panel7.add(buttonInvert);
-				buttonInvert.setBounds(30, 255, 270, buttonInvert
-						.getPreferredSize().height);
 
 				// ---- buttonSobel ----
 				buttonSobel.setText("Sobel");
+				buttonSobel.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 				buttonSobel.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						buttonSobelActionPerformed(e);
 					}
 				});
-				panel7.add(buttonSobel);
-				buttonSobel.setBounds(30, 280, 270, buttonSobel
-						.getPreferredSize().height);
-
 				// ---- buttonEliminarFondo ----
 				buttonEliminarFondo.setText("Eliminar Fondo");
+				buttonEliminarFondo.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 				buttonEliminarFondo.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						buttonEliminarFondoActionPerformed(e);
 					}
 				});
-				panel7.add(buttonEliminarFondo);
-				buttonEliminarFondo.setBounds(30, 305, 270, buttonEliminarFondo
-						.getPreferredSize().height);
-
 				// ---- buttonSkeleton ----
 				buttonSkeleton.setText("Esqueleto");
+				buttonSkeleton.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 				buttonSkeleton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						buttonSkeletonActionPerformed(e);
 					}
 				});
-				panel7.add(buttonSkeleton);
-				buttonSkeleton.setBounds(30, 330, 270, buttonSkeleton
-						.getPreferredSize().height);
 
 				// ---- buttonRangoObjeto ----
 				buttonRangoObjeto.setText("Rango objeto");
+				buttonRangoObjeto.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 				buttonRangoObjeto.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						buttonRangoObjetoActionPerformed(e);
 					}
 				});
-				panel7.add(buttonRangoObjeto);
-				buttonRangoObjeto.setBounds(30, 355, 270, buttonRangoObjeto
-						.getPreferredSize().height);
 				
 				// ---- buttonMedianFilter ----
 				buttonMedianFilter.setText("Filtro Mediana");
+				buttonMedianFilter.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 				buttonMedianFilter.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						buttonMedianFilterActionPerformed(e);
@@ -916,34 +896,37 @@ public class OperacionesPanel extends JPanel {
 
 					
 				});
-				panel7.add(buttonMedianFilter);
-				buttonMedianFilter.setBounds(30, 380, 270, buttonMedianFilter
-						.getPreferredSize().height);
 				// ---- buttonGussianFilter ----
 				buttonGaussianFilter.setText("Filtro Gausiano");
+				buttonGaussianFilter.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 				buttonGaussianFilter.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						buttonGaussianFilterActionPerformed(e);
 					}
 				});
-				panel7.add(buttonGaussianFilter);
-				buttonGaussianFilter.setBounds(30, 405, 270, buttonGaussianFilter
-						.getPreferredSize().height);
 
 				// ---- buttonEliminarFondoHistograma ----
 				buttonEliminarFondoHistograma.setText("Eliminar Fondo Histograma");
+				buttonEliminarFondoHistograma.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 				buttonEliminarFondoHistograma.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						buttonEliminarFondoHistogramaActionPerformed(e);
 					}
 
 				});
-				panel7.add(buttonEliminarFondoHistograma);
-				buttonEliminarFondoHistograma.setBounds(30, 430, 270, buttonEliminarFondoHistograma
-						.getPreferredSize().height);
+				
+				// ---- buttonRealzarImagen ----
+				buttonRealzarImagen.setText("Realzar Imagen");
+				buttonRealzarImagen.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+				buttonRealzarImagen.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						buttonRealzarImagenPerformed(e);
+					}
 
+				});
 				
 				{ // compute preferred size
+					/*
 					Dimension preferredSize = new Dimension();
 					for (int i = 0; i < panel7.getComponentCount(); i++) {
 						Rectangle bounds = panel7.getComponent(i).getBounds();
@@ -956,7 +939,28 @@ public class OperacionesPanel extends JPanel {
 					preferredSize.width += insets.right;
 					preferredSize.height += insets.bottom;
 					panel7.setMinimumSize(preferredSize);
-					panel7.setPreferredSize(preferredSize);
+					panel7.setPreferredSize(preferredSize);*/
+					Box box = Box.createVerticalBox();
+					
+					box.add(buttonBinarizar, null);
+					box.add(buttonGradientMagnitude, null);
+					box.add(buttonOpening, null);
+					box.add(buttonClosing, null);
+					box.add(buttonErosion, null);
+					box.add(buttonDilatacion, null);
+					box.add(buttonContornoActual, null);
+					box.add(buttonToGraySscale, null);
+					box.add(buttonDetectarContorno2, null);
+					box.add(buttonInvert, null);
+					box.add(buttonSobel, null);
+					box.add(buttonEliminarFondo, null);
+					box.add(buttonSkeleton, null);
+					box.add(buttonRangoObjeto, null);
+					box.add(buttonMedianFilter, null);
+					box.add(buttonGaussianFilter, null);
+					box.add(buttonEliminarFondoHistograma, null);
+					box.add(buttonRealzarImagen, null);
+					panel7.add(box,BorderLayout.CENTER);
 				}
 			}
 		}
@@ -1049,6 +1053,7 @@ public class OperacionesPanel extends JPanel {
 	private JButton buttonMedianFilter;
 	private JButton buttonGaussianFilter;
 	private JButton buttonEliminarFondoHistograma;
+	private JButton buttonRealzarImagen;
 	private JPanel objetoPanel1 = null;
 	private JPanel panelH2 = null;
 	private JLabel labelHMin1 = null;

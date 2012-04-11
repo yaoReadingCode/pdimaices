@@ -93,9 +93,9 @@ public class ObjetoReferencia {
 	
 	public static void setObjetoReferencia(Objeto obj) {
 		
-		cantPixel = obj.getAlto();
+		cantPixel = obj.getDiametro();
 		referencia = obj;
-		errorCalculos = (cantPixel-obj.getAncho());
+		errorCalculos = (obj.getAlto()-obj.getAncho());
 		if (errorCalculos < 0) errorCalculos = errorCalculos*-1;
 		errorCalculos = errorCalculos/cantMM;
 		cant_Pixeles_X_MM = (cantPixel / cantMM);

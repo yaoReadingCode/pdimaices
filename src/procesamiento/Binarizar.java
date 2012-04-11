@@ -4,7 +4,6 @@ package procesamiento;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.image.WritableRaster;
-import java.util.List;
 
 import javax.media.jai.JAI;
 import javax.media.jai.PlanarImage;
@@ -162,7 +161,7 @@ public class Binarizar extends AbstractImageCommand {
 	}
 	
 	/**
-	 * Convierte la imagen a blanco y negro
+	 * Elimina los puntos aislados de de la imagen. Puntos que no llevan a ningun lado.
 	 * @param image
 	 * @return
 	 */
@@ -250,6 +249,7 @@ public class Binarizar extends AbstractImageCommand {
 	public PlanarImage execute() {
 		if (getImage() != null) {
 			TiledImage image = binarizar(getImage());
+			//return image;
 			return eliminarPuntosAislados(image);
 		}
 		return null;
@@ -398,7 +398,7 @@ public class Binarizar extends AbstractImageCommand {
 	 * Limpia los pixels visitados
 	 */
 
-	private void initVisitados() {
+	protected void initVisitados() {
 		this.Matriz  = null;
 		this.Matriz = new int[maxMatrixW+1][maxMatrixH+1];
 	}
@@ -409,7 +409,7 @@ public class Binarizar extends AbstractImageCommand {
 	 * 
 	 * @param pixel
 	 */
-	private void setVisitado(Pixel p) {
+	protected void setVisitado(Pixel p) {
 		Pixel pixel =  convertirPixel(p);
 		if (pixel != null){
 			Matriz[pixel.getX()][pixel.getY()] = 1;
@@ -422,7 +422,7 @@ public class Binarizar extends AbstractImageCommand {
 	 * @param pixel
 	 * @return
 	 */
-	private boolean isVisitado(Pixel p) {
+	protected boolean isVisitado(Pixel p) {
 		Pixel pixel =  convertirPixel(p);
 		if (pixel != null)
 			if (Matriz[pixel.getX()][pixel.getY()] == 1){

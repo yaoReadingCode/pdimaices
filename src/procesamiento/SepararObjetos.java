@@ -21,6 +21,7 @@ import objeto.Rasgo;
 import objeto.RasgoClase;
 import objeto.RasgoObjeto;
 import objeto.Triangulo;
+import procesamiento.clasificacion.AspectRatio;
 import procesamiento.clasificacion.Circularidad;
 import procesamiento.clasificacion.CoeficientesRecta;
 import procesamiento.clasificacion.DivisionObjeto;
@@ -53,12 +54,13 @@ public class SepararObjetos extends AbstractImageCommand {
 	private int Matriz[][] = null;
 	
 	private EvaluadorClase evaluadorObjetoCircular = null;
+	private EvaluadorClase evaluadorObjetoRectangular = null;
 	
 	public SepararObjetos(PlanarImage image, List<Objeto> objetos, DetectarContorno padre) {
 		super(image);
 		this.objetos = objetos;
 		this.detectarContorno = padre;
-		createEvaluadorObjetoCircular();
+		createEvaluadoresObjeto();
 	}
 
 
@@ -66,24 +68,21 @@ public class SepararObjetos extends AbstractImageCommand {
 		super(image);
 		this.objetos = objetos;
 		this.ventanaPixeles = ventanaPixeles;
-		createEvaluadorObjetoCircular();
+		createEvaluadoresObjeto();
 	}
 	
 	/**
 	 * Crea y asigna el atributo evaluadorObjetoCircular 
 	 */
-	private void createEvaluadorObjetoCircular(){
+	private void createEvaluadoresObjeto(){
 		RasgoClase rcCircularidad = new RasgoClase();
 		rcCircularidad.setRasgo(new Rasgo("Circularidad"));
+		RasgoClase rcAspectRadio = new RasgoClase();
+		rcAspectRadio.setRasgo(new Rasgo("AspectRadio"));
 		
-		//RasgoClase rcAspectRadio = new RasgoClase();
-		//rcAspectRadio.setRasgo(new Rasgo("AspectRadio"));
-		
-	
 		Circularidad circularidad = new Circularidad(rcCircularidad, 0.7, 1.0);
-		//AspectRatio aspectRadio = new AspectRatio(rcAspectRadio, 0.6, 0.4);
-		//Area area = new Area("Area", 3000.0,2000.0);
-
+		//AspectRatio aspectRadio = new AspectRatio(rcAspectRadio, 0.6, 1.0);
+		
 		List<EvaluadorRasgo> rasgos = new ArrayList<EvaluadorRasgo>();
 		rasgos.add(circularidad);
 		//rasgos.add(aspectRadio);
@@ -93,6 +92,20 @@ public class SepararObjetos extends AbstractImageCommand {
 		
 		EvaluadorClase objetoCircular = new EvaluadorClase(claseObjetoCircular, rasgos);
 		setEvaluadorObjetoCircular(objetoCircular);
+
+
+		AspectRatio aspectRadio2 = new AspectRatio(rcAspectRadio, 0.4, 1.0);
+		
+		List<EvaluadorRasgo> rasgos2 = new ArrayList<EvaluadorRasgo>();
+		rasgos2.add(aspectRadio2);
+		//rasgos.add(aspectRadio);
+		
+		Clase claseObjetoRecatangular = new Clase();
+		claseObjetoCircular.setNombre("Objeto rectangular");
+		
+		EvaluadorClase objetoRectangular = new EvaluadorClase(claseObjetoRecatangular, rasgos2);
+		setEvaluadorObjetoRectangular(objetoRectangular);
+		
 	}
 
 
@@ -120,7 +133,6 @@ public class SepararObjetos extends AbstractImageCommand {
 		if (getObjetos() != null){
 			List<Objeto> nuevos = new ArrayList<Objeto>();
 			for (Objeto obj : getObjetos()) {
-
 				if (necesitaDivision(obj) && !obj.equals(ObjetoReferencia.getReferencia())){
 					setImagenBordes(getImagenBordes(obj));
 					JAI.create("filestore", getImagenBordes(), "sobel.tif", "TIFF");
@@ -161,11 +173,13 @@ public class SepararObjetos extends AbstractImageCommand {
 	 * @param contorno1 Contorno 1
 	 * @param contorno2 Contorno 2
 	 */
-	private void dividirObjeto(Objeto obj, Pixel puntoConflicto1, Pixel puntoConflicto2, List<Pixel> camino, Objeto objeto1, Objeto objeto2){
+	private void dividirObjeto(Objeto obj, Pixel puntoConflicto1, Pixel puntoConflicto2, List<Pixel> camino, Objeto objeto1, Objeto objeto2, boolean ajustarContorno){
 		if (camino.size() > 0){
 			List<Pixel> contorno = obj.getContorno(); 
 			int indexP1 = contorno.indexOf(puntoConflicto1);
 			int indexP2 = contorno.indexOf(puntoConflicto2);
+			Objeto objDivision = objeto2;
+			Objeto objResto = objeto1;
 			
 			if (indexP1 > indexP2){
 				int aux = indexP1;
@@ -174,6 +188,8 @@ public class SepararObjetos extends AbstractImageCommand {
 				Pixel auxP = puntoConflicto1.clonar();
 				puntoConflicto1 = puntoConflicto2;
 				puntoConflicto2 = auxP;
+				objDivision = objeto1;
+				objResto = objeto2;
 			}
 			
 			List<Pixel> contorno1 = objeto1.getContorno();
@@ -209,25 +225,24 @@ public class SepararObjetos extends AbstractImageCommand {
 				contorno2.addAll(list2);
 				contorno2.addAll(camino2);
 				
+				if (ajustarContorno){
+					int indexPInicio1 = contorno1.indexOf(puntoConflicto1) - getVentanaPixeles();
+					if (indexPInicio1 < 0)
+						indexPInicio1 = contorno1.size() + indexPInicio1;
+					int indexPFin1 = (contorno1.indexOf(puntoConflicto2) + getVentanaPixeles()) % contorno1.size();
+					List<Pixel> nuevoContorno1 = ajustarContorno(contorno1, indexPInicio1, indexPFin1,puntoConflicto1, puntoConflicto2);
+					
+					int indexPInicio2 = contorno2.indexOf(puntoConflicto2) - getVentanaPixeles();
+					if (indexPInicio2 < 0)
+						indexPInicio2 = contorno2.size() + indexPInicio2;
+					int indexPFin2 = getVentanaPixeles() % contorno2.size();
+					List<Pixel> nuevoContorno2 = ajustarContorno(contorno2, indexPInicio2, indexPFin2,puntoConflicto1, puntoConflicto2);
+					contorno1 = nuevoContorno1;
+					contorno2 = nuevoContorno2;
+				}
 				
-				int indexPInicio1 = contorno1.indexOf(puntoConflicto1) - getVentanaPixeles();
-				if (indexPInicio1 < 0)
-					indexPInicio1 = contorno1.size() + indexPInicio1;
-				int indexPFin1 = (contorno1.indexOf(puntoConflicto2) + getVentanaPixeles()) % contorno1.size();
-				List<Pixel> nuevoContorno1 = ajustarContorno(contorno1, indexPInicio1, indexPFin1,puntoConflicto1, puntoConflicto2);
-
-				int indexPInicio2 = contorno2.indexOf(puntoConflicto2) - getVentanaPixeles();
-				if (indexPInicio2 < 0)
-					indexPInicio2 = contorno2.size() + indexPInicio2;
-				int indexPFin2 = getVentanaPixeles() % contorno2.size();
-				List<Pixel> nuevoContorno2 = ajustarContorno(contorno2, indexPInicio2, indexPFin2,puntoConflicto1, puntoConflicto2);
-				
-				contorno1 = nuevoContorno1;
-				contorno2 = nuevoContorno2;
-				
-				
-				objeto1.setContorno(contorno1);
-				objeto2.setContorno(contorno2);
+				objResto.setContorno(contorno1);
+				objDivision.setContorno(contorno2);
 			}			
 		}
 	}
@@ -263,7 +278,7 @@ public class SepararObjetos extends AbstractImageCommand {
 				Pixel inicio = contorno.get(posInicio % contorno.size() );
 				Pixel medio = contorno.get(posMedio % contorno.size());
 				Pixel fin = p;
-				double lado = Pixel.lado(inicio, medio, fin);
+				double lado = Pixel.lado2(inicio, medio, fin);
 				if (lado < 0){
 					double angulo = ObjetoUtil.calcularAngulo(inicio, medio, fin);
 					if (angulo > anguloDesvio && (puntoConflicto == null || angulo > anguloMejor)){
@@ -295,7 +310,8 @@ public class SepararObjetos extends AbstractImageCommand {
 				if (opuestoMasCercano != null){
 					puntosConflicto.add(opuestoMasCercano);
 				}
-			}*/
+			}
+			*/
 			obj.setPuntosDivisionContorno(puntosConflicto);
 		}
 		return obj.getPuntosDivisionContorno();
@@ -378,7 +394,7 @@ public class SepararObjetos extends AbstractImageCommand {
 	 */
 	private Pixel getAnterior(Pixel p,List<Pixel> contorno){
 		int index = contorno.indexOf(p);
-		int indexAnterior = index - getVentanaPixeles();
+		int indexAnterior = index - getVentanaPixeles() / 2;
 		if (indexAnterior < 0)
 			indexAnterior = contorno.size() + indexAnterior;
 		Pixel anterior = contorno.get(indexAnterior);
@@ -429,7 +445,7 @@ public class SepararObjetos extends AbstractImageCommand {
 	 * @param contornoObjeto Contorno del objeto
 	 * @return
 	 */
-	private List<Pixel> getPosiblesDesviosAntihorarios(Pixel desvioHorario, List<Pixel> puntosDivision, List<Pixel> puntosDivisionVisitados, List<Pixel> contornoObjeto){
+	private List<Pixel> getPosiblesDesviosAntihorarios(Objeto obj, Pixel desvioHorario, List<Pixel> puntosDivision, List<Pixel> puntosDivisionVisitados, List<Pixel> contornoObjeto){
 		List<Pixel> desviosAntihorarios = new ArrayList<Pixel>();
 		desviosAntihorarios.remove(desvioHorario);
 		Pixel anteriorDH = getAnterior(desvioHorario, contornoObjeto);
@@ -439,15 +455,43 @@ public class SepararObjetos extends AbstractImageCommand {
 			//parPuntoDivision.sumar(p);
 			if (!desvioHorario.equals(p) && !desviosAntihorarios.contains(p) 
 					&& !puntosDivisionVisitados.contains(p)){
-				double lado = Pixel.lado(anteriorDH, desvioHorario, p);
-				int direccion = p.getDireccion(desvioHorario);
-				int distanciaDireccion = Pixel.distanciaLado(direccionDH, direccion);
-				if (lado >= 0 && distanciaDireccion <= 2 && !intersectaAlgunPuntoRecta(desvioHorario, p, contornoObjeto)){
-					double peso = desvioHorario.distancia(p);
-					p.setPeso(peso);
-					desviosAntihorarios.add(p);
-				}
 				
+				Pixel anteriorDAH =  getAnterior(p, contornoObjeto);
+				double lado = Pixel.lado(anteriorDH, desvioHorario, p);
+				double lado2 = Pixel.lado(anteriorDAH, p, desvioHorario);
+				int direccionDAH = p.getDireccion(anteriorDAH);
+				int distanciaDireccion = Pixel.distanciaLado(direccionDH, direccionDAH);
+				double distancia = desvioHorario.distancia(p);
+				if (/*distancia <= 2 * getVentanaPixeles() || */((lado > -10 || lado2 > -10) && distanciaDireccion >= 2 && !intersectaAlgunPuntoRecta(desvioHorario, p, contornoObjeto))){
+					List<Pixel> camino = ObjetoUtil.crearLinea(desvioHorario, p, getImage().getWidth(), getImage().getHeight());
+					if (camino != null && camino.size() > 0){
+						Pixel primero = camino.get(0);
+						if (desvioHorario.isAdyacente(primero)){
+							camino.add(0, desvioHorario); 
+							camino.add(p);
+						}
+						else{
+							camino.add(0, p); 
+							camino.add(desvioHorario);
+						}
+					}
+					Objeto obj1 = new Objeto();
+					obj1.setOriginalImage(getOriginalImage());
+					Objeto obj2 = new Objeto();
+					obj2.setOriginalImage(getOriginalImage());
+
+					dividirObjeto(obj, desvioHorario, p, camino, obj1, obj2, false);
+					//obj1.calcularMRC();
+					obj2.calcularMRC();
+
+					if (getEvaluadorObjetoRectangular().pertenece(obj2, false) /*&&
+							getEvaluadorObjetoRectangular().pertenece(obj2, false)*/){
+						double peso = distancia;
+						p.setPeso(peso);
+						desviosAntihorarios.add(p);
+					}
+
+				}
 			}
 		}
 		Collections.sort(desviosAntihorarios, new PixelComparator(true));
@@ -479,7 +523,7 @@ public class SepararObjetos extends AbstractImageCommand {
 			List<Pixel> posiblesVisitados = new ArrayList<Pixel>(puntosDivisionVisitados); 
 			for(int i = 0; i < puntosDivision.size() ; i++){
 				Pixel desvioHorario = puntosDivision.get(i);
-				List<Pixel> desviosAntihorarios = getPosiblesDesviosAntihorarios(desvioHorario , puntosDivision, posiblesVisitados, contornoObjeto);
+				List<Pixel> desviosAntihorarios = getPosiblesDesviosAntihorarios(obj, desvioHorario , puntosDivision, posiblesVisitados, contornoObjeto);
 				for(int j = 0; j < desviosAntihorarios.size(); j++){
 					Pixel desvioAntihorario = desviosAntihorarios.get(j);
 					Division division = new Division(desvioHorario, desvioAntihorario, null);
@@ -496,6 +540,8 @@ public class SepararObjetos extends AbstractImageCommand {
 							if (camino != null){
 								mejorDivision = new Division(desvioHorario, desvioAntihorario, camino);
 								mejorDivision.setEvaluacion(0);
+								if (mejorDivision.getEvaluacion() < 0.01)
+									mejorDivision = null;
 							}
 						}
 						else if (caminoRelativo1 != null && caminoRelativo2 != null){
@@ -516,18 +562,19 @@ public class SepararObjetos extends AbstractImageCommand {
 							Objeto obj2 = new Objeto(obj);
 							obj2.setOriginalImage(getOriginalImage());
 
-							dividirObjeto(obj, mejorDivision.origen, mejorDivision.fin, mejorDivision.puntos, obj1, obj2);
+							dividirObjeto(obj, mejorDivision.origen, mejorDivision.fin, mejorDivision.puntos, obj1, obj2, true);
 							if (obj1.validarContorno() && obj2.validarContorno() &&
 								(!obj1.getBoundingBox().isIncluido(obj2.getBoundingBox()) ||
 								!obj2.getBoundingBox().isIncluido(obj1.getBoundingBox()))){
 								List<RasgoObjeto> rasgosOb1 = new ArrayList<RasgoObjeto>();
 								List<RasgoObjeto> rasgosOb2 = new ArrayList<RasgoObjeto>();
+								getEvaluadorObjetoRectangular().pertenece(obj1, false);
 								boolean isCircularObj1 = getEvaluadorObjetoCircular().pertenece(obj1, false, rasgosOb1);
 								boolean isCircularObj2 = getEvaluadorObjetoCircular().pertenece(obj2, false, rasgosOb2);
 								if (isCircularObj1 || isCircularObj2){
 									Double circularidad1 = rasgosOb1.get(0).getValor();
 									Double circularidad2 = rasgosOb2.get(0).getValor();
-									Double valoracion = circularidad1 * circularidad2;//Math.max(circularidad1, circularidad2);
+									Double valoracion = /*mejorDivision.getEvaluacion();*/circularidad1 * circularidad2 * mejorDivision.getEvaluacion();
 									DivisionObjeto div = new DivisionObjeto(valoracion,obj1, obj2);
 									div.setOrigen(mejorDivision.origen);
 									div.setFin(mejorDivision.fin);
@@ -553,15 +600,16 @@ public class SepararObjetos extends AbstractImageCommand {
 					Objeto obj2 = mejorDivision.getObjeto2();
 					completarObjeto(obj1);
 					completarObjeto(obj2);
+
+					obj1.setName(obj.getName());
+					int cantObjetos = getClasificador().getCantidadObjetos() + 1;
+					getClasificador().aumentarCantidadObjetos();
+					obj2.setName(DetectarContorno.NOMBRE_DEFAULT+cantObjetos);
+					
 					if (isNecesarioAjustarContorno(obj1, mejorDivision))
 						ajustarContornoObjeto(obj1);
 					if (isNecesarioAjustarContorno(obj2, mejorDivision))
 						ajustarContornoObjeto(obj2);
-					
-					obj1.setName(obj.getName());
-					int cantObjetos = getClasificador().getCantidadObjetos() + 1;
-					getClasificador().aumentarCantidadObjetos();
-					obj2.setName("Objeto"+cantObjetos);
 					
 					List<Objeto> nuevos = new ArrayList<Objeto>();
 
@@ -695,13 +743,18 @@ public class SepararObjetos extends AbstractImageCommand {
 			while (actual != null && !actual.equals(fin) && isFondo(actual, getImagenBordes()) 
 					&& !isVisitado(actual) && distanciaActual < distanciaInicial && (cantMaxima == null || i < cantMaxima )){
 				anterior = actual;
-				actual = getAdyacente(actual, direccion, getImage());
+				int dirActual = direccion;
+				if (direccion == Pixel.DIR_NE || direccion == Pixel.DIR_NO || direccion == Pixel.DIR_SE || direccion == Pixel.DIR_SO){
+					if (i % 2 == 0)
+						dirActual = dir;
+				}
+				actual = getAdyacente(actual, dirActual, getImage());
 				if (actual != null && fin != null){
 					if (isFondo(actual, getImagenBordes())){
-						List<Pixel> posibles = getNextContornoDireccion(actual, anterior, inicio, direccion, true);
+						List<Pixel> posibles = getNextContornoDireccion(actual, anterior, inicio, dirActual, true);
 						if (posibles != null && posibles.size() > 0){
-							puntosContorno.addAll(posibles);
-							actual = null;
+							puntosContorno.add(posibles.get(0));
+							actual = posibles.get(0);
 						}
 					}
 					if (actual != null)
@@ -740,8 +793,8 @@ public class SepararObjetos extends AbstractImageCommand {
 			int dirActual = actual.getDireccion(anterior);
 			if (dirActual == -1)
 				dirActual = dirFin;
-			if (Pixel.distanciaLado(dirFin, dirActual) < 3){
-				int direccion = (dirActual + dirFin) / 2;
+			if (Pixel.distanciaLado(dirFin, dirActual) < 2){
+				int direccion = dirFin;/*(dirActual + dirFin) / 2;*/
 				Pixel posible = null;
 				double mejorDist = Double.MAX_VALUE;
 				int[] recorrido = Pixel.getRecorridoHorarioAdayacentes(direccion, 2);
@@ -756,7 +809,7 @@ public class SepararObjetos extends AbstractImageCommand {
 					}
 				}
 				if (nextContorno == null){
-					Pixel bordeMascercano = findBordeMasCercano(direccion,actual,fin, getVentanaPixeles());
+					Pixel bordeMascercano = findBordeMasCercano(dirFin,actual,fin, getVentanaPixeles());
 					if (bordeMascercano != null && !isFondo(bordeMascercano, getImagenBordes())){
 						List<Pixel> lineaPixeles = ObjetoUtil.crearLinea(actual, bordeMascercano, getImagenBordes().getWidth(), getImagenBordes().getHeight());
 						if (lineaPixeles.size() > 0){
@@ -842,8 +895,8 @@ public class SepararObjetos extends AbstractImageCommand {
 	 * @return
 	 */
 	private List<Pixel> ajustarContorno(List<Pixel> contorno, int indexP1, int indexP2, Pixel puntoConflicto1 ,Pixel puntoConflicto2) {
-		int ventana = getVentanaPixeles();
-		if (contorno.size() > 2 * ventana){
+		if (contorno.size() > 2 * getVentanaPixeles()){
+			int ventana = getVentanaPixeles() / 2;
 			List<Pixel> result = new ArrayList<Pixel>();
 			List<Pixel> resto = new ArrayList<Pixel>();
 			
@@ -1156,6 +1209,16 @@ public class SepararObjetos extends AbstractImageCommand {
 		this.evaluadorObjetoCircular = evaluadorObjetoCircular;
 	}
 	
+	public EvaluadorClase getEvaluadorObjetoRectangular() {
+		return evaluadorObjetoRectangular;
+	}
+
+	public void setEvaluadorObjetoRectangular(EvaluadorClase evaluadorObjetoRectangular) {
+		this.evaluadorObjetoRectangular = evaluadorObjetoRectangular;
+	}
+
+
+
 	private class Division implements Comparable<Division>{
 		/**
 		 * El porcentaje de los puntos que son borde en la division
@@ -1195,7 +1258,7 @@ public class SepararObjetos extends AbstractImageCommand {
 		
 		public void setEvaluacion(int countBorde) {
 			if (this.puntos != null && this.puntos.size() > 0)
-				this.evaluacion = ((double) 1 / this.puntos.size()) * ((double) (countBorde) / (this.puntos.size()));
+				this.evaluacion = ((double) 1 / this.puntos.size()) * 0.7 + ((double) (countBorde) / (this.puntos.size())) * 0.3;
 			else
 				this.evaluacion = 0.0;
 		}
@@ -1265,8 +1328,8 @@ public class SepararObjetos extends AbstractImageCommand {
 		
 		List<Objeto> objetos = dc.getObjetos();
 		if (objetos != null && objetos.size() > 0){
-			objeto.setContorno(bb.getPixelsOriginales(objetos.get(0).getContorno()));
-			objeto.setPuntos(bb.getPixelsOriginales(objetos.get(0).getPuntos()));
+			objeto.setContorno(bb.getPixelsOriginales(objetos.get(0).getContorno(),getImage().getWidth(), getImage().getHeight()));
+			objeto.setPuntos(bb.getPixelsOriginales(objetos.get(0).getPuntos(),getImage().getWidth(), getImage().getHeight()));
 		}
 
 	}
@@ -1350,11 +1413,12 @@ public class SepararObjetos extends AbstractImageCommand {
 			int total = 0;
 			BoundingBox bb = new BoundingBox(t);
 			Rectangle rectangle = new Rectangle((int)bb.getMinX(), (int)bb.getMinY(), (int)(bb.getMaxX() - bb.getMinX()), (int)(bb.getMaxY() - bb.getMinY()));
-			BufferedImage image = getOriginalImage().getAsBufferedImage(rectangle,null);
-			PlanarImage pi = TiledImage.wrapRenderedImage(image);
-			for(int x = (int) bb.getMinX(); x <= bb.getMaxX(); x++)
-				for(int y = (int) bb.getMinY(); y <= bb.getMaxY(); y++){
-					Pixel p = new Pixel(x, y, null, getImage().getWidth(), getImage().getHeight());
+			if (rectangle.getWidth() > 0 && rectangle.getHeight() > 0){
+				BufferedImage image = getOriginalImage().getAsBufferedImage(rectangle,null);
+				PlanarImage pi = TiledImage.wrapRenderedImage(image);
+				for(int x = (int) bb.getMinX(); x <= bb.getMaxX(); x++)
+					for(int y = (int) bb.getMinY(); y <= bb.getMaxY(); y++){
+						Pixel p = new Pixel(x, y, null, getImage().getWidth(), getImage().getHeight());
 						if (obj1.isPertenece(p)){
 							Pixel pixel = bb.getPixelRelativo(p);
 							Color color = ImageUtil.getColorPunto(pixel, pi);
@@ -1364,12 +1428,13 @@ public class SepararObjetos extends AbstractImageCommand {
 							}
 							total++;
 						}
-				}
-			double porcentajeFondo = 0.0;
-			if (total > getVentanaPixeles()*2)
-				porcentajeFondo = (double)cantidadFondo / (double)total;
-			if (porcentajeFondo > 0.25)
-				return true;
+					}
+				double porcentajeFondo = 0.0;
+				if (total > getVentanaPixeles()*2)
+					porcentajeFondo = (double)cantidadFondo / (double)total;
+				if (porcentajeFondo > 0.20)
+					return true;
+			}
 		}
 		return false;
 	}

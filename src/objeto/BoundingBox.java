@@ -108,10 +108,13 @@ public class BoundingBox {
 	 * @param lista
 	 * @return
 	 */
-	public List<Pixel> getPixelsOriginales(List<Pixel> lista){
+	public List<Pixel> getPixelsOriginales(List<Pixel> lista, int maxX, int maxY){
 		List<Pixel> nuevaLista = new ArrayList<Pixel>();
 		for(Pixel p:lista){
-			nuevaLista.add(getPixelOriginal(p));
+			Pixel nuevo = getPixelOriginal(p);
+			nuevo.setMaxX(maxX);
+			nuevo.setMaxY(maxY);
+			nuevaLista.add(nuevo);
 		}
 		return nuevaLista;
 	}

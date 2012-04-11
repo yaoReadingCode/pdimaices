@@ -4,16 +4,18 @@
 
 package aplicarFiltros;
 
+import java.awt.Component;
 import java.awt.Container;
-import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.Window;
+import java.awt.Dialog.ModalExclusionType;
 
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JWindow;
 
 /**
  * @author seba
@@ -21,7 +23,11 @@ import javax.swing.JWindow;
 public class Progress extends JPanel {
 	static private String newline = "\n";
 	
-	public Progress() {
+	private Component focusOwner;
+	
+	public Progress(Window owner) {
+		this.owner = owner;
+		setFocusOwner(owner);
 		initComponents();
 	}
 	public void aumentar(int valor, String texto){
@@ -43,6 +49,7 @@ public class Progress extends JPanel {
 		progressBar1.setValue(0);
 		label1.setText("Tarea:");
 		textAreaInfo.setText("");
+		owner.setEnabled(false);
 	}
 	
 	public void dibujar(){
@@ -53,6 +60,9 @@ public class Progress extends JPanel {
 	
 	public void finalizar(){
 		window1.setVisible(false);
+		owner.setEnabled(true);
+		if (getFocusOwner() != null)
+			getFocusOwner().requestFocus();
 	}
 	
 	/**
@@ -63,11 +73,19 @@ public class Progress extends JPanel {
 		textAreaInfo.setCaretPosition(textAreaInfo.getText().length());
 
 	}
-
+	
+	public Component getFocusOwner() {
+		return focusOwner;
+	}
+	public void setFocusOwner(Component focusOwner) {
+		this.focusOwner = focusOwner;
+	}
+	
 	public void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
 		// Generated using JFormDesigner Evaluation license - Oscar Giorgetti
-		window1 = new JWindow();
+		window1 = new JDialog(owner);
+		
 		progressBar1 = new JProgressBar();
 		label1 = new JLabel();
 		scrollPane1 = new JScrollPane();
@@ -75,8 +93,10 @@ public class Progress extends JPanel {
 
 		//======== window1 ========
 		{
-			window1.setAlwaysOnTop(true);
-			window1.setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
+			//window1.setAlwaysOnTop(true);
+			window1.setTitle("Progreso");
+			//window1.setModal(true);
+			window1.setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
 			Container window1ContentPane = window1.getContentPane();
 			window1ContentPane.setLayout(null);
 
@@ -110,10 +130,11 @@ public class Progress extends JPanel {
 
 	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
 	// Generated using JFormDesigner Evaluation license - Oscar Giorgetti
-	private JWindow window1;
+	private JDialog window1;
 	private JProgressBar progressBar1;
 	private JLabel label1;
 	private JScrollPane scrollPane1;
 	private JTextArea textAreaInfo;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
+	private Window owner;
 }
