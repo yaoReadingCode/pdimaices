@@ -177,7 +177,7 @@ public class FrameResultado extends JFrame {
 			RasgoObjeto rasgo = objeto.getRasgos().get(i);
 			if (rasgo.getRasgo().getVisible()){
 				if (rasgo.getClase() == null || rasgo.getClase().equals(clase))
-					model.addRow(new Object[]{rasgo.getRasgo().getDescripcion(),rasgo.getValor()});
+					model.addRow(new Object[]{rasgo.getRasgo().getDescripcion(),(rasgo.getValor()!= null) ? rasgo.getValor():""});
 				
 			}
 		}

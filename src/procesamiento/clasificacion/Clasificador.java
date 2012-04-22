@@ -162,16 +162,17 @@ public class Clasificador {
 			cantValores = rasgoClase.getCantValores();
 
 		for(Objeto o: objetos){
-			RasgoObjeto ro = o.getRasgo(rasgoClase.getRasgo());
-			if(ro != null && ro.getValor() != null){
-				sumValor += ro.getValor();
-				Double valorCuadrado = Math.pow(ro.getValor(), 2); 
+			RasgoObjeto ro = o.getRasgo(rasgoClase.getRasgo(),rasgoClase.getClase());
+			Double valor = ro.getValorRasgoClase();
+			if(valor != null){
+				sumValor += valor;
+				Double valorCuadrado = Math.pow(valor, 2); 
 				sumValorCuadrado += valorCuadrado;
 				if (rasgoClase.getRangoVariable() == true){
-					if ((maximo != null &&  ro.getValor() > maximo) || maximo == null)
-						maximo = ro.getValor();
-					if ((minimo != null &&  ro.getValor() < minimo) || minimo == null)
-						minimo = ro.getValor();
+					if ((maximo != null &&  valor > maximo) || maximo == null)
+						maximo = valor;
+					if ((minimo != null &&  valor < minimo) || minimo == null)
+						minimo = valor;
 				}
 			}
 			cantValores++;

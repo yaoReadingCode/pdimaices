@@ -62,19 +62,25 @@ public abstract class EvaluadorHistograma extends EvaluadorRasgo {
 		RasgoObjetoHistograma rasgoObjeto = new RasgoObjetoHistograma(this.getRasgoClase().getRasgo(),null, this.getRasgoClase().getClase());
 		rasgoObjeto.setHistogramas(histogramas);
 		double distanciaSum = 0;
+		int countHistogramas = 0;
 		for(Histograma h:histogramas){
 			Histograma hClase = this.getRasgoClase().getClase().getHistograma(h.getTipo());
-			double distancia = -1;
+			Double distancia = null;
 			if (hClase != null){
 				//double[] histogramaEcualizado = ObjetoUtil.ecualizarHistograma(objeto, hClase.getValores(),h.getValores(), h.getTipo());
 				distancia = ObjetoUtil.distanciaBhattacharya(h.getValores(), hClase.getValores());
 				//h.setValores(histogramaEcualizado);
 			}
-			distanciaSum += distancia;
+			if (distancia != null){
+				distanciaSum += distancia;
+				countHistogramas++;
+			}
 		}
-		if (histogramas.size() > 0){
-			double distanciaProm = distanciaSum / histogramas.size();
+		if (countHistogramas > 0){
+			double distanciaProm = distanciaSum / countHistogramas;
 			rasgoObjeto.setValor(distanciaProm);
+		}else{
+			rasgoObjeto.setValor(null);
 		}
 		return rasgoObjeto;
 	}

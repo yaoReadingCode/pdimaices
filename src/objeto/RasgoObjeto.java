@@ -93,6 +93,13 @@ public class RasgoObjeto implements Cloneable{
 		return false;
 	}
 	
+	/**
+	 * Retorna el valor para calcular el valor promedio del rasgo en la clase. Para la mayoria de los rasgos sera el valor del rasgo del objeto.
+	 */
+	public Double getValorRasgoClase() {
+		return getValor();
+	}
+	
 	public String toString(){
 		if (getRasgo() != null)
 			return getRasgo().getNombre() + ((this.getClase() != null)? " - " + this.getClase(): "") + " : " + numbertFormat.format(getValor());

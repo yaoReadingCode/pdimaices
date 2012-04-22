@@ -165,6 +165,7 @@ public class Clase implements HistogramaContainer{
 	public Double distanciaPromedio(Objeto objeto){
 		double acumulador = 0.0;
 		double cantidad = 0;
+		
 		for(RasgoClase r:this.getRasgos()){
 			if (r != null && r.getDeterminante()){
 				RasgoObjeto ro = objeto.getRasgo(r.getRasgo(),this);
@@ -178,7 +179,7 @@ public class Clase implements HistogramaContainer{
 					double distancia = 0.0;
 					distancia = Math.abs(media- ro.getValor());
 					if (r.getPeso() != null && r.getPeso() != 0){
-						distancia = distancia / r.getPeso();
+						distancia = distancia * Math.exp(r.getPeso());
 					}
 					acumulador += distancia;
 					cantidad++;
