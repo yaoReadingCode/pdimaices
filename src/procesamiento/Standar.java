@@ -40,6 +40,8 @@ public class Standar {
 	public Standar(){
 		//Hacer esto desde archivo
 		Norma nor= new Norma("Grado 1");
+		nor.addGrado("Humedad", 14.5f);
+		nor.addGrado("Peso Hectolitrico", -75);
 		nor.addGrado("Grano Dañado", 3);
 		nor.addGrado("Grano Partido", 2);
 		nor.addGrado("Materia Extraña", 1);
@@ -49,6 +51,8 @@ public class Standar {
 		normas.add(nor);
 		
 		Norma nor2= new Norma("Grado 2");
+		nor2.addGrado("Humedad", 14.5f);
+		nor2.addGrado("Peso Hectolitrico", -72);
 		nor2.addGrado("Grano Dañado", 5);
 		nor2.addGrado("Grano Partido", 3);
 		nor2.addGrado("Materia Extraña", 1.5f);
@@ -58,6 +62,8 @@ public class Standar {
 		normas.add(nor2);
 		
 		Norma nor3= new Norma("Grado 3");
+		nor3.addGrado("Humedad", 14.5f);
+		nor3.addGrado("Peso Hectolitrico", -69);		
 		nor3.addGrado("Grano Dañado", 8);
 		nor3.addGrado("Grano Partido", 5);
 		nor3.addGrado("Materia Extraña", 2f);
@@ -65,6 +71,8 @@ public class Standar {
 		nor3.setRebaja(98.5f); //Grado 1 = -1,5%
 		
 		//Es una copia de Grado 3
+		fueraStandard.addGrado("Humedad", 14.5f);
+		fueraStandard.addGrado("Peso Hectolitrico", -69);	
 		fueraStandard.addGrado("Grano Dañado", 8);
 		fueraStandard.addGrado("Grano Partido", 5);
 		fueraStandard.addGrado("Materia Extraña", 2f);
@@ -84,8 +92,7 @@ public class Standar {
 		Rebaja result;
 		for(Iterator<Norma> n = normas.iterator();n.hasNext();){
 			Norma norma = n.next();
-			if (norma.isNorma(valores)){
-				
+			if (norma.isNorma(valores)){		
 				result = new Rebaja(norma, norma.calcularDescuento(valores));
 				return result;
 			}

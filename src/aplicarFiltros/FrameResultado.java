@@ -10,12 +10,14 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import javax.swing.*;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -96,6 +98,13 @@ public class FrameResultado extends JFrame {
 				resultado.addValuePixel(c.getClase().getAgrupador(), cantidadPixeles);
 			
 			this.addPanel(container, c.getClase().getDescripcion());
+		}
+		try{
+			resultado.setHumedad(new Float(this.textField2.getText()));
+			resultado.setPesoHectolitrico(new Float(this.textField1.getText()) * -1);
+		}catch (Exception e) {
+			resultado.setHumedad(0f);
+			resultado.setPesoHectolitrico(0f);
 		}
 		resultado.actualizarDataSetCount();
 		resultado.actualizarDataSetPixel();
@@ -247,6 +256,27 @@ public class FrameResultado extends JFrame {
         // Get current tab
         //selectedPanel = pane.getSelectedIndex();
 	}
+
+	private void button1ActionPerformed(ActionEvent e) {
+		
+		int selectedPanel = tabbedPane1.getSelectedIndex();
+		Component panel = tabbedPane1.getComponentAt(selectedPanel);
+		Point scrollPos = null;
+
+		if (panel instanceof JScrollPane){
+			scrollPos = ((JScrollPane)panel).getViewport().getViewPosition();
+		}
+		
+		tabbedPane1.removeAll();
+		cantidadPaneles = 1;
+		this.setResultados();
+		
+		tabbedPane1.setSelectedIndex(selectedPanel);
+		panel = tabbedPane1.getComponentAt(selectedPanel);
+		if (panel instanceof JScrollPane){
+			((JScrollPane)panel).getViewport().setViewPosition(scrollPos);
+		}
+	}
 	
 
 	private void initComponents() {
@@ -259,6 +289,11 @@ public class FrameResultado extends JFrame {
 		scrollPaneRasgos = new JScrollPane();
 		tableRasgos = new JTable();
 		label1 = new JLabel();
+		label2 = new JLabel();
+		textField1 = new JTextField();
+		label3 = new JLabel();
+		textField2 = new JTextField();
+		button1 = new JButton();
 
 		//======== this ========
 		setBackground(new Color(5, 21, 64));
@@ -343,7 +378,7 @@ public class FrameResultado extends JFrame {
 					scrollPaneRasgos.setViewportView(tableRasgos);
 				}
 				panel2.add(scrollPaneRasgos);
-				scrollPaneRasgos.setBounds(5, 25, 235, 628);
+				scrollPaneRasgos.setBounds(5, 25, 235, 330);
 
 				//---- label1 ----
 				label1.setText("Nombre: ...");
@@ -351,6 +386,35 @@ public class FrameResultado extends JFrame {
 				label1.setFont(new Font("Tahoma", Font.BOLD, 12));
 				panel2.add(label1);
 				label1.setBounds(7, 5, 185, label1.getPreferredSize().height);
+
+				//---- label2 ----
+				label2.setText("Peso Hectolitrico:");
+				label2.setForeground(Color.white);
+				label2.setFont(new Font("Tahoma", Font.BOLD, 12));
+				panel2.add(label2);
+				label2.setBounds(5, 475, 115, label2.getPreferredSize().height);
+				panel2.add(textField1);
+				textField1.setBounds(125, 470, 115, textField1.getPreferredSize().height);
+
+				//---- label3 ----
+				label3.setText("Humedad:");
+				label3.setForeground(Color.white);
+				label3.setFont(new Font("Tahoma", Font.BOLD, 12));
+				panel2.add(label3);
+				label3.setBounds(5, 515, 115, 15);
+				panel2.add(textField2);
+				textField2.setBounds(125, 510, 115, 20);
+
+				//---- button1 ----
+				button1.setText("Recalcular");
+				button1.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						button1ActionPerformed(e);
+					}
+				});
+				panel2.add(button1);
+				button1.setBounds(5, 560, 235, button1.getPreferredSize().height);
 
 				{ // compute preferred size
 					Dimension preferredSize = new Dimension();
@@ -419,6 +483,11 @@ public class FrameResultado extends JFrame {
 	private JScrollPane scrollPaneRasgos;
 	private JTable tableRasgos;
 	private JLabel label1;
+	private JLabel label2;
+	private JTextField textField1;
+	private JLabel label3;
+	private JTextField textField2;
+	private JButton button1;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
 	private boolean tableIniciada=false;
 	public void addPanel(JPanel panel, String name){

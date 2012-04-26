@@ -5,6 +5,7 @@
 package aplicarFiltros;
 
 import java.awt.*;
+import java.awt.event.*;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -55,6 +56,23 @@ public class PanelResultado extends JPanel {
 	
 	private Clasificador clasificador;
 	
+	private Float pesoHectolitrico = 0f;
+	
+	private Float humedad = 0f;
+	
+	
+	public Float getPesoHectolitrico() {
+		return pesoHectolitrico;
+	}
+	public void setPesoHectolitrico(Float pesoHectolitrico) {
+		this.pesoHectolitrico = pesoHectolitrico;
+	}
+	public Float getHumedad() {
+		return humedad;
+	}
+	public void setHumedad(Float humedad) {
+		this.humedad = humedad;
+	}
 	public JFrame getContenedor() {
 		return contenedor;
 	}
@@ -125,6 +143,10 @@ public class PanelResultado extends JPanel {
 		}
 		model.addRow(new Object[]{"Clasificados Correctamente", clasificadosCorrectamente, formater.format(porcentajeCorrectamente)+"%"});
 		model.addRow(new Object[]{"Clasificados Incorrectamente", clasificadosIncorrectamente, formater.format(porcentajeIncorrectamente)+"%"});
+		
+		datasetCountPorc.put("Peso Hectolitrico",this.pesoHectolitrico);
+		datasetCountPorc.put("Humedad",this.humedad);
+
 		Rebaja rebaja = stan.getNorma(datasetCountPorc);
 		Norma norma = rebaja.getNorma();
 		this.resultado.setText(norma.getName());
@@ -198,6 +220,10 @@ public class PanelResultado extends JPanel {
 		
 	}
 
+	private void Recalcular(ActionEvent e) {
+		// TODO add your code here
+	}
+
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
 		// Generated using JFormDesigner Evaluation license - Sebastian Colavita
@@ -222,7 +248,7 @@ public class PanelResultado extends JPanel {
 		// JFormDesigner evaluation mark
 		setBorder(new javax.swing.border.CompoundBorder(
 			new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
-				"", javax.swing.border.TitledBorder.CENTER,
+				"JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
 				javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
 				java.awt.Color.red), getBorder())); addPropertyChangeListener(new java.beans.PropertyChangeListener(){public void propertyChange(java.beans.PropertyChangeEvent e){if("border".equals(e.getPropertyName()))throw new RuntimeException();}});
 
@@ -263,12 +289,12 @@ public class PanelResultado extends JPanel {
 					scrollPaneRasgos2.setViewportView(tableRasgos2);
 				}
 				panel1.add(scrollPaneRasgos2);
-				scrollPaneRasgos2.setBounds(10, 60, 590, 155);
+				scrollPaneRasgos2.setBounds(10, 60, 605, 155);
 
 				//---- button1 ----
 				button1.setIcon(new ImageIcon("\\\\img\\\\maiz_mon810_al.jpg"));
 				panel1.add(button1);
-				button1.setBounds(610, 25, 235, 190);
+				button1.setBounds(620, 60, 225, 155);
 				panel1.add(separator1);
 				separator1.setBounds(10, 5, 835, separator1.getPreferredSize().height);
 
@@ -283,20 +309,20 @@ public class PanelResultado extends JPanel {
 				resultado.setFont(new Font("Times New Roman", Font.BOLD, 13));
 				resultado.setForeground(Color.blue);
 				panel1.add(resultado);
-				resultado.setBounds(79, 33, 182, 19);
+				resultado.setBounds(79, 35, 171, 19);
 
 				//---- label2 ----
 				label2.setText(" Descuento:");
 				label2.setFont(new Font("Times New Roman", Font.BOLD, 13));
 				panel1.add(label2);
-				label2.setBounds(345, 34, 72, 19);
+				label2.setBounds(250, 35, 72, 19);
 
 				//---- Descuento ----
 				Descuento.setText("10%");
 				Descuento.setFont(new Font("Times New Roman", Font.BOLD, 13));
 				Descuento.setForeground(Color.blue);
 				panel1.add(Descuento);
-				Descuento.setBounds(419, 35, 140, Descuento.getPreferredSize().height);
+				Descuento.setBounds(320, 35, 60, Descuento.getPreferredSize().height);
 
 				{ // compute preferred size
 					Dimension preferredSize = new Dimension();
@@ -313,7 +339,7 @@ public class PanelResultado extends JPanel {
 				}
 			}
 			panel2.add(panel1);
-			panel1.setBounds(14, 10, 856, 225);
+			panel1.setBounds(15, 10, 856, 225);
 
 			//======== panel3 ========
 			{
@@ -379,7 +405,7 @@ public class PanelResultado extends JPanel {
 			}
 		}
 		add(panel2);
-		panel2.setBounds(12, 5, 883, 610);
+		panel2.setBounds(10, 5, 883, 610);
 
 		{ // compute preferred size
 			Dimension preferredSize = new Dimension();
