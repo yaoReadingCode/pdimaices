@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import procesamiento.descuento.AplicarDescuento;
+
 
 /**
  * The Class Norma.
@@ -18,7 +20,7 @@ public class Norma {
 	private Map<String,Float> grado = new HashMap<String, Float>();
 	
 	/** The descuento. */
-	private Map<String,Float> descuento = new HashMap<String, Float>();
+	private Map<String,AplicarDescuento> descuento = new HashMap<String, AplicarDescuento>();
 	
 	/** The rebaja. */
 	private float rebaja = 0.0f;
@@ -55,7 +57,7 @@ public class Norma {
 	 *
 	 * @return the descuento
 	 */
-	public Map<String, Float> getDescuento() {
+	public Map<String, AplicarDescuento> getDescuento() {
 		return descuento;
 	}
 
@@ -64,7 +66,7 @@ public class Norma {
 	 *
 	 * @param descuento the descuento
 	 */
-	public void setDescuento(Map<String, Float> descuento) {
+	public void setDescuento(Map<String, AplicarDescuento> descuento) {
 		this.descuento = descuento;
 	}
 
@@ -146,15 +148,18 @@ public class Norma {
 	@SuppressWarnings("unchecked")
 	public float calcularDescuento(Map<String, Float> valores) {
 		if (rebaja == 0.0f) {
-			float result = 98.5f;
+			float result = 98.5f;//Es 1.5% mas lo que esta fuera del standard
 			for (Iterator<Entry<String, Float>> iter = grado.entrySet()
 					.iterator(); iter.hasNext();) {
 				Map.Entry ent = (Map.Entry) iter.next();
 				Float valorRef = (Float) ent.getValue();
 				String tipo = (String) ent.getKey();
 				Float valor = valores.get(tipo);
+				AplicarDescuento des = this.descuento.get(tipo);
+				
+				
 				if ((valorRef != null) && (valor > valorRef)) {
-					result = result + ((valorRef - valor)); //Es 1.5% mas lo que esta fuera del standard
+					result = result - (des.eval(valorRef, valor)); 
 				}
 			}
 			return result;

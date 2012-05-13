@@ -1,9 +1,15 @@
 package procesamiento;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import procesamiento.descuento.AplicarDescuento;
+import procesamiento.descuento.AplicarDescuentoDirecto;
+import procesamiento.descuento.AplicarDescuentoPorcentual;
+
 
 /**
  * The Class Standar.
@@ -78,6 +84,29 @@ public class Standar {
 		fueraStandard.addGrado("Materia Extraña", 2f);
 		fueraStandard.addGrado("Semilla de Chamico", 2);
 		
+		Map<String, AplicarDescuento> descuento = new HashMap<String, AplicarDescuento>();
+		
+		AplicarDescuento descuentoCha = new AplicarDescuentoDirecto(1.3f);
+		descuento.put("Semilla de Chamico", descuentoCha);
+		
+		AplicarDescuento descuentoDaniados = new AplicarDescuentoPorcentual(1f);
+		descuento.put("Grano Dañado", descuentoDaniados);
+		
+		AplicarDescuento descuentoPartido = new AplicarDescuentoPorcentual(0.25f);
+		descuento.put("Grano Partido", descuentoPartido);
+		
+		AplicarDescuento descuentoExtr = new AplicarDescuentoPorcentual(1f);
+		descuento.put("Materia Extraña", descuentoExtr);
+		
+		AplicarDescuento descuentoHumedad = new AplicarDescuentoDirecto(1f);
+		descuento.put("Humedad", descuentoHumedad);
+		
+		AplicarDescuento descuentoHectolitrico = new AplicarDescuentoPorcentual(0.4f);
+		descuento.put("Peso Hectolitrico", descuentoHectolitrico);
+		
+		
+		fueraStandard.setDescuento(descuento);
+		
 		
 		normas.add(nor3);
 	}
@@ -93,7 +122,7 @@ public class Standar {
 		for(Iterator<Norma> n = normas.iterator();n.hasNext();){
 			Norma norma = n.next();
 			if (norma.isNorma(valores)){		
-				result = new Rebaja(norma, norma.calcularDescuento(valores));
+				result = new Rebaja(norma, norma.getRebaja());
 				return result;
 			}
 		}
