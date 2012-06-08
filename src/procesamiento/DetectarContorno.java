@@ -4,15 +4,11 @@ import java.awt.Color;
 import java.awt.image.WritableRaster;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.media.jai.JAI;
 import javax.media.jai.PlanarImage;
 import javax.media.jai.TiledImage;
-
-import com.sun.xml.internal.ws.api.pipe.NextAction;
 
 import objeto.Objeto;
 import objeto.ObjetoUtil;
