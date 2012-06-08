@@ -15,6 +15,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.media.jai.JAI;
@@ -32,6 +34,7 @@ import objeto.Clase;
 import objeto.ClaseObjeto;
 import objeto.Objeto;
 import objeto.ObjetoUtil;
+import procesamiento.clasificacion.ClaseComparator;
 import procesamiento.clasificacion.Clasificador;
 
 import com.sun.media.jai.widget.DisplayJAI;
@@ -45,7 +48,7 @@ public class ObjetoPanel extends JPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 	private Objeto objeto = null;
-	private Clasificador clasificador = null;
+	private Clasificador clasificador = null;  //  @jve:decl-index=0:
 	private FrameResultado contenedor = null;
 	private List<Clase> clases;
 	private Clase noSelect = new Clase("Modificar Clasificación","Modificar Clasificación");
@@ -82,7 +85,8 @@ public class ObjetoPanel extends JPanel {
 		claseModel.addElement(noSelect);
 		ClaseObjeto clase = objeto.getClases().get(0);
 		if (clasificador != null){
-			clases = clasificador.getClases();
+			clases = new ArrayList<Clase>(clasificador.getClases());
+			Collections.sort(clases, new ClaseComparator());
 			for(Clase c:clases){
 				if(!clase.getClase().equals(c))
 					claseModel.addElement(c);

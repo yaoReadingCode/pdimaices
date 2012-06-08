@@ -112,36 +112,38 @@ public class FrameResultado extends JFrame {
 	}
 	
 	public void changeObjeto(Objeto obj, Clase claseNew){
-		Set<EvaluadorClase> clases = getClasificador().getClasificacion().keySet();
-		for(EvaluadorClase c: clases){
-			if(obj.getClases().size() > 0 && c.getClase().equals(obj.getClases().get(0).getClase())){
-				getClasificador().getClasificacion().get(c).remove(obj);
-				obj.removeClase(c.getClase());
+		if (claseNew.getId() != null){
+			Set<EvaluadorClase> clases = getClasificador().getClasificacion().keySet();
+			for(EvaluadorClase c: clases){
+				if(obj.getClases().size() > 0 && c.getClase().equals(obj.getClases().get(0).getClase())){
+					getClasificador().getClasificacion().get(c).remove(obj);
+					obj.removeClase(c.getClase());
+				}
+				else if(c.getClase().equals(claseNew)){
+					getClasificador().getClasificacion().get(c).add(obj);
+					obj.addClase(c.getClase());
+				}
 			}
-			else if(c.getClase().equals(claseNew)){
-				getClasificador().getClasificacion().get(c).add(obj);
-				obj.addClase(c.getClase());
+			
+			getClasificador().modificarClasificacion(obj);
+			
+			int selectedPanel = tabbedPane1.getSelectedIndex();
+			Component panel = tabbedPane1.getComponentAt(selectedPanel);
+			Point scrollPos = null;
+			
+			if (panel instanceof JScrollPane){
+				scrollPos = ((JScrollPane)panel).getViewport().getViewPosition();
 			}
-		}
-		
-		getClasificador().modificarClasificacion(obj);
-		
-		int selectedPanel = tabbedPane1.getSelectedIndex();
-		Component panel = tabbedPane1.getComponentAt(selectedPanel);
-		Point scrollPos = null;
-
-		if (panel instanceof JScrollPane){
-			scrollPos = ((JScrollPane)panel).getViewport().getViewPosition();
-		}
-		
-		tabbedPane1.removeAll();
-		cantidadPaneles = 1;
-		this.setResultados();
-		
-		tabbedPane1.setSelectedIndex(selectedPanel);
-		panel = tabbedPane1.getComponentAt(selectedPanel);
-		if (panel instanceof JScrollPane){
-			((JScrollPane)panel).getViewport().setViewPosition(scrollPos);
+			
+			tabbedPane1.removeAll();
+			cantidadPaneles = 1;
+			this.setResultados();
+			
+			tabbedPane1.setSelectedIndex(selectedPanel);
+			panel = tabbedPane1.getComponentAt(selectedPanel);
+			if (panel instanceof JScrollPane){
+				((JScrollPane)panel).getViewport().setViewPosition(scrollPos);
+			}
 		}
 	}
 	
@@ -181,13 +183,15 @@ public class FrameResultado extends JFrame {
 			});
 		
 		DefaultTableModel model = (DefaultTableModel) tableRasgos.getModel();
-		Clase clase = ((ClaseObjeto)objeto.getClases().get(0)).getClase();
-		for(int i=0;i<objeto.getRasgos().size();i++){
-			RasgoObjeto rasgo = objeto.getRasgos().get(i);
-			if (rasgo.getRasgo().getVisible()){
-				if (rasgo.getClase() == null || rasgo.getClase().equals(clase))
-					model.addRow(new Object[]{rasgo.getRasgo().getDescripcion(),(rasgo.getValor()!= null) ? rasgo.getValor():""});
-				
+		if (objeto.getClases().size() > 0){
+			Clase clase = ((ClaseObjeto)objeto.getClases().get(0)).getClase();
+			for(int i=0;i<objeto.getRasgos().size();i++){
+				RasgoObjeto rasgo = objeto.getRasgos().get(i);
+				if (rasgo.getRasgo().getVisible()){
+					if (rasgo.getClase() == null || rasgo.getClase().equals(clase))
+						model.addRow(new Object[]{rasgo.getRasgo().getDescripcion(),(rasgo.getValor()!= null) ? rasgo.getValor():null});
+					
+				}
 			}
 		}
 		tableRasgos.setModel(model);
