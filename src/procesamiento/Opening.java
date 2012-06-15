@@ -2,7 +2,7 @@ package procesamiento;
 
 
 
-import jai.binarize.DisplayTwoSynchronizedImages;
+import jai.display.DisplayTwoSynchronizedImages;
 
 import java.awt.RenderingHints;
 import java.awt.image.renderable.ParameterBlock;

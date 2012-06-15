@@ -7,7 +7,7 @@ package procesamiento;
  * Rafael Santos (rafael.santos@lac.inpe.br)
  */
 
-import jai.binarize.DisplayTwoSynchronizedImages;
+import jai.display.DisplayTwoSynchronizedImages;
 
 import java.awt.RenderingHints;
 import java.awt.image.renderable.ParameterBlock;

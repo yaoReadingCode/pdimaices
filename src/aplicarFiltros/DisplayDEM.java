@@ -1,7 +1,7 @@
 package aplicarFiltros;
 
-import jai.histogram.DisplayHistogramApp;
-import jai.histogram.DisplayHistogramComponent;
+import jai.display.DisplayHistogramApp;
+import jai.display.DisplayHistogramComponent;
 
 import java.awt.BasicStroke;
 import java.awt.Color;

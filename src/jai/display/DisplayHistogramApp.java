@@ -1,4 +1,4 @@
-package jai.histogram;
+package jai.display;
 
 /*
  * Part of the Java Image Processing Cookbook, please see

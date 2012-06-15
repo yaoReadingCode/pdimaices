@@ -4,7 +4,7 @@
  * for information on usage and distribution.
  * Rafael Santos (rafael.santos@lac.inpe.br)
  */
-package jai.histogram;
+package jai.display;
 
 import java.awt.Color;
 import java.awt.Container;

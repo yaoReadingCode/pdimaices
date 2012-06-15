@@ -4,7 +4,7 @@
  * for information on usage and distribution.
  * Rafael Santos (rafael.santos@lac.inpe.br)
  */
-package jai.binarize;
+package jai.display;
 import java.awt.GridLayout;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
