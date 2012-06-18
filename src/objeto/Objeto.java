@@ -36,17 +36,6 @@ public class Objeto implements HistogramaContainer, Cloneable{
 	 */
 	private List<Pixel> puntos = new ArrayList<Pixel>();
 	
-//	/**
-//	 * Lista de triángulos que forman el objeto. Se calculan a partir de la
-//	 * lista de pixeles del objeto
-//	 */
-//	private List<Triangulo> triangulosContenedores = new ArrayList<Triangulo>();
-//	
-//	/**
-//	 * Cache que mantiene el triangulo que contuvo al ultimo pixel buscado 
-//	 */
-//	private Triangulo trianguloActual = null;
-
 	/**
 	 * Lista de pixeles del objeto
 	 */
@@ -109,6 +98,11 @@ public class Objeto implements HistogramaContainer, Cloneable{
 	 * Padre del objeto si proviene de una division
 	 */
 	private Objeto padre;
+	
+	/**
+	 * Flag que indica si el objeto fue seleccionado en la pantalla resultado para cambiar su clasificacion
+	 */
+	private boolean selected = false;
 	
 	public double[] getAcumuladorR() {
 		if (acumuladorR == null) this.colorPromedio();
@@ -1001,5 +995,13 @@ public class Objeto implements HistogramaContainer, Cloneable{
 
 	public void setMinimoRecContenedor(BoundingBox minimoRecContenedor) {
 		this.minimoRecContenedor = minimoRecContenedor;
+	}
+
+	public boolean isSelected() {
+		return selected;
+	}
+
+	public void setSelected(boolean selected) {
+		this.selected = selected;
 	}
 }

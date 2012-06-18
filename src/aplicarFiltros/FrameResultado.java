@@ -5,26 +5,26 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import javax.swing.*;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.ChangeEvent;
@@ -49,13 +49,17 @@ public class FrameResultado extends JFrame {
 	private JFrame frameHistograma = null;
 	private JPanel panelHistograma = null;
 	private Objeto objetoSeleccionado = null;
+	private PanelResultado panelResultado = null;
 	//private int selectedPanel = 0;
+	
+	
 	public void setResultados(){
 		Set<EvaluadorClase> clases = getClasificador().getClasificacion().keySet();
 		List<EvaluadorClase> lClases = new ArrayList<EvaluadorClase>(clases);
 		Collections.sort(lClases,new EvaluadorClaseComparator());
 		
 		PanelResultado resultado = new PanelResultado(getClasificador());
+		setPanelResultado(resultado);
 		resultado.setContenedor(this);
 		this.addPanel(resultado,"Resultado");
 		
@@ -63,40 +67,7 @@ public class FrameResultado extends JFrame {
 		int cantObjPage = 4;
 		
 		for(EvaluadorClase c: lClases){
-			List<Objeto> objetosClase = getClasificador().getClasificacion().get(c);
-			JPanel container = new JPanel();
-			GridBagLayout gbl = new GridBagLayout();
-			int cant = 0;
-			if (!c.getClase().isObjetoReferencia())
-				resultado.addValueCount(c.getClase().getAgrupador(), objetosClase.size());
-			container.setLayout(gbl);
-			//frame.getContentPane().add(new JScrollPane(container),BorderLayout.CENTER);
-			long cantidadPixeles = 0;
-			for (Objeto obj: objetosClase) {
-				// ObjetoPanel jp = new ObjetoPanel(o);
-				ObjetoPanel panel = new ObjetoPanel(obj,cant + 1, getClasificador(), this );
-				//panel.setSize(200, 100);
-				// JButton panel = new JButton("Boton");
-
-				// Place a component at cell location (1,1)
-				GridBagConstraints gbc = new GridBagConstraints();
-				gbc.gridy = cant / cantObjPage;// GridBagConstraints.RELATIVE;
-				gbc.gridx = cant % cantObjPage;// GridBagConstraints.RELATIVE;
-				gbc.gridheight = 1;
-				gbc.gridwidth = 1;
-				gbc.fill = GridBagConstraints.BOTH;
-
-				// Associate the gridbag constraints with the component
-				gbl.setConstraints(panel, gbc);
-
-				// Add the component to the container
-				container.add(panel);
-				cant++;
-				cantidadPixeles = cantidadPixeles + (obj.getPuntos().size() + obj.getContorno().size()); 
-			}
-			if (!c.getClase().isObjetoReferencia())
-				resultado.addValuePixel(c.getClase().getAgrupador(), cantidadPixeles);
-			
+			ClasePanel container = new ClasePanel(c.getClase(), this, getClasificador(), cantObjPage);
 			this.addPanel(container, c.getClase().getDescripcion());
 		}
 		try{
@@ -111,39 +82,58 @@ public class FrameResultado extends JFrame {
 		resultado.graficar();
 	}
 	
+	/**
+	 * Asigna a un objeto un a nueva clase
+	 * @param obj Objeto
+	 * @param claseNew Nueva Clase
+	 */
 	public void changeObjeto(Objeto obj, Clase claseNew){
+		Set<EvaluadorClase> clases = getClasificador().getClasificacion().keySet();
+		for(EvaluadorClase c: clases){
+			if(obj.getClases().size() > 0 && c.getClase().equals(obj.getClases().get(0).getClase())){
+				getClasificador().getClasificacion().get(c).remove(obj);
+				obj.removeClase(c.getClase());
+			}
+			else if(c.getClase().equals(claseNew)){
+				getClasificador().getClasificacion().get(c).add(obj);
+				obj.addClase(c.getClase());
+			}
+		}
+		getClasificador().modificarClasificacion(obj);
+	}
+	
+	/**
+	 * Asigna a una lista de objetos una nueva clase
+	 * @param objetos Lista de objetos
+	 * @param claseNew Nueva clase
+	 */
+	public void changeObjeto(List<Objeto> objetos, Clase claseNew){
 		if (claseNew.getId() != null){
-			Set<EvaluadorClase> clases = getClasificador().getClasificacion().keySet();
-			for(EvaluadorClase c: clases){
-				if(obj.getClases().size() > 0 && c.getClase().equals(obj.getClases().get(0).getClase())){
-					getClasificador().getClasificacion().get(c).remove(obj);
-					obj.removeClase(c.getClase());
-				}
-				else if(c.getClase().equals(claseNew)){
-					getClasificador().getClasificacion().get(c).add(obj);
-					obj.addClase(c.getClase());
-				}
+			for(Objeto obj:objetos){
+				changeObjeto(obj, claseNew);
+				obj.setSelected(false);				
 			}
-			
-			getClasificador().modificarClasificacion(obj);
-			
-			int selectedPanel = tabbedPane1.getSelectedIndex();
-			Component panel = tabbedPane1.getComponentAt(selectedPanel);
-			Point scrollPos = null;
-			
-			if (panel instanceof JScrollPane){
-				scrollPos = ((JScrollPane)panel).getViewport().getViewPosition();
-			}
-			
-			tabbedPane1.removeAll();
-			cantidadPaneles = 1;
-			this.setResultados();
-			
-			tabbedPane1.setSelectedIndex(selectedPanel);
-			panel = tabbedPane1.getComponentAt(selectedPanel);
-			if (panel instanceof JScrollPane){
-				((JScrollPane)panel).getViewport().setViewPosition(scrollPos);
-			}
+			actualizarPanel();
+		}
+	}
+	
+	public void actualizarPanel(){
+		int selectedPanel = tabbedPane1.getSelectedIndex();
+		Component panel = tabbedPane1.getComponentAt(selectedPanel);
+		Point scrollPos = null;
+		
+		if (panel instanceof JScrollPane){
+			scrollPos = ((JScrollPane)panel).getViewport().getViewPosition();
+		}
+		
+		tabbedPane1.removeAll();
+		cantidadPaneles = 1;
+		this.setResultados();
+		
+		tabbedPane1.setSelectedIndex(selectedPanel);
+		panel = tabbedPane1.getComponentAt(selectedPanel);
+		if (panel instanceof JScrollPane){
+			((JScrollPane)panel).getViewport().setViewPosition(scrollPos);
 		}
 	}
 	
@@ -515,6 +505,14 @@ public class FrameResultado extends JFrame {
 
 	public void setObjetoSeleccionado(Objeto objetoSeleccionado) {
 		this.objetoSeleccionado = objetoSeleccionado;
+	}
+
+	public PanelResultado getPanelResultado() {
+		return panelResultado;
+	}
+
+	public void setPanelResultado(PanelResultado panelResultado) {
+		this.panelResultado = panelResultado;
 	}
 	
 }

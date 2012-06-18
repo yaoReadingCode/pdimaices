@@ -20,6 +20,11 @@ public class EvaluadorClase {
 	
 	private Long id;
 	
+	@Override
+	public int hashCode() {
+		return toString().hashCode();
+	}
+
 	/**
 	 * Clase a evaluar
 	 */

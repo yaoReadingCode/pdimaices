@@ -11,30 +11,21 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import javax.media.jai.JAI;
 import javax.media.jai.PlanarImage;
 import javax.swing.BoxLayout;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 
-import objeto.Clase;
-import objeto.ClaseObjeto;
 import objeto.Objeto;
 import objeto.ObjetoUtil;
-import procesamiento.clasificacion.ClaseComparator;
 import procesamiento.clasificacion.Clasificador;
 
 import com.sun.media.jai.widget.DisplayJAI;
@@ -47,12 +38,10 @@ public class ObjetoPanel extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private Objeto objeto = null;
+	private Objeto objeto = null;  //  @jve:decl-index=0:
 	private Clasificador clasificador = null;  //  @jve:decl-index=0:
-	private FrameResultado contenedor = null;
-	private List<Clase> clases;
-	private Clase noSelect = new Clase("Modificar Clasificación","Modificar Clasificación");
- 	public ObjetoPanel(Objeto objeto, int nroPanel, Clasificador clasificador, FrameResultado contenedor) {
+	private ClasePanel contenedor = null;
+ 	public ObjetoPanel(Objeto objeto, int nroPanel, Clasificador clasificador, ClasePanel contenedor) {
 		initComponents();
 		this.contenedor = contenedor;
 		
@@ -68,35 +57,14 @@ public class ObjetoPanel extends JPanel {
 		
 		this.labelNombre.setText(objeto.getName());
 		this.labelNro.setText(Integer.toString(nroPanel));
-		/*
-		DefaultTableModel model = (DefaultTableModel) tableRasgos.getModel();
-		
-		for(int i=0;i<objeto.getRasgos().size();i++){
-			RasgoObjeto rasgo = objeto.getRasgos().get(i);
-			/*
-			model.setValueAt(rasgo.getRasgo().getNombre(), i, 0);
-			model.setValueAt(rasgo.getValor(), i, 1);
-			
-			model.addRow(new Object[]{rasgo.getRasgo().getNombre(),rasgo.getValor()});
-		}
-		*/
-		//---- comboBoxClase ----
-		DefaultComboBoxModel claseModel = new DefaultComboBoxModel();
-		claseModel.addElement(noSelect);
-		ClaseObjeto clase = objeto.getClases().get(0);
-		if (clasificador != null){
-			clases = new ArrayList<Clase>(clasificador.getClases());
-			Collections.sort(clases, new ClaseComparator());
-			for(Clase c:clases){
-				if(!clase.getClase().equals(c))
-					claseModel.addElement(c);
-			}
-		}
-
-		comboBoxClase.setModel(claseModel);
-
-		
-		//this.comboBoxClase.setSelectedItem(noSelect);
+		this.checkSelected.setSelected(this.objeto.isSelected());
+	}
+ 	
+	@Override
+	public void repaint() {
+		super.repaint();
+		if (checkSelected != null && getObjeto() != null)
+			checkSelected.setSelected(getObjeto().isSelected());
 	}
 
 	public Objeto getObjeto() {
@@ -114,33 +82,34 @@ public class ObjetoPanel extends JPanel {
 	public void setClasificador(Clasificador clasificador) {
 		this.clasificador = clasificador;
 	}
-
-	private void buttonGuardarActionPerformed(ActionEvent e) {
-		Clase clase = (Clase) this.comboBoxClase.getSelectedItem();
-		ClaseObjeto claseObjeto = this.objeto.getClases().get(0);
-		claseObjeto.setClase(clase);
-	}
-
+	
 	private void panelImagenMouseClicked(MouseEvent e) {
-		this.contenedor.presentarResultados(objeto);
+		this.contenedor.getContenedor().presentarResultados(objeto);
 	}
 
-	private void comboBoxClaseItemStateChanged(ItemEvent e) {
-	}
-
-	private void comboBoxClaseActionPerformed(ActionEvent e) {
-		this.contenedor.changeObjeto(objeto, ((Clase)this.comboBoxClase.getSelectedItem()));
+	/**
+	 * Cambia el valor selected del objeto
+	 * @param e
+	 */
+	private void toggleSelectItem(ActionEvent e) {
+		if (checkSelected.isSelected())
+			this.contenedor.agregarSeleccionado(getObjeto());
+		else
+			this.contenedor.eliminarSeleccionado(getObjeto());
 	}
 
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
 		// Generated using JFormDesigner Evaluation license - Sebastian Colavita
-		panel1 = new JPanel();
+		panelTop = new JPanel();
+		panelLabel = new JPanel();
+		panelCheckBox = new JPanel();
 		labelNro = new JLabel();
 		labelNombre = new JLabel();
 		panelImagen = new JPanel();
-		panel2 = new JPanel();
-		comboBoxClase = new JComboBox();
+		panelCenter = new JPanel();
+		//comboBoxClase = new JComboBox();
+		checkSelected = new JCheckBox();
 
 		//======== this ========
 		setBorder(new LineBorder(new Color(153, 204, 255)));
@@ -156,18 +125,31 @@ public class ObjetoPanel extends JPanel {
 
 		//======== panel1 ========
 		{
-			panel1.setLayout(new FlowLayout(FlowLayout.LEFT));
+			panelTop.setLayout(new BoxLayout(panelTop, BoxLayout.X_AXIS));
+			panelLabel.setLayout(new FlowLayout(FlowLayout.LEFT));
+			panelCheckBox.setLayout(new FlowLayout(FlowLayout.RIGHT));
+			panelTop.add(panelLabel);
+			panelTop.add(panelCheckBox);
 
 			//---- labelNro ----
 			labelNro.setText("1");
-			panel1.add(labelNro);
+			panelLabel.add(labelNro);
 
 			//---- labelNombre ----
 			labelNombre.setText("Nombre");
 			labelNombre.setFont(labelNombre.getFont().deriveFont(labelNombre.getFont().getStyle() | Font.BOLD));
-			panel1.add(labelNombre);
+			panelLabel.add(labelNombre);
+			
+			checkSelected.setToolTipText("Seleccionar");
+			checkSelected.addActionListener(new ActionListener(){
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					toggleSelectItem(e);
+				}
+			});
+			panelCheckBox.add(checkSelected);
 		}
-		add(panel1, BorderLayout.NORTH);
+		add(panelTop, BorderLayout.NORTH);
 
 		//======== panelImagen ========
 		{
@@ -184,34 +166,21 @@ public class ObjetoPanel extends JPanel {
 
 		//======== panel2 ========
 		{
-			panel2.setLayout(new FlowLayout(FlowLayout.LEFT));
-
-			//---- comboBoxClase ----
-			comboBoxClase.addItemListener(new ItemListener() {
-				@Override
-				public void itemStateChanged(ItemEvent e) {
-					comboBoxClaseItemStateChanged(e);
-				}
-			});
-			comboBoxClase.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					comboBoxClaseActionPerformed(e);
-				}
-			});
-			panel2.add(comboBoxClase);
+			panelCenter.setLayout(new FlowLayout(FlowLayout.LEFT));
 		}
-		add(panel2, BorderLayout.SOUTH);
+		add(panelCenter, BorderLayout.SOUTH);
 		// JFormDesigner - End of component initialization  //GEN-END:initComponents
 	}
 
 	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
 	// Generated using JFormDesigner Evaluation license - Sebastian Colavita
-	private JPanel panel1;
+	private JPanel panelTop;
+	private JPanel panelLabel;
+	private JPanel panelCheckBox;
 	private JLabel labelNro;
 	private JLabel labelNombre;
 	private JPanel panelImagen;
-	private JPanel panel2;
-	private JComboBox comboBoxClase;
+	private JPanel panelCenter;
+	private JCheckBox checkSelected;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
 }
