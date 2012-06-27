@@ -68,6 +68,12 @@ public class EliminarFondo extends AbstractImageCommand {
 
 									float[] hsv = RgbHsv.RGBtoHSV(r, g, b);
 									if (rangeObjeto == null || rangeObjeto.isNulo()){
+										//Una pelotudes probar bien
+										/*if((r < 60)&&(g+b > 230)){
+											int[] newPixel = { 0, 0, 0 };
+											wr.setPixel(x, y, newPixel);
+											
+										}*/
 										if (rangeFondo.isEnRango(hsv[0], hsv[1], hsv[2])) {
 
 											int[] newPixel = { 0, 0, 0 };

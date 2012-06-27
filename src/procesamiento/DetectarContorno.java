@@ -746,8 +746,8 @@ public class DetectarContorno extends AbstractImageCommand {
 			peso--;
 		}
 		Collections.sort(posibles, new PixelComparator());
-		if (posibles.size() == 0)
-			System.out.println("No hay posibles");
+		/*if (posibles.size() == 0)
+			System.out.println("No hay posibles");*/
 		return posibles;
 	}
 

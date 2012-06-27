@@ -47,12 +47,12 @@ public class PanelResultado extends JPanel {
 	private DefaultPieDataset datasetCount = new DefaultPieDataset();
 	private DefaultPieDataset datasetPixel = new DefaultPieDataset();
 	
-	private Map<String,Integer> datasetCountModel = new HashMap<String, Integer>();  
+	private Map<String,Long> datasetCountModel = new HashMap<String, Long>();  
 	private Map<String,Float> datasetCountPorc = new HashMap<String, Float>(); //  @jve:decl-index=0:
 	
 	private Map<String,Long> datasetPixelModel = new HashMap<String, Long>();
 	
-	private Integer totalObjetos = 0;  //  @jve:decl-index=0:
+	private long totalObjetos = 0;  //  @jve:decl-index=0:
 	
 	private Clasificador clasificador;
 	
@@ -96,10 +96,10 @@ public class PanelResultado extends JPanel {
 		datasetCount.clear();
 		datasetPixel.clear();
 	}
-	public void addValueCount(String nombre, int cantidad){
-		Integer count = cantidad;
+	public void addValueCount(String nombre, long cantidad){
+		long count = cantidad;
 		if (datasetCountModel.containsKey(nombre)){
-			Integer cantidaParcial = datasetCountModel.get(nombre);
+			Long cantidaParcial = datasetCountModel.get(nombre);
 			count += cantidaParcial;
 		}
 		totalObjetos += cantidad;
@@ -123,7 +123,7 @@ public class PanelResultado extends JPanel {
 		DecimalFormat formater = new DecimalFormat("0.00");
 
 		for(String agrupador: datasetCountModel.keySet()){
-			Integer cantidad = datasetCountModel.get(agrupador);
+			Long cantidad = datasetCountModel.get(agrupador);
 			Double porcentaje = 0.0;
 			if (totalObjetos != 0)
 				porcentaje = (cantidad * 100)/ (double) totalObjetos;
@@ -134,7 +134,7 @@ public class PanelResultado extends JPanel {
 		}
 		
 		int clasificadosIncorrectamente = getClasificador().getClasificadosIncorrectamente().size();
-		int clasificadosCorrectamente = totalObjetos - clasificadosIncorrectamente;
+		long clasificadosCorrectamente = totalObjetos - clasificadosIncorrectamente;
 		Double porcentajeCorrectamente = 0.0;
 		Double porcentajeIncorrectamente = 0.0;
 		if (totalObjetos != 0){
