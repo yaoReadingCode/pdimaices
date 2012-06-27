@@ -168,15 +168,28 @@
                                                                                              
                                                                                       
                                                                                       
+                                                            
+                                                                        
+                                                                         
+                                                                
+                                                             
+                                                                             
+                                                                                     
+                                                                                       
+                                                                                
+                                                                                  
+                                                                                  
+                                                                                     
 1,AREA,Area del objeto,procesamiento.clasificacion.Area,true
 2,ASPECT RADIO,Aspect Radio,procesamiento.clasificacion.AspectRatio,true
 3,CIRCULARIDAD,Circularidad,procesamiento.clasificacion.Circularidad,true
-4,CURVATURA,Curvatura,procesamiento.clasificacion.Curvatura,true
+4,CURVATURA,Curvatura,procesamiento.clasificacion.Curvatura,false
 5,DIAMETRO,Diametro,procesamiento.clasificacion.Diametro,true
-6,SUMA_ANGULOS,Sumatoria Angulos,procesamiento.clasificacion.SumaAngulos,true
+6,SUMA_ANGULOS,Sumatoria Angulos,procesamiento.clasificacion.SumaAngulos,false
 7,HISTOGRAMA_RGB,Histogramas,procesamiento.clasificacion.EvaluadorHistogramaRGB,false
 8,HISTOGRAMA_GRIS,Histogramas,procesamiento.clasificacion.EvaluadorHistogramaGris,false
 9,HISTOGRAMA_H,Histogramas,procesamiento.clasificacion.EvaluadorHistogramaH,true
 10,HISTOGRAMA_S,Histogramas,procesamiento.clasificacion.EvaluadorHistogramaS,false
 11,HISTOGRAMA_V,Histogramas,procesamiento.clasificacion.EvaluadorHistogramaV,false
 12,HISTOGRAMA_HSV,Histogramas,procesamiento.clasificacion.EvaluadorHistogramaHSV,true
+13,PUNTOS_DIVISION,Puntos de división,procesamiento.clasificacion.CantidadPuntosDivision,false
