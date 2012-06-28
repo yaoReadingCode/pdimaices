@@ -1,0 +1,4 @@
+1,Grado 1,101.0,false,MAIZ
+2,Grado 2,100.0,false,MAIZ
+3,Grado 3,98.5,false,MAIZ
+4,Fuera Estándar,98.5,true,MAIZ
