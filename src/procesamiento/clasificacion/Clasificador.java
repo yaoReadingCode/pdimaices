@@ -15,6 +15,11 @@ import objeto.RasgoObjeto;
 import dataAcces.ObjectDao;
 
 public class Clasificador {
+	/**
+	 * Por el ahora es uno solo MAIZ
+	 */
+	private static final String NOMBRE_SISTEMA = "MAIZ";
+
 	public static String CLASE_INDETERMINADO = "INDETERMINADO";
 
 	private Map<EvaluadorClase, List<Objeto>> clasificacion = new HashMap<EvaluadorClase, List<Objeto>>();
@@ -33,7 +38,7 @@ public class Clasificador {
 	
 	public Clasificador() {
 		super();
-		configuracion = ObjectDao.getInstance().findConfiguracion("MAICES");
+		configuracion = ObjectDao.getInstance().findConfiguracion(NOMBRE_SISTEMA);
 	}
 
 	public Map<EvaluadorClase, List<Objeto>> getClasificacion() {
@@ -152,6 +157,8 @@ public class Clasificador {
 		Double sumValorCuadrado = 0.0;
 		Double maximo = rasgoClase.getMaximo();
 		Double minimo = rasgoClase.getMinimo();
+		Double minimoReal = rasgoClase.getMinimoReal();
+		Double maximoReal = rasgoClase.getMaximoReal();
 		Integer cantValores = 0;
 		
 		if(rasgoClase.getSumValor() != null)
@@ -174,6 +181,12 @@ public class Clasificador {
 					if ((minimo != null &&  valor < minimo) || minimo == null)
 						minimo = valor;
 				}
+				if (ro.getValor() !=  null){
+					if ((minimoReal != null &&  ro.getValor() < minimoReal) || minimoReal == null)
+						minimoReal = ro.getValor();
+					if ((maximoReal != null &&  ro.getValor() > maximoReal) || maximoReal == null)
+						maximoReal = ro.getValor();
+				}
 			}
 			cantValores++;
 		}
@@ -183,6 +196,8 @@ public class Clasificador {
 		rasgoClase.setCantValores(cantValores);
 		rasgoClase.setMinimo(minimo);
 		rasgoClase.setMaximo(maximo);
+		rasgoClase.setMinimoReal(minimoReal);
+		rasgoClase.setMaximoReal(maximoReal);
 		
 		ObjectDao.getInstance().save(rasgoClase);		
 	}

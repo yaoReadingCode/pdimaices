@@ -41,9 +41,23 @@ public class RasgoClase {
 	private Double maximo;
 
 	/**
+	 * Valor máximo real del rasgo para los objetos de la clase.
+	 * El atributo máximo puede no ser el máximo real de los objetos clasificados, esto depende de si
+	 * el rango es variable o no y del valor por defecto inicial para el valor minimo. 
+	 */
+	private Double maximoReal;
+
+	/**
 	 * Valor mínimo del rasgo para los objetos de la clase.
 	 */
 	private Double minimo;
+	
+	/**
+	 * Valor mínimo real del rasgo para los objetos de la clase.
+	 * El atributo minimo puede no ser el minimo real de los objetos clasificados, esto depende de si
+	 * el rango es variable o no y del valor por defecto inicial para el valor minimo. 
+	 */
+	private Double minimoReal;
 	
 	/**
 	 * Determina el peso de un rasgo para determinar la pertenencia o no de un objeto a una clase.<br>
@@ -125,6 +139,14 @@ public class RasgoClase {
 	public void setMaximo(Double maximo) {
 		this.maximo = maximo;
 	}
+	
+	public Double getMaximoReal() {
+		return maximoReal;
+	}
+
+	public void setMaximoReal(Double maximoReal) {
+		this.maximoReal = maximoReal;
+	}
 
 	public Double getMinimo() {
 		return minimo;
@@ -132,6 +154,14 @@ public class RasgoClase {
 
 	public void setMinimo(Double minimo) {
 		this.minimo = minimo;
+	}
+	
+	public Double getMinimoReal() {
+		return minimoReal;
+	}
+
+	public void setMinimoReal(Double minimoReal) {
+		this.minimoReal = minimoReal;
 	}
 
 	public Double getPeso() {

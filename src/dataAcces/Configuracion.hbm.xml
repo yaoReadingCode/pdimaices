@@ -6,7 +6,7 @@
 	<id name="id" column="uid" type="long">
 		<generator class="increment"/>
 	</id>
-	<property name="nombreSistema" type="string" column="nombre_sistema" not-null="true"/>
+	<property name="nombreSistema" type="string" column="id_sistema" not-null="true"/>
 	<property name="fondoHMin" type="float" column="fondo_h_min"/>
 	<property name="fondoHMax" type="float" column="fondo_h_max"/>
 	<property name="fondoSMin" type="float" column="fondo_s_min"/>	

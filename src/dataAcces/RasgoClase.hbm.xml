@@ -38,7 +38,11 @@
 		
 		<property name="maximo" type="double" column="maximo"/>
 		
+		<property name="maximoReal" type="double" column="maximo_real"/>
+		
 		<property name="minimo" type="double" column="minimo"/>
+		
+		<property name="minimoReal" type="double" column="minimo_real"/>
 		
 		<property name="rangoVariable" type="boolean" column="rango_variable"/>
 							

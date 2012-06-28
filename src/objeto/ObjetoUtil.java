@@ -67,44 +67,52 @@ public class ObjetoUtil {
 			*/
 			
 			o.setPathImage("image\\" + o.getName() + "_" + System.currentTimeMillis() + ".tif");
-
 			PlanarImage image = ti;
 			if (pixelPunta != null){
-				Pixel p = pixelPunta.getCoordenadasCartesianas();
-				Pixel m = medio.getCoordenadasCartesianas();
-				p.restar(m);
-				Double angulo = p.getAnguloPolar();
-				if (angulo != null){
-					float angle= (float) Math.toRadians(angulo + ORIENTACION_ABAJO);
-					angle = (float)((int)(angle * 100000))/100000.0f;
-					float centerX= widthRotateImage / 2f;
-					float centerY= heightRotateImage / 2f;
-					double r = fondo.getRed();
-					double g = fondo.getGreen();
-					double b = fondo.getBlue();
-					double[] backgroundColor = {r, g, b};
- 					ParameterBlock pb= new ParameterBlock();
-					pb.addSource(ti);
-					pb.add(centerX);
-					pb.add(centerY);
-					pb.add(angle);
-					pb.add(new InterpolationBilinear());
-					pb.add(backgroundColor);
-					RenderingHints hints = JAI.getDefaultInstance().getRenderingHints();
-					image =JAI.create("rotate",pb,hints);
-					
-					ParameterBlock pbCrop= new ParameterBlock();
-					pbCrop.addSource(image);
-					pbCrop.add(new Float(centerX - width / 2));
-					pbCrop.add(new Float(centerY - height / 2));
-					pbCrop.add(new Float(width));
-					pbCrop.add(new Float(height));
-					image =JAI.create("crop",pbCrop,hints);
-					
-					JAI.create("filestore", image, o.getPathImage(), "TIFF");
+				
+					Pixel p = pixelPunta.getCoordenadasCartesianas();
+					Pixel m = medio.getCoordenadasCartesianas();
+					p.restar(m);
+					Double angulo = p.getAnguloPolar();
+					if (angulo != null){
+						try{
+							float angle= (float) Math.toRadians(angulo + ORIENTACION_ABAJO);
+							angle = (float)((int)(angle * 100000))/100000.0f;
+							float centerX= widthRotateImage / 2f;
+							float centerY= heightRotateImage / 2f;
+							double r = fondo.getRed();
+							double g = fondo.getGreen();
+							double b = fondo.getBlue();
+							double[] backgroundColor = {r, g, b};
+		 					ParameterBlock pb= new ParameterBlock();
+							pb.addSource(ti);
+							pb.add(centerX);
+							pb.add(centerY);
+							pb.add(angle);
+							pb.add(new InterpolationBilinear());
+							pb.add(backgroundColor);
+							RenderingHints hints = JAI.getDefaultInstance().getRenderingHints();
+							image =JAI.create("rotate",pb,hints);
+							
+							ParameterBlock pbCrop= new ParameterBlock();
+							pbCrop.addSource(image);
+							pbCrop.add(new Float(centerX - width / 2));
+							pbCrop.add(new Float(centerY - height / 2));
+							pbCrop.add(new Float(width));
+							pbCrop.add(new Float(height));
+							image =JAI.create("crop",pbCrop,hints);
+							
+							JAI.create("filestore", image, o.getPathImage(), "TIFF");
+						}
+						catch (Exception e) {
+							e.printStackTrace();
+							JAI.create("filestore", ti, o.getPathImage(), "TIFF");
+						}
+
 					return;
 				}
 			}
+				
 			JAI.create("filestore", ti, o.getPathImage(), "TIFF");
 		}
 

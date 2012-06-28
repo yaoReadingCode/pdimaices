@@ -1,5 +1,7 @@
 package procesamiento.descuento;
 
+import aplicarFiltros.Agrupador;
+
 public class AplicarDescuentoPorcentual extends AplicarDescuento {
 
 	private float descuneto;
@@ -10,8 +12,8 @@ public class AplicarDescuentoPorcentual extends AplicarDescuento {
 	}
 	
 	
-	public float eval(float valorEsperado, float valorObtenido) {
-		return (valorObtenido - valorEsperado) * descuneto;
+	public float eval(EvaluadorRubro valorEsperado, Agrupador valorObtenido) {
+		return (valorObtenido.getPorcentaje() - valorEsperado.getValor()) * descuneto;
 	}
 
 }

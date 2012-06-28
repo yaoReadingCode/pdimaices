@@ -47,12 +47,11 @@ public class PanelResultado extends JPanel {
 	private DefaultPieDataset datasetCount = new DefaultPieDataset();
 	private DefaultPieDataset datasetPixel = new DefaultPieDataset();
 	
-	private Map<String,Long> datasetCountModel = new HashMap<String, Long>();  
 	private Map<String,Float> datasetCountPorc = new HashMap<String, Float>(); //  @jve:decl-index=0:
 	
-	private Map<String,Long> datasetPixelModel = new HashMap<String, Long>();
+	private Map<String,Agrupador> datasetPixelModel = new HashMap<String, Agrupador>();
 	
-	private long totalObjetos = 0;  //  @jve:decl-index=0:
+	private long totalPixeles = 0;  //  @jve:decl-index=0:
 	
 	private Clasificador clasificador;
 	
@@ -90,31 +89,29 @@ public class PanelResultado extends JPanel {
 	private JFrame contenedor;
 
 	public void initDataSetModels(){
-		totalObjetos = 0;
-		datasetCountModel.clear();
+		totalPixeles = 0;
 		datasetPixelModel.clear();
 		datasetCount.clear();
 		datasetPixel.clear();
 	}
-	public void addValueCount(String nombre, long cantidad){
-		long count = cantidad;
-		if (datasetCountModel.containsKey(nombre)){
-			Long cantidaParcial = datasetCountModel.get(nombre);
-			count += cantidaParcial;
-		}
-		totalObjetos += cantidad;
-		datasetCountModel.put(nombre, count);
-
 		
-	}
-	
-	public void addValuePixel(String nombre, Long cantidadPixeles){
-		Long count = cantidadPixeles;
+	public void addValuePixel(String nombre, Long cantidadPixeles, Integer cantidadObjetos){
+		Agrupador cantidaParcial = null;
 		if (datasetPixelModel.containsKey(nombre)){
-			Long cantidaParcial = datasetPixelModel.get(nombre);
-			count += cantidaParcial;
+			cantidaParcial = datasetPixelModel.get(nombre);
+			Long area = cantidaParcial.getArea() + cantidadPixeles;
+			cantidaParcial.setArea(area);
+			int cantidad = cantidaParcial.getCantidad() + cantidadObjetos;
+			cantidaParcial.setCantidad(cantidad);
 		}
-		datasetPixelModel.put(nombre, count);
+		else{
+			cantidaParcial = new Agrupador();
+			cantidaParcial.setNombre(nombre);
+			cantidaParcial.setArea(cantidadPixeles);
+			cantidaParcial.setCantidad(cantidadObjetos);
+		}
+		datasetPixelModel.put(nombre, cantidaParcial);
+		totalPixeles += cantidadPixeles;
 	}
 	
 	public void actualizarDataSetCount(){
@@ -122,32 +119,36 @@ public class PanelResultado extends JPanel {
 		DefaultTableModel model = (DefaultTableModel) tableRasgos2.getModel();
 		DecimalFormat formater = new DecimalFormat("0.00");
 
-		for(String agrupador: datasetCountModel.keySet()){
-			Long cantidad = datasetCountModel.get(agrupador);
-			Double porcentaje = 0.0;
-			if (totalObjetos != 0)
-				porcentaje = (cantidad * 100)/ (double) totalObjetos;
-			model.addRow(new Object[]{agrupador, cantidad, formater.format(porcentaje)+"%"});
+		for(String agrupador: datasetPixelModel.keySet()){
+			Agrupador agrupadorClase = datasetPixelModel.get(agrupador);
+			Float porcentaje = 0.0f;
+			if (totalPixeles != 0)
+				porcentaje = (agrupadorClase.getArea() * 100f)/ totalPixeles;
+			agrupadorClase.setPorcentaje(porcentaje);
+			model.addRow(new Object[]{agrupador, agrupadorClase.getCantidad(), formater.format(porcentaje)+"%"});
 			datasetCountPorc.put(agrupador, porcentaje.floatValue());
 			//Grafico
-			datasetCount.setValue( agrupador,cantidad);
+			datasetCount.setValue( agrupador,agrupadorClase.getArea());
 		}
 		
 		int clasificadosIncorrectamente = getClasificador().getClasificadosIncorrectamente().size();
-		long clasificadosCorrectamente = totalObjetos - clasificadosIncorrectamente;
+		int cantidadObjetos = getClasificador().countObject() - 1; // Cantidad de objetos menos el objeto referencia
+		long clasificadosCorrectamente = cantidadObjetos - clasificadosIncorrectamente;
 		Double porcentajeCorrectamente = 0.0;
 		Double porcentajeIncorrectamente = 0.0;
-		if (totalObjetos != 0){
-			porcentajeCorrectamente = (clasificadosCorrectamente * 100)/ (double) totalObjetos;
-			porcentajeIncorrectamente = (clasificadosIncorrectamente * 100)/ (double) totalObjetos;
+		if (cantidadObjetos != 0){
+			porcentajeCorrectamente = (clasificadosCorrectamente * 100)/ (double) cantidadObjetos;
+			porcentajeIncorrectamente = (clasificadosIncorrectamente * 100)/ (double) cantidadObjetos;
 		}
+		
 		model.addRow(new Object[]{"Clasificados Correctamente", clasificadosCorrectamente, formater.format(porcentajeCorrectamente)+"%"});
 		model.addRow(new Object[]{"Clasificados Incorrectamente", clasificadosIncorrectamente, formater.format(porcentajeIncorrectamente)+"%"});
 		
-		datasetCountPorc.put("Peso Hectolitrico",this.pesoHectolitrico);
-		datasetCountPorc.put("Humedad",this.humedad);
+		
+		datasetPixelModel.put("Peso Hectolitrico",new Agrupador("Peso Hectolitrico", 0, 0l,this.pesoHectolitrico, false));
+		datasetPixelModel.put("Humedad",new Agrupador("Humedad", 0, 0l,this.humedad, false));
 
-		Rebaja rebaja = stan.getNorma(datasetCountPorc);
+		Rebaja rebaja = stan.getNorma(datasetPixelModel);
 		Norma norma = rebaja.getNorma();
 		this.resultado.setText(norma.getName());
 		this.Descuento.setText(rebaja.getDescuento()+"%");
@@ -155,36 +156,17 @@ public class PanelResultado extends JPanel {
 
 	public void actualizarDataSetPixel(){
 		for(String agrupador: datasetPixelModel.keySet()){
-			Long cantidad = datasetPixelModel.get(agrupador);
-			//Grafico
-			datasetPixel.setValue( agrupador,cantidad);
+			Agrupador agrupadorClase = datasetPixelModel.get(agrupador);
+			if (agrupadorClase.isGraficar())
+				//Grafico
+				datasetPixel.setValue( agrupador,agrupadorClase.getArea());
 		}
 	}
 	
 	public void graficar(){
-		//Grafico de cantidad de semillas
-		JFreeChart chart = ChartFactory.createPieChart("Clasificación Cantidad de Semillas", datasetCount, true,  true,
-	            false); 
-		chart.setBackgroundPaint(Color.ORANGE);
-	    PiePlot plot = (PiePlot)chart.getPlot();
-	    //Color de las etiquetas
-	    plot.setLabelBackgroundPaint(Color.ORANGE);
-	    //Color de el fondo del gráfico
-	    plot.setBackgroundPaint(Color.WHITE);
-	    plot.setNoDataMessage("No hay data");
-		
-	    
-	    ChartPanel panel = new ChartPanel(chart);
-	    final JPanel content = new JPanel(new BorderLayout());
-	    content.add(panel);
-	    //panel.setPreferredSize(new java.awt.Dimension(500, 250));
-	    panel.setSize(new java.awt.Dimension(500, 250));
-	    this.setPanelGrafico(content);
-	    panelGrafico.setPreferredSize(new java.awt.Dimension(500, 180));
-	    
-	    
+		   
 	  //Grafico de cantidad de Pixeles
-		JFreeChart chartPixel = ChartFactory.createPieChart("Clasificación por Volumen", datasetPixel, true,  true,
+		JFreeChart chartPixel = ChartFactory.createPieChart("Clasificación", datasetPixel, true,  true,
 	            false); 
 		chartPixel.setBackgroundPaint(Color.ORANGE);
 	    PiePlot plotPixel = (PiePlot)chartPixel.getPlot();
@@ -206,22 +188,11 @@ public class PanelResultado extends JPanel {
 		contentPixel.setVisible(true);
 		this.panelGraficoPixel.setVisible(true);
 	}
-	public void setPanelGrafico(Component arg0){
-		this.panelGrafico.setLayout(new BorderLayout());
-		this.panelGrafico.add(arg0);
-		arg0.setVisible(true);
-		this.panelGrafico.setVisible(true);
-	}
-	
-	
+		
 	public PanelResultado(Clasificador clasificador) {
 		this.clasificador = clasificador;
 		initComponents();
 		
-	}
-
-	private void Recalcular(ActionEvent e) {
-		// TODO add your code here
 	}
 
 	private void initComponents() {
@@ -239,8 +210,6 @@ public class PanelResultado extends JPanel {
 		label2 = new JLabel();
 		Descuento = new JLabel();
 		panel3 = new JPanel();
-		panelGrafico = new JPanel();
-		separator2 = new JSeparator();
 		panelGraficoPixel = new JPanel();
 
 		//======== this ========
@@ -272,7 +241,7 @@ public class PanelResultado extends JPanel {
 						new Object[][] {
 						},
 						new String[] {
-							"Clasificaciones", "Cantidad de Objetos", "Porcentaje"
+							"Clasificaciones", "Cantidad", "Porcentaje Area"
 						}
 					) {
 						Class<?>[] columnTypes = new Class<?>[] {
@@ -346,27 +315,6 @@ public class PanelResultado extends JPanel {
 				panel3.setBorder(new TitledBorder("Gr\u00e1ficos"));
 				panel3.setLayout(new BoxLayout(panel3, BoxLayout.Y_AXIS));
 
-				//======== panelGrafico ========
-				{
-					panelGrafico.setLayout(null);
-
-					{ // compute preferred size
-						Dimension preferredSize = new Dimension();
-						for(int i = 0; i < panelGrafico.getComponentCount(); i++) {
-							Rectangle bounds = panelGrafico.getComponent(i).getBounds();
-							preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
-							preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
-						}
-						Insets insets = panelGrafico.getInsets();
-						preferredSize.width += insets.right;
-						preferredSize.height += insets.bottom;
-						panelGrafico.setMinimumSize(preferredSize);
-						panelGrafico.setPreferredSize(preferredSize);
-					}
-				}
-				panel3.add(panelGrafico);
-				panel3.add(separator2);
-
 				//======== panelGraficoPixel ========
 				{
 					panelGraficoPixel.setLayout(null);
@@ -438,60 +386,9 @@ public class PanelResultado extends JPanel {
 	private JLabel label2;
 	private JLabel Descuento;
 	private JPanel panel3;
-	private JPanel panelGrafico;
-	private JSeparator separator2;
 	private JPanel panelGraficoPixel;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
 	
-	private JPanel panel = new JPanel();
 	//private JPanel panelGraficoPixel = new JPanel();
-	
-	private void agregarGrafico(){
-		//======== panel3 ========
-			
-			panel.setLayout(null);
-			//panel.add(separator2);
-			//separator2.setBounds(10, 5, 650, separator2.getPreferredSize().height);
-
-			//======== panelGrafico ========
-			{
-				panelGraficoPixel.setBorder(new BevelBorder(BevelBorder.LOWERED));
-				panelGraficoPixel.setLayout(null);
-
-				{ // compute preferred size
-					Dimension preferredSize = new Dimension();
-					for(int i = 0; i < panelGraficoPixel.getComponentCount(); i++) {
-						Rectangle bounds = panelGraficoPixel.getComponent(i).getBounds();
-						preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
-						preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
-					}
-					Insets insets = panelGraficoPixel.getInsets();
-					preferredSize.width += insets.right;
-					preferredSize.height += insets.bottom;
-					panelGraficoPixel.setMinimumSize(preferredSize);
-					panelGraficoPixel.setPreferredSize(preferredSize);
-				}
-			}
-			panel.add(panelGraficoPixel);
-			panelGraficoPixel.setBounds(10, 25, 650, 180);
-
-			{ // compute preferred size
-				Dimension preferredSize = new Dimension();
-				for(int i = 0; i < panel.getComponentCount(); i++) {
-					Rectangle bounds = panel.getComponent(i).getBounds();
-					preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
-					preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
-				}
-				Insets insets = panel.getInsets();
-				preferredSize.width += insets.right;
-				preferredSize.height += insets.bottom;
-				panel.setMinimumSize(preferredSize);
-				panel.setPreferredSize(preferredSize);
-			}
-
-		panel2.add(panel);
-		panel.setBounds(5, 435, 670, 225);
-	}
-	
 	
 }

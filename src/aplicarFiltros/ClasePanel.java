@@ -71,8 +71,6 @@ public class ClasePanel extends JPanel {
 		int cant = 0;
 		List<Objeto> objetosClase = getObjetosClase();
 
-		if (!getClase().isObjetoReferencia())
-			contenedor.getPanelResultado().addValueCount(getClase().getAgrupador(), objetosClase.size());
 		panelObjetos.setLayout(gbl);
 		//frame.getContentPane().add(new JScrollPane(container),BorderLayout.CENTER);
 		long cantidadPixeles = 0;
@@ -98,8 +96,10 @@ public class ClasePanel extends JPanel {
 			cant++;
 			cantidadPixeles = cantidadPixeles + (obj.getPuntos().size() + obj.getContorno().size()); 
 		}
-		if (!getClase().isObjetoReferencia())
-			getContenedor().getPanelResultado().addValuePixel(getClase().getAgrupador(), cantidadPixeles);
+		if (!getClase().isObjetoReferencia()){
+			String agrupador = (getClase().getRubroCalidad() != null) ? getClase().getRubroCalidad().getDescripcion(): getClase().getDescripcion();
+			getContenedor().getPanelResultado().addValuePixel(agrupador, cantidadPixeles, cant);
+		}
 		JScrollPane scrollPanelObjetos = new JScrollPane(panelObjetos);
 		scrollPanelObjetos.setPreferredSize(computePreferredSize(panelObjetos));
 		

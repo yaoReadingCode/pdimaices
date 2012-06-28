@@ -29,9 +29,9 @@ public class Clase implements HistogramaContainer{
 	private List<RasgoClase> rasgos;
 	
 	/**
-	 * Agrupador que agrupa varias clases
+	 * Rubro al que pertenece la clase
 	 */
-	private String agrupador;
+	private RubroCalidad rubroCalidad;
 	
 	/**
 	 * Indica si es la clase que se asigna cuando un objeto no pertenece a ninguna otra clase
@@ -191,14 +191,12 @@ public class Clase implements HistogramaContainer{
 		return null;
 	}
 
-	public String getAgrupador() {
-		if (agrupador != null)
-			return agrupador;
-		return getDescripcion();
+	public RubroCalidad getRubroCalidad() {
+		return rubroCalidad;
 	}
 
-	public void setAgrupador(String agrupador) {
-		this.agrupador = agrupador;
+	public void setRubroCalidad(RubroCalidad rubroCalidad) {
+		this.rubroCalidad = rubroCalidad;
 	}
 
 	public boolean isIndeterminado() {

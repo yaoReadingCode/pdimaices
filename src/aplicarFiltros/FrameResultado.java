@@ -20,6 +20,7 @@ import java.util.Set;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -71,8 +72,8 @@ public class FrameResultado extends JFrame {
 			this.addPanel(container, c.getClase().getDescripcion());
 		}
 		try{
-			resultado.setHumedad(new Float(this.textField2.getText()));
-			resultado.setPesoHectolitrico(new Float(this.textField1.getText()) * -1);
+			resultado.setHumedad(new Float(this.textFieldHumedad.getText()));
+			resultado.setPesoHectolitrico(new Float(this.textFieldPesoHect.getText()) * -1);
 		}catch (Exception e) {
 			resultado.setHumedad(0f);
 			resultado.setPesoHectolitrico(0f);
@@ -272,6 +273,20 @@ public class FrameResultado extends JFrame {
 		}
 	}
 	
+	private void buttonGuardarClasificacionActionPerformed(ActionEvent e) {
+
+		try {
+			getClasificador().guardarClasificacion();
+			JOptionPane.showMessageDialog(this, "Clasificación guardada.");
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			JOptionPane.showMessageDialog(this,
+					"Ocurrió un error al guardar la clasificación.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
+
+	}
+	
 
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
@@ -284,10 +299,11 @@ public class FrameResultado extends JFrame {
 		tableRasgos = new JTable();
 		label1 = new JLabel();
 		label2 = new JLabel();
-		textField1 = new JTextField();
+		textFieldPesoHect = new JTextField();
 		label3 = new JLabel();
-		textField2 = new JTextField();
-		button1 = new JButton();
+		textFieldHumedad = new JTextField();
+		buttonRecalcular = new JButton();
+		buttonGuardarClasificacion = new JButton();
 
 		//======== this ========
 		setBackground(new Color(5, 21, 64));
@@ -387,8 +403,8 @@ public class FrameResultado extends JFrame {
 				label2.setFont(new Font("Tahoma", Font.BOLD, 12));
 				panel2.add(label2);
 				label2.setBounds(5, 475, 115, label2.getPreferredSize().height);
-				panel2.add(textField1);
-				textField1.setBounds(125, 470, 115, textField1.getPreferredSize().height);
+				panel2.add(textFieldPesoHect);
+				textFieldPesoHect.setBounds(125, 470, 115, textFieldPesoHect.getPreferredSize().height);
 
 				//---- label3 ----
 				label3.setText("Humedad:");
@@ -396,19 +412,30 @@ public class FrameResultado extends JFrame {
 				label3.setFont(new Font("Tahoma", Font.BOLD, 12));
 				panel2.add(label3);
 				label3.setBounds(5, 515, 115, 15);
-				panel2.add(textField2);
-				textField2.setBounds(125, 510, 115, 20);
+				panel2.add(textFieldHumedad);
+				textFieldHumedad.setBounds(125, 510, 115, 20);
 
 				//---- button1 ----
-				button1.setText("Recalcular");
-				button1.addActionListener(new ActionListener() {
+				buttonRecalcular.setText("Recalcular");
+				buttonRecalcular.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						button1ActionPerformed(e);
 					}
 				});
-				panel2.add(button1);
-				button1.setBounds(5, 560, 235, button1.getPreferredSize().height);
+				panel2.add(buttonRecalcular);
+				buttonRecalcular.setBounds(5, 560, 235, buttonRecalcular.getPreferredSize().height);
+				
+				//---- button1 ----
+				buttonGuardarClasificacion.setText("Guardar Clasificación");
+				buttonGuardarClasificacion.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						buttonGuardarClasificacionActionPerformed(e);
+					}
+				});
+				panel2.add(buttonGuardarClasificacion);
+				buttonGuardarClasificacion.setBounds(5, 605, 235, buttonGuardarClasificacion.getPreferredSize().height);
 
 				{ // compute preferred size
 					Dimension preferredSize = new Dimension();
@@ -478,10 +505,11 @@ public class FrameResultado extends JFrame {
 	private JTable tableRasgos;
 	private JLabel label1;
 	private JLabel label2;
-	private JTextField textField1;
+	private JTextField textFieldPesoHect;
 	private JLabel label3;
-	private JTextField textField2;
-	private JButton button1;
+	private JTextField textFieldHumedad;
+	private JButton buttonRecalcular;
+	private JButton buttonGuardarClasificacion;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
 	private boolean tableIniciada=false;
 	public void addPanel(JPanel panel, String name){

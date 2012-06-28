@@ -5,7 +5,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import aplicarFiltros.Agrupador;
+
 import procesamiento.descuento.AplicarDescuento;
+import procesamiento.descuento.EvaluadorRubro;
 
 
 /**
@@ -17,14 +20,14 @@ public class Norma {
 	private String name;
 	
 	/** The grado. */
-	private Map<String,Float> grado = new HashMap<String, Float>();
+	private Map<String,EvaluadorRubro> grado = new HashMap<String, EvaluadorRubro>();
 	
 	/** The descuento. */
 	private Map<String,AplicarDescuento> descuento = new HashMap<String, AplicarDescuento>();
 	
 	/** The rebaja. */
 	private float rebaja = 0.0f;
-
+	
 	/**
 	 * Gets the rebaja.
 	 *
@@ -85,7 +88,7 @@ public class Norma {
 	 *
 	 * @return the grado
 	 */
-	public Map<String, Float> getGrado() {
+	public Map<String, EvaluadorRubro> getGrado() {
 		return grado;
 	}
 
@@ -94,7 +97,7 @@ public class Norma {
 	 *
 	 * @param grado the grado
 	 */
-	public void setGrado(Map<String, Float> grado) {
+	public void setGrado(Map<String, EvaluadorRubro> grado) {
 		this.grado = grado;
 	}
 
@@ -113,8 +116,8 @@ public class Norma {
 	 * @param tipo the tipo
 	 * @param valor the valor
 	 */
-	public void addGrado(String tipo, float valor){
-		grado.put(tipo, valor);
+	public void addGrado(String tipo, EvaluadorRubro evaluadorRubro){
+		grado.put(tipo, evaluadorRubro);
 		
 	}
 	
@@ -125,13 +128,13 @@ public class Norma {
 	 * @return true, if is norma
 	 */
 	@SuppressWarnings("unchecked")
-	public boolean isNorma(Map<String,Float> valores){
-		for(Iterator<Entry<String, Float>> iter = grado.entrySet().iterator(); iter.hasNext();){
+	public boolean isNorma(Map<String,Agrupador> valores){
+		for(Iterator<Entry<String, EvaluadorRubro>> iter = grado.entrySet().iterator(); iter.hasNext();){
 			Map.Entry ent = (Map.Entry)iter.next();
-			Float valorRef = (Float)ent.getValue();
+			EvaluadorRubro valorRef = (EvaluadorRubro)ent.getValue();
 			String tipo = (String)ent.getKey();
-			Float valor = valores.get(tipo);
-			if ((valorRef != null)&& (valor > valorRef)){
+			Agrupador valor = valores.get(tipo);
+			if ((valorRef != null)&& valorRef.cumpleNorma(valor)){
 				return false;
 			}
 		}
@@ -146,19 +149,19 @@ public class Norma {
 	 * @return the float
 	 */
 	@SuppressWarnings("unchecked")
-	public float calcularDescuento(Map<String, Float> valores) {
+	public float calcularDescuento(Map<String, Agrupador> valores) {
 		if (rebaja == 0.0f) {
 			float result = 98.5f;//Es 1.5% mas lo que esta fuera del standard
-			for (Iterator<Entry<String, Float>> iter = grado.entrySet()
+			for (Iterator<Entry<String, EvaluadorRubro>> iter = grado.entrySet()
 					.iterator(); iter.hasNext();) {
 				Map.Entry ent = (Map.Entry) iter.next();
-				Float valorRef = (Float) ent.getValue();
+				EvaluadorRubro valorRef = (EvaluadorRubro) ent.getValue();
 				String tipo = (String) ent.getKey();
-				Float valor = valores.get(tipo);
+				Agrupador valor = valores.get(tipo);
 				AplicarDescuento des = this.descuento.get(tipo);
 				
 				
-				if ((valorRef != null) && (valor > valorRef)) {
+				if ((valorRef != null) && valorRef.cumpleNorma(valor)) {
 					result = result - (des.eval(valorRef, valor)); 
 				}
 			}

@@ -1,7 +1,9 @@
 package procesamiento.descuento;
 
+import aplicarFiltros.Agrupador;
+
 public abstract class AplicarDescuento {
 
-	public abstract float eval(float valorEsperado, float valorObtenido);
+	public abstract float eval(EvaluadorRubro valorEsperado, Agrupador valorObtenido);
 	
 }

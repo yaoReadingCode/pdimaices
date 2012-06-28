@@ -149,8 +149,8 @@ public class ImageEditorPanel extends JPanel implements IImageProcessing,
 				try {
 					Visualizador.iniciarProgreso(window);
 					Visualizador.aumentarProgreso(0, "Cargando archivo...");
-					inputImage = ImageUtil.loadImage(absolutePath, ImageUtil.tileWidth, ImageUtil.tileHeight);
-					//inputImage = ImageUtil.loadTIFFImage(absolutePath, ImageUtil.tileWidth, ImageUtil.tileHeight);
+					//inputImage = ImageUtil.loadImage(absolutePath, ImageUtil.tileWidth, ImageUtil.tileHeight);
+					inputImage = ImageUtil.loadTIFFImage(absolutePath, ImageUtil.tileWidth, ImageUtil.tileHeight);
 
 					//inputImage = new TiledImage(inputImage, false);
 					//inputImage = ImageUtil.reformatImage(inputImage, new Dimension(ImageUtil.tileWidth, ImageUtil.tileHeight));

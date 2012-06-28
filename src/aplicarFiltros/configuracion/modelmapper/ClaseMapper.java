@@ -45,7 +45,7 @@ public class ClaseMapper extends ModelMapper<Clase> {
 			Clase c = getDataModel().get(index);
 			data[index][NOMBRE_INDEX] = c.getNombre();
 			data[index][DESCRIPCION_INDEX] = c.getDescripcion();
-			data[index][AGRUPADOR_INDEX] = c.getAgrupador();
+			data[index][AGRUPADOR_INDEX] = c.getRubroCalidad();
 			data[index][ORDEN_INDEX] = c.getOrdenEvaluacion();
 			data[index][COLOR_INDEX] = (c.getColorRgb() != null) ? new Color(c.getColorRgb()): Color.gray;
 		}
@@ -66,7 +66,7 @@ public class ClaseMapper extends ModelMapper<Clase> {
 			clase.setDescripcion((String)value);
 			break;
 		case AGRUPADOR_INDEX:
-			clase.setAgrupador((String)value);
+			//clase.setAgrupador((String)value);
 			break;
 		case ORDEN_INDEX:
 			clase.setOrdenEvaluacion((Integer)value);
