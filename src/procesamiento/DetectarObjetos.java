@@ -94,6 +94,7 @@ public class DetectarObjetos extends AbstractImageCommand {
 			Binarizar ef = new Binarizar(getOriginalImage(), getHsvRange());
 			PlanarImage binaryImage = ef.execute();
 			PlanarImage output = binaryImage;
+			ef.postExecute();
 			//JAI.create("filestore", binaryImage, "binary.tif", "TIFF");
 			/*
 			Visualizador.aumentarProgreso(15, "Detectando Contorno Grueso...");
@@ -108,17 +109,15 @@ public class DetectarObjetos extends AbstractImageCommand {
 			output = dc.execute();
 			
 			List<Objeto> objetos = dc.getObjetos();			
+			dc.postExecute();
 			
 			setObjetos(objetos);
 			
 			Visualizador.aumentarProgreso(60, "Clasificando objetos...");
-			clasificarObjetos(dc.getObjetos());
+			clasificarObjetos(objetos);
 			
 			Visualizador.aumentarProgreso(15, "Visualizar resultado...");
 			output = pintarContorno(getOriginalImage());
-			
-			ef.postExecute();
-			dc.postExecute(); 
 			
 			visualizarResultado();
 			System.out.println("Inicio: " + (new Date(System.currentTimeMillis())).toString() + " - FIN: " + fechaInicio.toString());
@@ -331,8 +330,9 @@ public class DetectarObjetos extends AbstractImageCommand {
 	 * @see procesamiento.ImageComand#postExecute()
 	 */
 	public void postExecute() {
+		super.postExecute();
 		originalImage = null;
-
+		objetos = null;
 	}
 
 	/**

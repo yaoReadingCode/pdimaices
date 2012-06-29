@@ -203,6 +203,7 @@ public class DetectarContorno extends AbstractImageCommand {
 		originalImage = null;
 		// pixels = null;
 		objetos = null;
+		Matriz = null;
 		//System.gc();
 	}
 

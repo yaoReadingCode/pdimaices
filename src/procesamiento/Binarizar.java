@@ -359,8 +359,8 @@ public class Binarizar extends AbstractImageCommand {
 	 * @see procesamiento.ImageComand#postExecute()
 	 */
 	public void postExecute() {
-		// TODO Auto-generated method stub
-		
+		super.postExecute();
+		Matriz = null;
 	}
 
 	public int getTileXActual() {

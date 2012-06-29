@@ -108,12 +108,15 @@ public class ObjetoUtil {
 							e.printStackTrace();
 							JAI.create("filestore", ti, o.getPathImage(), "TIFF");
 						}
-
+					image = null;
+					ti = null;
 					return;
 				}
 			}
 				
 			JAI.create("filestore", ti, o.getPathImage(), "TIFF");
+			image = null;
+			ti = null;
 		}
 
 	}

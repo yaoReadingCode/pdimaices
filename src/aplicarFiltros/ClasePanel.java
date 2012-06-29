@@ -76,25 +76,31 @@ public class ClasePanel extends JPanel {
 		long cantidadPixeles = 0;
 		for (Objeto obj: objetosClase) {
 			// ObjetoPanel jp = new ObjetoPanel(o);
-			ObjetoPanel panel = new ObjetoPanel(obj,cant + 1, clasificador, this);
-			//panel.setSize(200, 100);
-			// JButton panel = new JButton("Boton");
-
-			// Place a component at cell location (1,1)
-			GridBagConstraints gbc = new GridBagConstraints();
-			gbc.gridy = cant / cantObjPage;// GridBagConstraints.RELATIVE;
-			gbc.gridx = cant % cantObjPage;// GridBagConstraints.RELATIVE;
-			gbc.gridheight = 1;
-			gbc.gridwidth = 1;
-			gbc.fill = GridBagConstraints.BOTH;
-
-			// Associate the gridbag constraints with the component
-			gbl.setConstraints(panel, gbc);
-
-			// Add the component to the container
-			panelObjetos.add(panel);
-			cant++;
-			cantidadPixeles = cantidadPixeles + (obj.getPuntos().size() + obj.getContorno().size()); 
+			try{
+				ObjetoPanel panel = new ObjetoPanel(obj,cant + 1, clasificador, this);
+				//panel.setSize(200, 100);
+				// JButton panel = new JButton("Boton");
+	
+				// Place a component at cell location (1,1)
+				GridBagConstraints gbc = new GridBagConstraints();
+				gbc.gridy = cant / cantObjPage;// GridBagConstraints.RELATIVE;
+				gbc.gridx = cant % cantObjPage;// GridBagConstraints.RELATIVE;
+				gbc.gridheight = 1;
+				gbc.gridwidth = 1;
+				gbc.fill = GridBagConstraints.BOTH;
+	
+				// Associate the gridbag constraints with the component
+				gbl.setConstraints(panel, gbc);
+	
+				// Add the component to the container
+				panelObjetos.add(panel);
+				cant++;
+				cantidadPixeles = cantidadPixeles + (obj.getPuntos().size() + obj.getContorno().size());
+			}
+			catch (Exception e) {
+				System.err.println("Error creando panel objeto");
+				e.printStackTrace();
+			}
 		}
 		if (!getClase().isObjetoReferencia()){
 			String agrupador = (getClase().getRubroCalidad() != null) ? getClase().getRubroCalidad().getDescripcion(): getClase().getDescripcion();

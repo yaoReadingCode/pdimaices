@@ -47,7 +47,6 @@ public class ObjetoPanel extends JPanel {
 		
 		this.objeto = objeto;
 		this.clasificador = clasificador;
-
 		PlanarImage image = JAI.create("fileload", objeto.getPathImage());
 		DisplayJAI dd = new DisplayJAI(image);
 		JScrollPane scrollPanel = new JScrollPane();

@@ -111,9 +111,9 @@ public class OperacionesPanel extends JPanel {
 				getImageHolder().setImage(command.execute());
 
 				Visualizador.terminar();
-				command.postExecute();
 				long endTime = System.currentTimeMillis();
 				getImageHolder().addExecutedCommand(command, command.getInfo(), endTime - startTime);
+				command.postExecute();
 			}
 		};
 		Thread thread = new Thread(runnable);
