@@ -5,10 +5,11 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import aplicarFiltros.Agrupador;
+import objeto.RubroCalidad;
 
 import procesamiento.descuento.AplicarDescuento;
 import procesamiento.descuento.EvaluadorRubro;
+import aplicarFiltros.Agrupador;
 
 
 /**
@@ -20,20 +21,20 @@ public class Norma {
 	private String name;
 	
 	/** The grado. */
-	private Map<String,EvaluadorRubro> grado = new HashMap<String, EvaluadorRubro>();
+	private Map<RubroCalidad,EvaluadorRubro> grado = new HashMap<RubroCalidad, EvaluadorRubro>();
 	
 	/** The descuento. */
-	private Map<String,AplicarDescuento> descuento = new HashMap<String, AplicarDescuento>();
+	private Map<RubroCalidad,AplicarDescuento> descuento = new HashMap<RubroCalidad, AplicarDescuento>();
 	
 	/** The rebaja. */
-	private float rebaja = 0.0f;
+	private double rebaja = 0.0;
 	
 	/**
 	 * Gets the rebaja.
 	 *
 	 * @return the rebaja
 	 */
-	public float getRebaja() {
+	public double getRebaja() {
 		return rebaja;
 	}
 
@@ -42,7 +43,7 @@ public class Norma {
 	 *
 	 * @param rebaja the new rebaja
 	 */
-	public void setRebaja(float rebaja) {
+	public void setRebaja(double rebaja) {
 		this.rebaja = rebaja;
 	}
 
@@ -60,7 +61,7 @@ public class Norma {
 	 *
 	 * @return the descuento
 	 */
-	public Map<String, AplicarDescuento> getDescuento() {
+	public Map<RubroCalidad, AplicarDescuento> getDescuento() {
 		return descuento;
 	}
 
@@ -69,7 +70,7 @@ public class Norma {
 	 *
 	 * @param descuento the descuento
 	 */
-	public void setDescuento(Map<String, AplicarDescuento> descuento) {
+	public void setDescuento(Map<RubroCalidad, AplicarDescuento> descuento) {
 		this.descuento = descuento;
 	}
 
@@ -88,7 +89,7 @@ public class Norma {
 	 *
 	 * @return the grado
 	 */
-	public Map<String, EvaluadorRubro> getGrado() {
+	public Map<RubroCalidad, EvaluadorRubro> getGrado() {
 		return grado;
 	}
 
@@ -97,7 +98,7 @@ public class Norma {
 	 *
 	 * @param grado the grado
 	 */
-	public void setGrado(Map<String, EvaluadorRubro> grado) {
+	public void setGrado(Map<RubroCalidad, EvaluadorRubro> grado) {
 		this.grado = grado;
 	}
 
@@ -116,7 +117,7 @@ public class Norma {
 	 * @param tipo the tipo
 	 * @param valor the valor
 	 */
-	public void addGrado(String tipo, EvaluadorRubro evaluadorRubro){
+	public void addGrado(RubroCalidad tipo, EvaluadorRubro evaluadorRubro){
 		grado.put(tipo, evaluadorRubro);
 		
 	}
@@ -128,11 +129,11 @@ public class Norma {
 	 * @return true, if is norma
 	 */
 	@SuppressWarnings("unchecked")
-	public boolean isNorma(Map<String,Agrupador> valores){
-		for(Iterator<Entry<String, EvaluadorRubro>> iter = grado.entrySet().iterator(); iter.hasNext();){
+	public boolean isNorma(Map<RubroCalidad,Agrupador> valores){
+		for(Iterator<Entry<RubroCalidad, EvaluadorRubro>> iter = grado.entrySet().iterator(); iter.hasNext();){
 			Map.Entry ent = (Map.Entry)iter.next();
 			EvaluadorRubro valorRef = (EvaluadorRubro)ent.getValue();
-			String tipo = (String)ent.getKey();
+			RubroCalidad tipo = (RubroCalidad)ent.getKey();
 			Agrupador valor = valores.get(tipo);
 			if ((valorRef != null)&& valorRef.cumpleNorma(valor)){
 				return false;
@@ -149,10 +150,10 @@ public class Norma {
 	 * @return the float
 	 */
 	@SuppressWarnings("unchecked")
-	public float calcularDescuento(Map<String, Agrupador> valores) {
+	public double calcularDescuento(Map<RubroCalidad, Agrupador> valores) {
 		if (rebaja == 0.0f) {
-			float result = 98.5f;//Es 1.5% mas lo que esta fuera del standard
-			for (Iterator<Entry<String, EvaluadorRubro>> iter = grado.entrySet()
+			double result = 98.5f;//Es 1.5% mas lo que esta fuera del standard
+			for (Iterator<Entry<RubroCalidad, EvaluadorRubro>> iter = grado.entrySet()
 					.iterator(); iter.hasNext();) {
 				Map.Entry ent = (Map.Entry) iter.next();
 				EvaluadorRubro valorRef = (EvaluadorRubro) ent.getValue();

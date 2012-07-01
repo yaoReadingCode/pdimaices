@@ -72,11 +72,11 @@ public class FrameResultado extends JFrame {
 			this.addPanel(container, c.getClase().getDescripcion());
 		}
 		try{
-			resultado.setHumedad(new Float(this.textFieldHumedad.getText()));
-			resultado.setPesoHectolitrico(new Float(this.textFieldPesoHect.getText()) * -1);
+			resultado.setHumedad(new Double(this.textFieldHumedad.getText()));
+			resultado.setPesoHectolitrico(new Double(this.textFieldPesoHect.getText()) * -1);
 		}catch (Exception e) {
-			resultado.setHumedad(0f);
-			resultado.setPesoHectolitrico(0f);
+			resultado.setHumedad(0.0);
+			resultado.setPesoHectolitrico(0.0);
 		}
 		resultado.actualizarDataSetCount();
 		resultado.actualizarDataSetPixel();

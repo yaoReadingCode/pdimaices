@@ -1,5 +1,8 @@
 package objeto;
 
+import procesamiento.descuento.AplicarDescuento;
+import procesamiento.descuento.EvaluadorRubro;
+
 public class ToleranciaRubro {
 	
 	private Long id;
@@ -24,11 +27,10 @@ public class ToleranciaRubro {
 	 */
 	private Double descuento;
 	
-	/**
-	 * Tipo de descuento: Porcentual o Directo
-	 */
-	private String tipoDescuento;
-
+	private EvaluadorRubro evaluadorValorRubro;
+	
+	private AplicarDescuento evaluadorDescuento;
+	
 	public Long getId() {
 		return id;
 	}
@@ -68,15 +70,57 @@ public class ToleranciaRubro {
 	public void setDescuento(Double descuento) {
 		this.descuento = descuento;
 	}
-
-	public String getTipoDescuento() {
-		return tipoDescuento;
-	}
-
-	public void setTipoDescuento(String tipoDescuento) {
-		this.tipoDescuento = tipoDescuento;
-	}
 	
+	public EvaluadorRubro getEvaluadorValorRubro() {
+		if (evaluadorValorRubro == null){
+			evaluadorValorRubro = createEvaluadorValorRubro();
+		}
+		return evaluadorValorRubro;
+	}
+
+	private EvaluadorRubro createEvaluadorValorRubro() {
+		try{
+			if (getRubro().getClaseEvaluadorValorRubro() != null){
+				EvaluadorRubro evaluadorRubro = (EvaluadorRubro) Class.forName(getRubro().getClaseEvaluadorValorRubro()).newInstance();
+				evaluadorRubro.setValor(getValor());
+				return evaluadorRubro;
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public void setEvaluadorValorRubro(EvaluadorRubro evaluadorValorRubro) {
+		this.evaluadorValorRubro = evaluadorValorRubro;
+	}
+
+	public AplicarDescuento getEvaluadorDescuento() {
+		if (evaluadorDescuento == null){
+			evaluadorDescuento = createEvaluadorDescuento();
+		}
+		return evaluadorDescuento;
+	}
+
+	private AplicarDescuento createEvaluadorDescuento() {
+		try{
+			if (getRubro().getClaseEvaluadorDescuento() != null){
+				AplicarDescuento evaluadorDescuento = (AplicarDescuento) Class.forName(getRubro().getClaseEvaluadorDescuento()).newInstance();
+				evaluadorDescuento.setDescuento(getDescuento());
+				return evaluadorDescuento;
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public void setEvaluadorDescuento(AplicarDescuento evaluadorDescuento) {
+		this.evaluadorDescuento = evaluadorDescuento;
+	}
+
 	public boolean equals(Object o) {
 		if (o == null)
 			return false;

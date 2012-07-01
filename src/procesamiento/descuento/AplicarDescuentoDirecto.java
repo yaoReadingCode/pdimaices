@@ -4,12 +4,16 @@ import aplicarFiltros.Agrupador;
 
 public class AplicarDescuentoDirecto extends AplicarDescuento {
 
-	private float descuentoDirecto;
-	public AplicarDescuentoDirecto(float descuento){
-		this.descuentoDirecto = descuento;
+	public AplicarDescuentoDirecto() {
+		super();
 	}
-	public float eval(EvaluadorRubro valorEsperado, Agrupador valorObtenido) {
-		return descuentoDirecto;
+
+	public AplicarDescuentoDirecto(Double descuento){
+		super(descuento);
+	}
+	
+	public double eval(EvaluadorRubro valorEsperado, Agrupador valorObtenido) {
+		return getDescuento();
 	}
 
 }

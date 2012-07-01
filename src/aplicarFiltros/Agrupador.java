@@ -4,11 +4,11 @@ package aplicarFiltros;
 public class Agrupador {
 	private String nombre;
 	
-	private Integer cantidad = 0;
+	private Double cantidad = 0.0;
 	
-	private Long area = 0l;
+	private Double area = 0.0;
 	
-	private Float porcentaje = 0f;
+	private Double porcentaje = 0.0;
 	
 	private boolean graficar = true;
 	
@@ -16,8 +16,8 @@ public class Agrupador {
 		super();
 	}
 
-	public Agrupador(String nombre, Integer cantidad, Long area,
-			Float porcentaje, boolean graficar) {
+	public Agrupador(String nombre, Double cantidad, Double area,
+			Double porcentaje, boolean graficar) {
 		super();
 		this.nombre = nombre;
 		this.cantidad = cantidad;
@@ -34,19 +34,19 @@ public class Agrupador {
 		this.nombre = nombre;
 	}
 
-	public Integer getCantidad() {
+	public Double getCantidad() {
 		return cantidad;
 	}
 
-	public void setCantidad(Integer cantidad) {
+	public void setCantidad(Double cantidad) {
 		this.cantidad = cantidad;
 	}
 
-	public Long getArea() {
+	public Double getArea() {
 		return area;
 	}
 
-	public void setArea(Long area) {
+	public void setArea(Double area) {
 		this.area = area;
 	}
 	
@@ -67,11 +67,11 @@ public class Agrupador {
 		return getNombre();
 	}
 
-	public Float getPorcentaje() {
+	public Double getPorcentaje() {
 		return porcentaje;
 	}
 
-	public void setPorcentaje(Float porcentaje) {
+	public void setPorcentaje(Double porcentaje) {
 		this.porcentaje = porcentaje;
 	}
 

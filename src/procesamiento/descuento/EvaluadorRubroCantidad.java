@@ -3,8 +3,12 @@ package procesamiento.descuento;
 import aplicarFiltros.Agrupador;
 
 public class EvaluadorRubroCantidad extends EvaluadorRubro {
+	
+	public EvaluadorRubroCantidad() {
+		super();
+	}
 
-	public EvaluadorRubroCantidad(Float valor) {
+	public EvaluadorRubroCantidad(Double valor) {
 		super(valor);
 	}
 

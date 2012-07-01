@@ -23,6 +23,8 @@ import javax.swing.UIManager;
 import javax.swing.border.*;
 import javax.swing.table.DefaultTableModel;
 
+import objeto.RubroCalidad;
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -49,27 +51,27 @@ public class PanelResultado extends JPanel {
 	
 	private Map<String,Float> datasetCountPorc = new HashMap<String, Float>(); //  @jve:decl-index=0:
 	
-	private Map<String,Agrupador> datasetPixelModel = new HashMap<String, Agrupador>();
+	private Map<RubroCalidad,Agrupador> datasetPixelModel = new HashMap<RubroCalidad, Agrupador>();  //  @jve:decl-index=0:
 	
 	private long totalPixeles = 0;  //  @jve:decl-index=0:
 	
-	private Clasificador clasificador;
+	private Clasificador clasificador;  //  @jve:decl-index=0:
 	
-	private Float pesoHectolitrico = 0f;
+	private Double pesoHectolitrico = 0.0;  //  @jve:decl-index=0:
 	
-	private Float humedad = 0f;
+	private Double humedad = 0.0;
 	
 	
-	public Float getPesoHectolitrico() {
+	public Double getPesoHectolitrico() {
 		return pesoHectolitrico;
 	}
-	public void setPesoHectolitrico(Float pesoHectolitrico) {
+	public void setPesoHectolitrico(Double pesoHectolitrico) {
 		this.pesoHectolitrico = pesoHectolitrico;
 	}
-	public Float getHumedad() {
+	public Double getHumedad() {
 		return humedad;
 	}
-	public void setHumedad(Float humedad) {
+	public void setHumedad(Double humedad) {
 		this.humedad = humedad;
 	}
 	public JFrame getContenedor() {
@@ -95,40 +97,41 @@ public class PanelResultado extends JPanel {
 		datasetPixel.clear();
 	}
 		
-	public void addValuePixel(String nombre, Long cantidadPixeles, Integer cantidadObjetos){
+	public void addValuePixel(RubroCalidad rubro, Double cantidadPixeles, Double cantidadObjetos){
 		Agrupador cantidaParcial = null;
-		if (datasetPixelModel.containsKey(nombre)){
-			cantidaParcial = datasetPixelModel.get(nombre);
-			Long area = cantidaParcial.getArea() + cantidadPixeles;
+		if (datasetPixelModel.containsKey(rubro)){
+			cantidaParcial = datasetPixelModel.get(rubro);
+			Double area = cantidaParcial.getArea() + cantidadPixeles;
 			cantidaParcial.setArea(area);
-			int cantidad = cantidaParcial.getCantidad() + cantidadObjetos;
+			Double cantidad = cantidaParcial.getCantidad() + cantidadObjetos;
 			cantidaParcial.setCantidad(cantidad);
 		}
 		else{
 			cantidaParcial = new Agrupador();
-			cantidaParcial.setNombre(nombre);
+			cantidaParcial.setNombre(rubro.getDescripcion());
 			cantidaParcial.setArea(cantidadPixeles);
 			cantidaParcial.setCantidad(cantidadObjetos);
 		}
-		datasetPixelModel.put(nombre, cantidaParcial);
+		datasetPixelModel.put(rubro, cantidaParcial);
 		totalPixeles += cantidadPixeles;
 	}
 	
 	public void actualizarDataSetCount(){
-		Standar stan = new Standar();
+		Standar stan = new Standar(getClasificador());
 		DefaultTableModel model = (DefaultTableModel) tableRasgos2.getModel();
 		DecimalFormat formater = new DecimalFormat("0.00");
+		DecimalFormat formaterInteger = new DecimalFormat("0");
 
-		for(String agrupador: datasetPixelModel.keySet()){
+		for(RubroCalidad agrupador: datasetPixelModel.keySet()){
 			Agrupador agrupadorClase = datasetPixelModel.get(agrupador);
-			Float porcentaje = 0.0f;
+			Double porcentaje = 0.0;
 			if (totalPixeles != 0)
 				porcentaje = (agrupadorClase.getArea() * 100f)/ totalPixeles;
 			agrupadorClase.setPorcentaje(porcentaje);
-			model.addRow(new Object[]{agrupador, agrupadorClase.getCantidad(), formater.format(porcentaje)+"%"});
-			datasetCountPorc.put(agrupador, porcentaje.floatValue());
+			model.addRow(new Object[]{agrupador.getDescripcion(), formaterInteger.format(agrupadorClase.getCantidad()), formater.format(porcentaje)+"%"});
+			//datasetCountPorc.put(agrupador, porcentaje.floatValue());
 			//Grafico
-			datasetCount.setValue( agrupador,agrupadorClase.getArea());
+			datasetCount.setValue( agrupador.getDescripcion(),agrupadorClase.getArea());
 		}
 		
 		int clasificadosIncorrectamente = getClasificador().getClasificadosIncorrectamente().size();
@@ -144,9 +147,10 @@ public class PanelResultado extends JPanel {
 		model.addRow(new Object[]{"Clasificados Correctamente", clasificadosCorrectamente, formater.format(porcentajeCorrectamente)+"%"});
 		model.addRow(new Object[]{"Clasificados Incorrectamente", clasificadosIncorrectamente, formater.format(porcentajeIncorrectamente)+"%"});
 		
-		
-		datasetPixelModel.put("Peso Hectolitrico",new Agrupador("Peso Hectolitrico", 0, 0l,this.pesoHectolitrico, false));
-		datasetPixelModel.put("Humedad",new Agrupador("Humedad", 0, 0l,this.humedad, false));
+		RubroCalidad humedad = getClasificador().getRubroCalidad(Clasificador.RUBRO_CALIDAD_HUMEDAD);
+		RubroCalidad pesoHectolitrico = getClasificador().getRubroCalidad(Clasificador.RUBRO_CALIDAD_PESO_HECTOLITRICO);
+		datasetPixelModel.put(pesoHectolitrico,new Agrupador(pesoHectolitrico.getDescripcion(), 0.0, 0.0,this.pesoHectolitrico, false));
+		datasetPixelModel.put(humedad,new Agrupador(humedad.getDescripcion(), 0.0, 0.0,this.humedad, false));
 
 		Rebaja rebaja = stan.getNorma(datasetPixelModel);
 		Norma norma = rebaja.getNorma();
@@ -155,11 +159,11 @@ public class PanelResultado extends JPanel {
 	}
 
 	public void actualizarDataSetPixel(){
-		for(String agrupador: datasetPixelModel.keySet()){
+		for(RubroCalidad agrupador: datasetPixelModel.keySet()){
 			Agrupador agrupadorClase = datasetPixelModel.get(agrupador);
 			if (agrupadorClase.isGraficar())
 				//Grafico
-				datasetPixel.setValue( agrupador,agrupadorClase.getArea());
+				datasetPixel.setValue( agrupador.getDescripcion(),agrupadorClase.getArea());
 		}
 	}
 	

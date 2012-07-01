@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="objeto" default-access="property">
+  <class name="Grado" table="GRADO">
+  	<cache usage="read-write"/>
+	<id name="id" column="uid" type="long">
+		<generator class="increment"/>
+	</id>
+	<property name="nombre" type="string" column="nombre" not-null="true"/>
+	<property name="sistema" type="string" column="id_sistema" not-null="true"/>
+	<property name="rebaja" type="double" column="rebaja" not-null="true"/>
+	<property name="fueraEstandar" type="boolean" column="ES_FUERA_ESTANDAR" not-null="true"/>
+	<set name="toleranciaRubros" cascade="all-delete-orphan" lazy="false">
+		<key column="ID_GRADO" not-null="true"></key>
+		<one-to-many class="objeto.ToleranciaRubro"/>
+	</set>
+  </class>
+</hibernate-mapping>

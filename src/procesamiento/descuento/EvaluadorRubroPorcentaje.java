@@ -4,7 +4,11 @@ import aplicarFiltros.Agrupador;
 
 public class EvaluadorRubroPorcentaje extends EvaluadorRubro {
 
-	public EvaluadorRubroPorcentaje(Float valor) {
+	public EvaluadorRubroPorcentaje() {
+		super();
+	}
+
+	public EvaluadorRubroPorcentaje(Double valor) {
 		super(valor);
 	}
 

@@ -9,5 +9,7 @@
 	<property name="nombre" type="string" column="nombre" not-null="true"/>
 	<property name="descripcion" type="string" column="descripcion" not-null="true"/>
 	<property name="sistema" type="string" column="id_sistema" not-null="true"/>
+	<property name="claseEvaluadorValorRubro" type="string" column="clase_evaluador_valor_rubro"/>
+	<property name="claseEvaluadorDescuento" type="string" column="clase_evaluador_descuento"/>
   </class>
 </hibernate-mapping>

@@ -32,6 +32,8 @@
 		<mapping resource="dataAcces/Histograma.hbm.xml" />
 		<mapping resource="dataAcces/ValorHistograma.hbm.xml" />
 		<mapping resource="dataAcces/RubroCalidad.hbm.xml" />
+		<mapping resource="dataAcces/Grado.hbm.xml" />
+		<mapping resource="dataAcces/ToleranciaRubro.hbm.xml" />
 
 	</session-factory>
 </hibernate-configuration>

@@ -8,19 +8,25 @@ import java.util.Set;
 
 import objeto.Clase;
 import objeto.ClaseObjeto;
+import objeto.Grado;
 import objeto.Histograma;
 import objeto.Objeto;
 import objeto.RasgoClase;
 import objeto.RasgoObjeto;
+import objeto.RubroCalidad;
 import dataAcces.ObjectDao;
 
 public class Clasificador {
 	/**
 	 * Por el ahora es uno solo MAIZ
 	 */
-	private static final String NOMBRE_SISTEMA = "MAIZ";
+	public static final String NOMBRE_SISTEMA = "MAIZ";
 
 	public static String CLASE_INDETERMINADO = "INDETERMINADO";
+	
+	public static String RUBRO_CALIDAD_HUMEDAD = "HUMEDAD";
+	
+	public static String RUBRO_CALIDAD_PESO_HECTOLITRICO = "PESO_HECTOLITRICO";
 
 	private Map<EvaluadorClase, List<Objeto>> clasificacion = new HashMap<EvaluadorClase, List<Objeto>>();
 	
@@ -35,6 +41,10 @@ public class Clasificador {
 	private Integer cantidadObjetos = null;
 	
 	private List<Objeto> clasificadosIncorrectamente = new ArrayList<Objeto>();
+	
+	private List<RubroCalidad> rubrosCalidad = new ArrayList<RubroCalidad>();
+	
+	private List<Grado> gradosCalidad = new ArrayList<Grado>();
 	
 	public Clasificador() {
 		super();
@@ -211,8 +221,10 @@ public class Clasificador {
 		ObjetoReferencia.inicializarObjetoReferencia();
 		ObjectDao dao = ObjectDao.getInstance();
 		List<Clase> clases = dao.qryClases(null,false,false);
-		clasificacion = new HashMap<EvaluadorClase, List<Objeto>>();
+		this.rubrosCalidad = dao.qryAllRubroCalidad(NOMBRE_SISTEMA);
+		this.gradosCalidad = dao.qryAllGrados(NOMBRE_SISTEMA);
 		
+		clasificacion = new HashMap<EvaluadorClase, List<Objeto>>();
 		this.cantidadObjetos = dao.getCantidadObjetos();
 		
 		for(Clase c: clases){
@@ -356,5 +368,21 @@ public class Clasificador {
 				getClasificadosIncorrectamente().add(objeto);
 			}
 		}
+	}
+
+	public List<RubroCalidad> getRubrosCalidad() {
+		return rubrosCalidad;
+	}
+	
+	public RubroCalidad getRubroCalidad(String nombreRubro) {
+		for(RubroCalidad rubro:getRubrosCalidad()){
+			if (rubro.getNombre().equals(nombreRubro))
+				return rubro;
+		}
+		return null;
+	}
+
+	public List<Grado> getGradosCalidad() {
+		return gradosCalidad;
 	}
 }

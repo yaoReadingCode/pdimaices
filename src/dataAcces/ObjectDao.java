@@ -4,6 +4,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 import objeto.Clase;
+import objeto.Grado;
+import objeto.RubroCalidad;
 
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
@@ -13,6 +15,7 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.classic.Session;
 
 import procesamiento.clasificacion.Configuracion;
+import sun.font.CreatedFontTracker;
 
 public class ObjectDao {
 	public static final String NULL_VALUE = "null";
@@ -69,6 +72,26 @@ public class ObjectDao {
 			session.beginTransaction();
 
 			List result = session.createQuery("from " + className).list();
+
+			session.getTransaction().commit();
+			session.connection().close();
+			session.close();
+
+			return result;
+		} 
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	public List<RubroCalidad> qryAllRubroCalidad(String idSistema) {
+		try {
+			Session session = getSessionFactory().openSession();
+			session.beginTransaction();
+			String qryString = "from " + RubroCalidad.class.getName() + " where sistema = :idSistema";
+			Query query = session.createQuery(qryString);
+			query.setParameter("idSistema", idSistema, Hibernate.STRING);
+			List<RubroCalidad> result = query.list();
 
 			session.getTransaction().commit();
 			session.connection().close();
@@ -179,6 +202,24 @@ public class ObjectDao {
 			session.connection().close();
 			session.close();
 		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public List<Grado> qryAllGrados(String idSistema) {
+		try{
+			Session session = getSessionFactory().openSession();
+			//session.beginTransaction();
+			String qryStr = "from Grado where sistema = :idSistema order by nombre";
+			Query query = session.createQuery(qryStr);
+			query.setParameter("idSistema", idSistema, Hibernate.STRING);
+			List<Grado> result = query.list();
+			session.connection().close();
+			session.close();
+
+			return result;
+		}
+		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}

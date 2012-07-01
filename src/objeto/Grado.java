@@ -1,5 +1,8 @@
 package objeto;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class Grado {
 
 	private Long id;
@@ -24,6 +27,8 @@ public class Grado {
 	 */
 	private String sistema;
 
+	private Set<ToleranciaRubro> toleranciaRubros = new HashSet<ToleranciaRubro>();
+	
 	public Long getId() {
 		return id;
 	}
@@ -62,6 +67,14 @@ public class Grado {
 
 	public void setSistema(String sistema) {
 		this.sistema = sistema;
+	}
+	
+	public Set<ToleranciaRubro> getToleranciaRubros() {
+		return toleranciaRubros;
+	}
+
+	public void setToleranciaRubros(Set<ToleranciaRubro> toleranciaRubros) {
+		this.toleranciaRubros = toleranciaRubros;
 	}
 
 	public boolean equals(Object o) {

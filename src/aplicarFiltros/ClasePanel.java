@@ -73,7 +73,7 @@ public class ClasePanel extends JPanel {
 
 		panelObjetos.setLayout(gbl);
 		//frame.getContentPane().add(new JScrollPane(container),BorderLayout.CENTER);
-		long cantidadPixeles = 0;
+		Double cantidadPixeles = 0.0;
 		for (Objeto obj: objetosClase) {
 			// ObjetoPanel jp = new ObjetoPanel(o);
 			try{
@@ -103,8 +103,8 @@ public class ClasePanel extends JPanel {
 			}
 		}
 		if (!getClase().isObjetoReferencia()){
-			String agrupador = (getClase().getRubroCalidad() != null) ? getClase().getRubroCalidad().getDescripcion(): getClase().getDescripcion();
-			getContenedor().getPanelResultado().addValuePixel(agrupador, cantidadPixeles, cant);
+			if (getClase().getRubroCalidad() != null)
+				getContenedor().getPanelResultado().addValuePixel(getClase().getRubroCalidad(), cantidadPixeles, new Double(cant));
 		}
 		JScrollPane scrollPanelObjetos = new JScrollPane(panelObjetos);
 		scrollPanelObjetos.setPreferredSize(computePreferredSize(panelObjetos));

@@ -4,20 +4,24 @@ import aplicarFiltros.Agrupador;
 
 public abstract class EvaluadorRubro {
 	
-	private Float valor;
+	private Double valor;
 	
-	public EvaluadorRubro(Float valor) {
+	public EvaluadorRubro() {
+		super();
+	}
+
+	public EvaluadorRubro(Double valor) {
 		super();
 		this.valor = valor;
 	}
 
 	public abstract boolean cumpleNorma(Agrupador rubro);
 
-	public Float getValor() {
+	public Double getValor() {
 		return valor;
 	}
 
-	public void setValor(Float valor) {
+	public void setValor(Double valor) {
 		this.valor = valor;
 	}
 }

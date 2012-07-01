@@ -1,10 +1,30 @@
-1,MAIZ,Maiz,MAIZ
-2,GRANO_PARTIDO,Grano Partido,MAIZ
-3,GRANO_DANIADO,Grano Dañado,MAIZ
-4,MATERIA_EXTRANIA,Materia Extraña,MAIZ
-5,CHAMICO,Semilla de Chamico,MAIZ
-6,PESO_HECTOLITRICO,Peso Hectolítrico,MAIZ
-7,HUMEDAD,Humedad,MAIZ
-8,GRANO_PICADO,Granos Picados,MAIZ
-9,TIPO,Tipo,MAIZ
-10,COLOR,Color,MAIZ
+1,MAIZ,Maiz,MAIZ,,
+                                    
+                                   
+                                         
+                                   
+                                            
+                        
+                                    
+                  
+                     
+                                                                                                                                      
+                                                                                                                                      
+                                                                                                                                      
+                                                                                                                                     
+                                                                                                                                           
+                                                                                                                                
+                                                                                                                                              
+                                                                                                                       
+                                                                                                                                      
+                                                                                                                    
+                                                                                                                       
+2,GRANO_PARTIDO,Grano Partido,MAIZ,procesamiento.descuento.AplicarDescuentoPorcentual,procesamiento.descuento.EvaluadorRubroPorcentaje
+3,GRANO_DANIADO,Grano Dañado,MAIZ,procesamiento.descuento.AplicarDescuentoPorcentual,procesamiento.descuento.EvaluadorRubroPorcentaje
+4,MATERIA_EXTRANIA,Materia Extraña,MAIZ,procesamiento.descuento.AplicarDescuentoPorcentual,procesamiento.descuento.EvaluadorRubroPorcentaje
+5,CHAMICO,Semilla de Chamico,MAIZ,procesamiento.descuento.AplicarDescuentoDirecto,procesamiento.descuento.EvaluadorRubroCantidad
+6,PESO_HECTOLITRICO,Peso Hectolítrico,MAIZ,procesamiento.descuento.AplicarDescuentoPorcentual,procesamiento.descuento.EvaluadorRubroPorcentaje
+7,HUMEDAD,Humedad,MAIZ,procesamiento.descuento.AplicarDescuentoDirecto,procesamiento.descuento.EvaluadorRubroPorcentaje
+8,GRANO_PICADO,Granos Picados,MAIZ,procesamiento.descuento.AplicarDescuentoPorcentual,procesamiento.descuento.EvaluadorRubroPorcentaje
+9,TIPO,Tipo,MAIZ,procesamiento.descuento.AplicarDescuentoPorcentual,procesamiento.descuento.EvaluadorRubroPorcentaje
+10,COLOR,Color,MAIZ,procesamiento.descuento.AplicarDescuentoPorcentual,procesamiento.descuento.EvaluadorRubroPorcentaje

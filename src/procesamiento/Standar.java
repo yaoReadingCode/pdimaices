@@ -6,13 +6,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import aplicarFiltros.Agrupador;
-
+import objeto.Grado;
+import objeto.RubroCalidad;
+import objeto.ToleranciaRubro;
+import procesamiento.clasificacion.Clasificador;
 import procesamiento.descuento.AplicarDescuento;
-import procesamiento.descuento.AplicarDescuentoDirecto;
-import procesamiento.descuento.AplicarDescuentoPorcentual;
-import procesamiento.descuento.EvaluadorRubroCantidad;
-import procesamiento.descuento.EvaluadorRubroPorcentaje;
+import aplicarFiltros.Agrupador;
 
 
 /**
@@ -47,81 +46,109 @@ public class Standar {
 	/**
 	 * Instantiates a new standar.
 	 */
-	public Standar(){
+	public Standar(Clasificador clasificador){
+		List<Grado> grados = clasificador.getGradosCalidad();
+		for(Grado grado: grados){
+			Norma norma = createNorma(grado);
+			if (grado.isFueraEstandar())
+				fueraStandard = norma;
+			else{
+				normas.add(norma);
+			}
+		}
+		/*
 		//Hacer esto desde archivo
 		Norma nor= new Norma("Grado 1");
-		nor.addGrado("Humedad", new EvaluadorRubroPorcentaje(14.5f));
-		nor.addGrado("Peso Hectolitrico", new EvaluadorRubroPorcentaje(-75f));
-		nor.addGrado("Grano Dañado", new EvaluadorRubroPorcentaje(3f));
-		nor.addGrado("Grano Partido", new EvaluadorRubroPorcentaje(2f));
-		nor.addGrado("Materia Extraña", new EvaluadorRubroPorcentaje(1f));
-		nor.addGrado("Semilla de Chamico", new EvaluadorRubroCantidad(2f));
+		nor.addGrado("Humedad", new EvaluadorRubroPorcentaje(14.5));
+		nor.addGrado("Peso Hectolitrico", new EvaluadorRubroPorcentaje(-75.0));
+		nor.addGrado("Grano Dañado", new EvaluadorRubroPorcentaje(3.0));
+		nor.addGrado("Grano Partido", new EvaluadorRubroPorcentaje(2.0));
+		nor.addGrado("Materia Extraña", new EvaluadorRubroPorcentaje(1.0));
+		nor.addGrado("Semilla de Chamico", new EvaluadorRubroCantidad(2.0));
 		nor.setRebaja(101); //Grado 1 = 1%
 		
 		normas.add(nor);
 		
 		Norma nor2= new Norma("Grado 2");
-		nor2.addGrado("Humedad", new EvaluadorRubroPorcentaje(14.5f));
-		nor2.addGrado("Peso Hectolitrico", new EvaluadorRubroPorcentaje(-72f));
-		nor2.addGrado("Grano Dañado", new EvaluadorRubroPorcentaje(5f));
-		nor2.addGrado("Grano Partido", new EvaluadorRubroPorcentaje(3f));
-		nor2.addGrado("Materia Extraña", new EvaluadorRubroPorcentaje(1.5f));
-		nor2.addGrado("Semilla de Chamico", new EvaluadorRubroCantidad(2f));
+		nor2.addGrado("Humedad", new EvaluadorRubroPorcentaje(14.5));
+		nor2.addGrado("Peso Hectolitrico", new EvaluadorRubroPorcentaje(-72.0));
+		nor2.addGrado("Grano Dañado", new EvaluadorRubroPorcentaje(5.0));
+		nor2.addGrado("Grano Partido", new EvaluadorRubroPorcentaje(3.0));
+		nor2.addGrado("Materia Extraña", new EvaluadorRubroPorcentaje(1.5));
+		nor2.addGrado("Semilla de Chamico", new EvaluadorRubroCantidad(2.0));
 		nor2.setRebaja(100); //Grado 1 = 0%
 		
 		normas.add(nor2);
 		
 		Norma nor3= new Norma("Grado 3");
-		nor3.addGrado("Humedad", new EvaluadorRubroPorcentaje(14.5f));
-		nor3.addGrado("Peso Hectolitrico", new EvaluadorRubroPorcentaje(-69f));		
-		nor3.addGrado("Grano Dañado", new EvaluadorRubroPorcentaje(8f));
-		nor3.addGrado("Grano Partido", new EvaluadorRubroPorcentaje(5f));
-		nor3.addGrado("Materia Extraña", new EvaluadorRubroPorcentaje(2f));
-		nor3.addGrado("Semilla de Chamico", new EvaluadorRubroCantidad(2f));
+		nor3.addGrado("Humedad", new EvaluadorRubroPorcentaje(14.5));
+		nor3.addGrado("Peso Hectolitrico", new EvaluadorRubroPorcentaje(-69.0));		
+		nor3.addGrado("Grano Dañado", new EvaluadorRubroPorcentaje(8.0));
+		nor3.addGrado("Grano Partido", new EvaluadorRubroPorcentaje(5.0));
+		nor3.addGrado("Materia Extraña", new EvaluadorRubroPorcentaje(2.0));
+		nor3.addGrado("Semilla de Chamico", new EvaluadorRubroCantidad(2.0));
 		nor3.setRebaja(98.5f); //Grado 1 = -1,5%
 		
 		//Es una copia de Grado 3
-		fueraStandard.addGrado("Humedad", new EvaluadorRubroPorcentaje(14.5f));
-		fueraStandard.addGrado("Peso Hectolitrico", new EvaluadorRubroPorcentaje(-69f));		
-		fueraStandard.addGrado("Grano Dañado", new EvaluadorRubroPorcentaje(8f));
-		fueraStandard.addGrado("Grano Partido", new EvaluadorRubroPorcentaje(5f));
-		fueraStandard.addGrado("Materia Extraña", new EvaluadorRubroPorcentaje(2f));
-		fueraStandard.addGrado("Semilla de Chamico", new EvaluadorRubroCantidad(2f));
+		fueraStandard.addGrado("Humedad", new EvaluadorRubroPorcentaje(14.5));
+		fueraStandard.addGrado("Peso Hectolitrico", new EvaluadorRubroPorcentaje(-69.0));		
+		fueraStandard.addGrado("Grano Dañado", new EvaluadorRubroPorcentaje(8.0));
+		fueraStandard.addGrado("Grano Partido", new EvaluadorRubroPorcentaje(5.0));
+		fueraStandard.addGrado("Materia Extraña", new EvaluadorRubroPorcentaje(2.0));
+		fueraStandard.addGrado("Semilla de Chamico", new EvaluadorRubroCantidad(2.0));
 		
 		Map<String, AplicarDescuento> descuento = new HashMap<String, AplicarDescuento>();
 		
-		AplicarDescuento descuentoCha = new AplicarDescuentoDirecto(1.3f);
+		AplicarDescuento descuentoCha = new AplicarDescuentoDirecto(1.3);
 		descuento.put("Semilla de Chamico", descuentoCha);
 		
-		AplicarDescuento descuentoDaniados = new AplicarDescuentoPorcentual(1f);
+		AplicarDescuento descuentoDaniados = new AplicarDescuentoPorcentual(1.0);
 		descuento.put("Grano Dañado", descuentoDaniados);
 		
-		AplicarDescuento descuentoPartido = new AplicarDescuentoPorcentual(0.25f);
+		AplicarDescuento descuentoPartido = new AplicarDescuentoPorcentual(0.25);
 		descuento.put("Grano Partido", descuentoPartido);
 		
-		AplicarDescuento descuentoExtr = new AplicarDescuentoPorcentual(1f);
+		AplicarDescuento descuentoExtr = new AplicarDescuentoPorcentual(1.0);
 		descuento.put("Materia Extraña", descuentoExtr);
 		
-		AplicarDescuento descuentoHumedad = new AplicarDescuentoDirecto(1f);
+		AplicarDescuento descuentoHumedad = new AplicarDescuentoDirecto(1.0);
 		descuento.put("Humedad", descuentoHumedad);
 		
-		AplicarDescuento descuentoHectolitrico = new AplicarDescuentoPorcentual(0.4f);
+		AplicarDescuento descuentoHectolitrico = new AplicarDescuentoPorcentual(0.4);
 		descuento.put("Peso Hectolitrico", descuentoHectolitrico);
 		
 		
 		fueraStandard.setDescuento(descuento);
 		
 		
-		normas.add(nor3);
+		normas.add(nor3);*/
 	}
 	
+	/**
+	 * Crea una instancia de Norma a partir de una instancia de Grado
+	 * @param grado
+	 * @return
+	 */
+	private Norma createNorma(Grado grado) {
+		Norma n = new Norma(grado.getNombre());
+		n.setRebaja(grado.getRebaja());
+		Map<RubroCalidad, AplicarDescuento> descuento = new HashMap<RubroCalidad, AplicarDescuento>();
+		for(ToleranciaRubro tr:grado.getToleranciaRubros()){
+			n.addGrado(tr.getRubro(),tr.getEvaluadorValorRubro());
+			if(tr.getDescuento() != null){
+				descuento.put(tr.getRubro(), tr.getEvaluadorDescuento());
+			}
+		}
+		return n;
+	}
+
 	/**
 	 * Gets the norma.
 	 *
 	 * @param valores the valores
 	 * @return the norma
 	 */
-	public Rebaja getNorma(Map<String,Agrupador> valores){
+	public Rebaja getNorma(Map<RubroCalidad,Agrupador> valores){
 		Rebaja result;
 		for(Iterator<Norma> n = normas.iterator();n.hasNext();){
 			Norma norma = n.next();

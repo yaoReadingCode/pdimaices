@@ -10,7 +10,7 @@ public class Rebaja {
 	Norma norma;
 	
 	/** The descuento. */
-	float descuento;
+	double descuento;
 	
 	/**
 	 * Gets the norma.
@@ -26,7 +26,7 @@ public class Rebaja {
 	 *
 	 * @return the descuento
 	 */
-	public float getDescuento() {
+	public double getDescuento() {
 		return descuento;
 	}
 	
@@ -36,7 +36,7 @@ public class Rebaja {
 	 * @param n the n
 	 * @param d the d
 	 */
-	public Rebaja(Norma n, float d){
+	public Rebaja(Norma n, double d){
 		this.norma = n;
 		this.descuento = d;
 	}
