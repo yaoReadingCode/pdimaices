@@ -128,12 +128,11 @@ public class Norma {
 	 * @param valores the valores
 	 * @return true, if is norma
 	 */
-	@SuppressWarnings("unchecked")
 	public boolean isNorma(Map<RubroCalidad,Agrupador> valores){
 		for(Iterator<Entry<RubroCalidad, EvaluadorRubro>> iter = grado.entrySet().iterator(); iter.hasNext();){
-			Map.Entry ent = (Map.Entry)iter.next();
-			EvaluadorRubro valorRef = (EvaluadorRubro)ent.getValue();
-			RubroCalidad tipo = (RubroCalidad)ent.getKey();
+			Map.Entry<RubroCalidad,EvaluadorRubro> ent = iter.next();
+			EvaluadorRubro valorRef = (EvaluadorRubro) ent.getValue();
+			RubroCalidad tipo = ent.getKey();
 			Agrupador valor = valores.get(tipo);
 			if ((valorRef != null)&& valorRef.cumpleNorma(valor)){
 				return false;
@@ -149,25 +148,22 @@ public class Norma {
 	 * @param valores the valores
 	 * @return the float
 	 */
-	@SuppressWarnings("unchecked")
 	public double calcularDescuento(Map<RubroCalidad, Agrupador> valores) {
-		if (rebaja == 0.0f) {
-			double result = 98.5f;//Es 1.5% mas lo que esta fuera del standard
-			for (Iterator<Entry<RubroCalidad, EvaluadorRubro>> iter = grado.entrySet()
-					.iterator(); iter.hasNext();) {
-				Map.Entry ent = (Map.Entry) iter.next();
-				EvaluadorRubro valorRef = (EvaluadorRubro) ent.getValue();
-				String tipo = (String) ent.getKey();
-				Agrupador valor = valores.get(tipo);
-				AplicarDescuento des = this.descuento.get(tipo);
-				
-				
-				if ((valorRef != null) && valorRef.cumpleNorma(valor)) {
-					result = result - (des.eval(valorRef, valor)); 
-				}
+		//double result = 98.5f;//Es 1.5% mas lo que esta fuera del standard
+		double result = getRebaja();//Es 1.5% mas lo que esta fuera del standard
+		for (Iterator<Entry<RubroCalidad, EvaluadorRubro>> iter = grado.entrySet()
+				.iterator(); iter.hasNext();) {
+			Map.Entry<RubroCalidad,EvaluadorRubro> ent = iter.next();
+			EvaluadorRubro valorRef = (EvaluadorRubro) ent.getValue();
+			RubroCalidad tipo = ent.getKey();
+			Agrupador valor = valores.get(tipo);
+			AplicarDescuento des = this.descuento.get(tipo);
+			
+			
+			if (des != null && valorRef != null && valorRef.cumpleNorma(valor)) {
+				result = result - (des.eval(valorRef, valor)); 
 			}
-			return result;
 		}
-		return rebaja;
+		return result;
 	}
 }

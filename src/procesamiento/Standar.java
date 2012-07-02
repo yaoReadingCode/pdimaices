@@ -139,6 +139,7 @@ public class Standar {
 				descuento.put(tr.getRubro(), tr.getEvaluadorDescuento());
 			}
 		}
+		n.setDescuento(descuento);
 		return n;
 	}
 
