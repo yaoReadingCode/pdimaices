@@ -226,6 +226,9 @@ public class Clasificador {
 		
 		clasificacion = new HashMap<EvaluadorClase, List<Objeto>>();
 		this.cantidadObjetos = dao.getCantidadObjetos();
+		if (getConfiguracion() != null && getConfiguracion().getDiametroObjetoReferencia() != null){
+			ObjetoReferencia.setCantMM(getConfiguracion().getDiametroObjetoReferencia());
+		}
 		
 		for(Clase c: clases){
 			EvaluadorClase ec = createEvaluadorClase(c);

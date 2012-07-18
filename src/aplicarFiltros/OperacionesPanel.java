@@ -27,6 +27,7 @@ import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -37,6 +38,7 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.text.NumberFormatter;
 
 import org.hibernate.exception.JDBCConnectionException;
 
@@ -80,7 +82,10 @@ public class OperacionesPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private IImageProcessing imageHolder;
 	
-	private static DecimalFormat rangeFormater = new DecimalFormat("0");  
+	private static DecimalFormat rangeFormater = new DecimalFormat("0");  //  @jve:decl-index=0:
+	
+	private static boolean panelOperacionesEnabled = false;
+	
 	//  @jve:decl-index=0:
 
 	public void dibujar() {
@@ -100,7 +105,7 @@ public class OperacionesPanel extends JPanel {
 		if (!(e.getKeyChar() >= '0' && e.getKeyChar() <= '9'))
 			e.setKeyChar('\b');
 	}
-
+	
 	private void executeCommand(final ImageComand command) {
 		final Window window = this.getImageHolder().getMainWindow();
 		Runnable runnable = new Runnable() {
@@ -191,31 +196,16 @@ public class OperacionesPanel extends JPanel {
 	}
 
 	/**
-	 * Setea el rango HSV del objeto
+	 * Setea el diametro del objeto de referencia
 	 * 
 	 * @return
 	 */
-	private void setHSVRangeObjeto(HSVRange range) {
-		if (range != null) {
-			textFieldHMin2.setText(null);
-			textFieldHMax2.setText(null);
-			textFieldSMin2.setText(null);
-			textFieldSMax2.setText(null);
-			textFieldVMin2.setText(null);
-			textFieldVMax2.setText(null);
-			if (range.getHMin() != null)
-				textFieldHMin2.setText(rangeFormater.format(range.getHMin()));
-			if (range.getHMax() != null)
-				textFieldHMax2.setText(rangeFormater.format(range.getHMax()));
-			if (range.getSMin() != null)
-				textFieldSMin2.setText(rangeFormater.format(range.getSMin()));
-			if (range.getSMax() != null)
-				textFieldSMax2.setText(rangeFormater.format(range.getSMax()));
-			if (range.getVMin() != null)
-				textFieldVMin2.setText(rangeFormater.format(range.getVMin()));
-			if (range.getVMax() != null)
-				textFieldVMax2.setText(rangeFormater.format(range.getVMax()));
-		}
+	private void setDiametro(Double diametro) {
+		textFieldDiametro.setValue(diametro);
+		/**
+		if (diametro != null) {
+			textFieldDiametro.setText(diametroFormater.format(diametro));
+		}*/
 	}
 
 	private void buttonBinarizarActionPerformed(ActionEvent e) {
@@ -240,6 +230,7 @@ public class OperacionesPanel extends JPanel {
 			Configuracion configuracion = imageHolder.getClasificador().getConfiguracion();
 			if (configuracion != null) {
 				setHSVRange(configuracion.getHSVRange());
+				setDiametro(configuracion.getDiametroObjetoReferencia());
 			}
 		}
 	}
@@ -970,7 +961,7 @@ public class OperacionesPanel extends JPanel {
 		add(tabbedPane1);
 		tabbedPane1.setBounds(13, 5, 409, 442);
 
-		tabbedPane1.addTab("Fondo", null, panel2, null);
+		tabbedPane1.setVisible(true);
 		{ // compute preferred size
 			Dimension preferredSize = new Dimension();
 			for (int i = 0; i < getComponentCount(); i++) {
@@ -993,11 +984,14 @@ public class OperacionesPanel extends JPanel {
 						Font.BOLD, 12), SystemColor.textHighlight));
 		this.setSize(new Dimension(436, 452));
 		panel7.setPreferredSize(this.getPreferredSize());
-		tabbedPane1.addTab("Operaciones", null, scrollPanel7, null);
+		tabbedPane1.addTab("Configuración", null, panel2, null);
+		if (panelOperacionesEnabled)
+			tabbedPane1.addTab("Operaciones", null, scrollPanel7, null);
 		panel2.add(getObjetoPanel1(), null);
 		fondoPanel.add(getButtonSeleccionarFondo(), null);
 			fondoPanel.add(getButtonEliminarFondo2(), null);
 			fondoPanel.add(getButtonGuardarFondo(), null);
+			scrollPanel7.setVisible(true);
 		labelSMin.setBounds(new Rectangle(10, 17, 35, 14));
 		textFieldHMin.setBounds(new Rectangle(50, 12, 65, 20));
 		textFieldSMin.setBounds(new Rectangle(50, 14, 65, 20));
@@ -1056,25 +1050,13 @@ public class OperacionesPanel extends JPanel {
 	private JButton buttonRealzarImagen;
 	private JPanel objetoPanel1 = null;
 	private JPanel panelH2 = null;
-	private JLabel labelHMin1 = null;
-	private JTextField textFieldHMin2 = null;
-	private JLabel labelHMax2 = null;
-	private JTextField textFieldHMax2 = null;
-	private JPanel panelS2 = null;
-	private JLabel labelSMin2 = null;
-	private JTextField textFieldSMin2 = null;
-	private JLabel labelSMax2 = null;
-	private JTextField textFieldSMax2 = null;
-	private JPanel panelV2 = null;
-	private JLabel labelVMin2 = null;
-	private JTextField textFieldVMin2 = null;
-	private JLabel labelVMax2 = null;
-	private JTextField textFieldVMax2 = null;
-	private JButton buttonSeleccionarObjeto = null;
+	private JLabel labelDiametro = null;
+	private JFormattedTextField textFieldDiametro = null;
 	private JButton buttonEliminarFondo2 = null;
 	private JButton buttonGuardarFondo = null;
 	private JButton buttonReestablecerFondo = null;
-
+	private JLabel labelMilimetros = null;
+	private JButton buttonGuardarDiametro = null;
 	/**
 	 * This method initializes buttonSeleccionarFondo
 	 * 
@@ -1129,17 +1111,6 @@ public class OperacionesPanel extends JPanel {
 		}
 	}
 
-	private void buttonSeleccionarObjetoActionPerformed(ActionEvent e) {
-		BufferedImage image = getImageHolder().getSelectedRectangle();
-		if (image != null){
-			showSelectedImage(image);
-
-			Raster raster = image.getData();
-			HSVRange range = RgbHsv.createHsvRange(raster, null);
-			setHSVRangeObjeto(range);
-		}
-	}
-
 	/**
 	 * This method initializes objetoPanel1
 	 * 
@@ -1149,14 +1120,12 @@ public class OperacionesPanel extends JPanel {
 		if (objetoPanel1 == null) {
 			objetoPanel1 = new JPanel();
 			objetoPanel1.setLayout(null);
-			objetoPanel1.setBounds(new Rectangle(3, 172, 397, 167));
+			objetoPanel1.setBounds(new Rectangle(3, 172, 397, 61));
 			objetoPanel1.setMinimumSize(new Dimension());
 			objetoPanel1.setPreferredSize(new Dimension());
-			objetoPanel1.setBorder(BorderFactory.createTitledBorder(null, "Objeto", TitledBorder.LEADING, TitledBorder.TOP, new Font("Dialog", Font.BOLD, 12), SystemColor.textHighlight));
+			objetoPanel1.setBorder(BorderFactory.createTitledBorder(null, "Objeto de Referencia", TitledBorder.LEADING, TitledBorder.TOP, new Font("Dialog", Font.BOLD, 12), SystemColor.textHighlight));
 			objetoPanel1.add(getPanelH2(), getPanelH2().getName());
-			objetoPanel1.add(getPanelS2(), getPanelS2().getName());
-			objetoPanel1.add(getPanelV2(), getPanelV2().getName());
-			objetoPanel1.add(getButtonSeleccionarObjeto(), null);
+			objetoPanel1.add(getButtonGuardarDiametro(), null);
 		}
 		return objetoPanel1;
 	}
@@ -1168,189 +1137,40 @@ public class OperacionesPanel extends JPanel {
 	 */
 	private JPanel getPanelH2() {
 		if (panelH2 == null) {
-			labelHMax2 = new JLabel();
-			labelHMax2.setBounds(new Rectangle(129, 16, 35, 14));
-			labelHMax2.setText("Max:");
-			labelHMax2.setFont(new Font("Tahoma", Font.BOLD, 11));
-			labelHMin1 = new JLabel();
-			labelHMin1.setFont(new Font("Tahoma", Font.BOLD, 11));
-			labelHMin1.setBounds(new Rectangle(10, 16, 35, 14));
-			labelHMin1.setText("Min:");
+			labelMilimetros = new JLabel();
+			labelMilimetros.setBounds(new Rectangle(145, 16, 36, 14));
+			labelMilimetros.setText("mm.");
+			labelMilimetros.setFont(new Font("Tahoma", Font.BOLD, 11));
+			labelDiametro = new JLabel();
+			labelDiametro.setFont(new Font("Tahoma", Font.BOLD, 11));
+			labelDiametro.setBounds(new Rectangle(10, 16, 61, 14));
+			labelDiametro.setToolTipText("Diámetro en milímetros");
+			labelDiametro.setText("Diámetro:");
 			panelH2 = new JPanel();
 			panelH2.setLayout(null);
-			panelH2.setBounds(new Rectangle(11, 15, 245, 37));
+			panelH2.setBounds(new Rectangle(11, 17, 244, 35));
 			panelH2.setMinimumSize(new Dimension());
 			panelH2.setPreferredSize(new Dimension());
-			panelH2.setBorder(BorderFactory.createTitledBorder(null, "H",
-					TitledBorder.LEADING, TitledBorder.TOP, new Font("Dialog",
-							Font.BOLD, 12), SystemColor.textHighlight));
-			panelH2.add(labelHMin1, labelHMin1.getName());
-			panelH2.add(getTextFieldHMin2(), getTextFieldHMin2().getName());
-			panelH2.add(labelHMax2, labelHMax2.getName());
-			panelH2.add(getTextFieldHMax2(), getTextFieldHMax2().getName());
+			panelH2.setBorder(BorderFactory.createTitledBorder(null, "", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), new Color(51, 51, 51)));
+			panelH2.add(labelDiametro, labelDiametro.getName());
+			panelH2.add(getTextFieldDiametro(), getTextFieldDiametro().getName());
+			panelH2.add(labelMilimetros, null);
 		}
 		return panelH2;
 	}
 
 	/**
-	 * This method initializes textFieldHMin2
+	 * This method initializes textFieldDiametro
 	 * 
 	 * @return javax.swing.JTextField
 	 */
-	private JTextField getTextFieldHMin2() {
-		if (textFieldHMin2 == null) {
-			textFieldHMin2 = new JTextField();
-			textFieldHMin2.setBounds(new Rectangle(50, 12, 65, 20));
+	private JFormattedTextField getTextFieldDiametro() {
+		if (textFieldDiametro == null) {
+			NumberFormatter formater = new NumberFormatter(new DecimalFormat("#.000"));
+			textFieldDiametro = new JFormattedTextField(formater);
+			textFieldDiametro.setBounds(new Rectangle(78, 11, 65, 20));
 		}
-		return textFieldHMin2;
-	}
-
-	/**
-	 * This method initializes textFieldHMax2
-	 * 
-	 * @return javax.swing.JTextField
-	 */
-	private JTextField getTextFieldHMax2() {
-		if (textFieldHMax2 == null) {
-			textFieldHMax2 = new JTextField();
-			textFieldHMax2.setBounds(new Rectangle(172, 12, 65, 20));
-		}
-		return textFieldHMax2;
-	}
-
-	/**
-	 * This method initializes panelS2
-	 * 
-	 * @return javax.swing.JPanel
-	 */
-	private JPanel getPanelS2() {
-		if (panelS2 == null) {
-			labelSMax2 = new JLabel();
-			labelSMax2.setBounds(new Rectangle(129, 16, 35, 14));
-			labelSMax2.setText("Max:");
-			labelSMax2.setFont(new Font("Tahoma", Font.BOLD, 11));
-			labelSMin2 = new JLabel();
-			labelSMin2.setFont(new Font("Tahoma", Font.BOLD, 11));
-			labelSMin2.setBounds(new Rectangle(10, 16, 35, 14));
-			labelSMin2.setText("Min:");
-			panelS2 = new JPanel();
-			panelS2.setLayout(null);
-			panelS2.setBounds(new Rectangle(11, 54, 245, 37));
-			panelS2.setMinimumSize(new Dimension());
-			panelS2.setPreferredSize(new Dimension());
-			panelS2.setBorder(BorderFactory.createTitledBorder(null, "S",
-					TitledBorder.LEADING, TitledBorder.TOP, new Font("Dialog",
-							Font.BOLD, 12), SystemColor.textHighlight));
-			panelS2.add(labelSMin2, labelSMin2.getName());
-			panelS2.add(getTextFieldSMin2(), getTextFieldSMin2().getName());
-			panelS2.add(labelSMax2, labelSMax2.getName());
-			panelS2.add(getTextFieldSMax2(), getTextFieldSMax2().getName());
-		}
-		return panelS2;
-	}
-
-	/**
-	 * This method initializes textFieldSMin2
-	 * 
-	 * @return javax.swing.JTextField
-	 */
-	private JTextField getTextFieldSMin2() {
-		if (textFieldSMin2 == null) {
-			textFieldSMin2 = new JTextField();
-			textFieldSMin2.setBounds(new Rectangle(50, 12, 65, 20));
-		}
-		return textFieldSMin2;
-	}
-
-	/**
-	 * This method initializes textFieldSMax2
-	 * 
-	 * @return javax.swing.JTextField
-	 */
-	private JTextField getTextFieldSMax2() {
-		if (textFieldSMax2 == null) {
-			textFieldSMax2 = new JTextField();
-			textFieldSMax2.setBounds(new Rectangle(172, 12, 65, 20));
-		}
-		return textFieldSMax2;
-	}
-
-	/**
-	 * This method initializes panelV2
-	 * 
-	 * @return javax.swing.JPanel
-	 */
-	private JPanel getPanelV2() {
-		if (panelV2 == null) {
-			labelVMax2 = new JLabel();
-			labelVMax2.setBounds(new Rectangle(129, 16, 35, 14));
-			labelVMax2.setText("Max:");
-			labelVMax2.setFont(new Font("Tahoma", Font.BOLD, 11));
-			labelVMin2 = new JLabel();
-			labelVMin2.setFont(new Font("Tahoma", Font.BOLD, 11));
-			labelVMin2.setBounds(new Rectangle(10, 16, 35, 14));
-			labelVMin2.setText("Min:");
-			panelV2 = new JPanel();
-			panelV2.setLayout(null);
-			panelV2.setBounds(new Rectangle(11, 94, 245, 38));
-			panelV2.setMinimumSize(new Dimension());
-			panelV2.setPreferredSize(new Dimension());
-			panelV2.setBorder(BorderFactory.createTitledBorder(null, "V",
-					TitledBorder.LEADING, TitledBorder.TOP, new Font("Dialog",
-							Font.BOLD, 12), SystemColor.textHighlight));
-			panelV2.add(labelVMin2, labelVMin2.getName());
-			panelV2.add(getTextFieldVMin2(), getTextFieldVMin2().getName());
-			panelV2.add(labelVMax2, labelVMax2.getName());
-			panelV2.add(getTextFieldVMax2(), getTextFieldVMax2().getName());
-		}
-		return panelV2;
-	}
-
-	/**
-	 * This method initializes textFieldVMin2
-	 * 
-	 * @return javax.swing.JTextField
-	 */
-	private JTextField getTextFieldVMin2() {
-		if (textFieldVMin2 == null) {
-			textFieldVMin2 = new JTextField();
-			textFieldVMin2.setBounds(new Rectangle(50, 12, 65, 20));
-		}
-		return textFieldVMin2;
-	}
-
-	/**
-	 * This method initializes textFieldVMax2
-	 * 
-	 * @return javax.swing.JTextField
-	 */
-	private JTextField getTextFieldVMax2() {
-		if (textFieldVMax2 == null) {
-			textFieldVMax2 = new JTextField();
-			textFieldVMax2.setBounds(new Rectangle(172, 12, 65, 20));
-		}
-		return textFieldVMax2;
-	}
-
-	/**
-	 * This method initializes buttonSeleccionarObjeto
-	 * 
-	 * @return javax.swing.JButton
-	 */
-	private JButton getButtonSeleccionarObjeto() {
-		if (buttonSeleccionarObjeto == null) {
-			buttonSeleccionarObjeto = new JButton();
-			buttonSeleccionarObjeto.setBounds(new Rectangle(12, 140, 244, 21));
-			buttonSeleccionarObjeto.setText("Seleccionar desde imagen");
-			buttonSeleccionarObjeto.setActionCommand("");
-			buttonSeleccionarObjeto
-					.addActionListener(new java.awt.event.ActionListener() {
-						public void actionPerformed(java.awt.event.ActionEvent e) {
-							buttonSeleccionarObjetoActionPerformed(e);
-						}
-					});
-		}
-		return buttonSeleccionarObjeto;
+		return textFieldDiametro;
 	}
 
 	/**
@@ -1423,6 +1243,53 @@ public class OperacionesPanel extends JPanel {
 		if (configuracion != null) {
 			setHSVRange(configuracion.getHSVRange());
 		}
+	}
+
+	/**
+	 * This method initializes buttonGuardarDiametro	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getButtonGuardarDiametro() {
+		if (buttonGuardarDiametro == null) {
+			buttonGuardarDiametro = new JButton();
+			buttonGuardarDiametro.setBounds(new Rectangle(269, 19, 117, 21));
+			buttonGuardarDiametro.setText("Guardar");
+			buttonGuardarDiametro.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					guardarDiametroActionPerformed();
+				}
+			});
+		}
+		return buttonGuardarDiametro;
+	}
+
+	private void guardarDiametroActionPerformed() {
+		Configuracion configuracion = imageHolder.getClasificador().getConfiguracion();
+		if (configuracion != null) {
+			try{
+				Double diametro = Double.valueOf(textFieldDiametro.getValue().toString());//Double.valueOf(textFieldDiametro.getText());
+				configuracion.setDiametroObjetoReferencia(diametro);
+				ObjectDao.getInstance().save(configuracion);
+				textFieldDiametro.setBackground(Color.white);
+				textFieldDiametro.setToolTipText(null);
+			}
+			catch (NullPointerException e) {
+				textFieldDiametro.setBackground(Color.red);
+				textFieldDiametro.setToolTipText("Valor requerido");
+			}
+			catch (NumberFormatException e) {
+				textFieldDiametro.setBackground(Color.red);
+				textFieldDiametro.setToolTipText("Valor inválido");
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				JOptionPane.showMessageDialog(this,
+						"Ocurrió un error inesperado al realizar la operación.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		
 	}
 
 } 

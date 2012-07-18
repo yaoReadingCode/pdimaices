@@ -12,10 +12,7 @@
 	<property name="fondoSMin" type="float" column="fondo_s_min"/>	
 	<property name="fondoSMax" type="float" column="fondo_s_max"/>
 	<property name="fondoVMin" type="float" column="fondo_v_min"/>	
-	<!-- 
-	<property name="areaObjetoRefCm" type="float" column="area_objeto_ref_cm"/>
-	<property name="colorObjetoRefRgb" type="integer" column="color_objeto_ref_rgb"/>
-	 -->
-	
+	<property name="diametroObjetoReferencia" type="double" column="diametro_objeto_referencia"/>
+
   </class>
 </hibernate-mapping>

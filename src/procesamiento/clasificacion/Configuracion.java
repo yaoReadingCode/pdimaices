@@ -44,15 +44,11 @@ public class Configuracion {
 	
 	
 	/**
-	 * Area en cm2 del objeto de referencia
+	 * Diametro en mm del objeto de referencia
 	 */
-	private Double areaObjetoRefCm = 10.0;
+	private Double diametroObjetoReferencia;
 	
-	/**
-	 * Color del objeto de referencia en formato int utilizado para encontrarlo en la imagen
-	 */
-	private Integer colorObjetoRefRgb;
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -117,22 +113,14 @@ public class Configuracion {
 		this.fondoVMax = fondoVMax;
 	}
 
-	public Double getAreaObjetoRefCm() {
-		return areaObjetoRefCm;
+	public Double getDiametroObjetoReferencia() {
+		return diametroObjetoReferencia;
 	}
 
-	public void setAreaObjetoRefCm(Double areaObjetoRefCm) {
-		this.areaObjetoRefCm = areaObjetoRefCm;
+	public void setDiametroObjetoReferencia(Double diametroObjetoReferencia) {
+		this.diametroObjetoReferencia = diametroObjetoReferencia;
 	}
 
-	public Integer getColorObjetoRefRgb() {
-		return colorObjetoRefRgb;
-	}
-
-	public void setColorObjetoRefRgb(Integer colorObjetoRefRgb) {
-		this.colorObjetoRefRgb = colorObjetoRefRgb;
-	}
-	
 	public HSVRange getHSVRange(){
 		HSVRange range = new HSVRange();
 		range.setHMin(getFondoHMin());

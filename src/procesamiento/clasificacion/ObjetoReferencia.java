@@ -137,7 +137,9 @@ public class ObjetoReferencia {
 	public static Double getErrorCalculos() {
 		return errorCalculos;
 	}
-	
-	
+
+	public static void setCantMM(Double cantMM) {
+		ObjetoReferencia.cantMM = cantMM;
+	}
 
 }
