@@ -5,7 +5,9 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.media.jai.JAI;
 import javax.media.jai.PlanarImage;
@@ -138,7 +140,8 @@ public class SepararObjetos extends AbstractImageCommand {
 					JAI.create("filestore", getImagenBordes(), "sobel.tif", "TIFF");
 					initVisitados();
 					List<Pixel> puntosDivisionVisitados = new ArrayList<Pixel>();
-					List<Objeto> nuevosObjetos = separarObjetosImagenBordes(obj, puntosDivisionVisitados, 0);
+					Map<Pixel, Pixel> puntoConflictoOpuestos = new HashMap<Pixel, Pixel>();
+					List<Objeto> nuevosObjetos = separarObjetosImagenBordes(obj, puntosDivisionVisitados, 0, puntoConflictoOpuestos);
 					nuevos.addAll(nuevosObjetos);
 					if (detectarContorno.isBuscarObjetoReferencia()){
 						for(Objeto o:nuevosObjetos){
@@ -447,14 +450,10 @@ public class SepararObjetos extends AbstractImageCommand {
 	 */
 	private List<Pixel> getPosiblesDesviosAntihorarios(Objeto obj, Pixel desvioHorario, List<Pixel> puntosDivision, List<Pixel> puntosDivisionVisitados, List<Pixel> contornoObjeto){
 		List<Pixel> desviosAntihorarios = new ArrayList<Pixel>();
-		desviosAntihorarios.remove(desvioHorario);
 		Pixel anteriorDH = getAnterior(desvioHorario, contornoObjeto);
 		int direccionDH = desvioHorario.getDireccion(anteriorDH);
 		for(Pixel p:puntosDivision){
-			//Pixel parPuntoDivision = desvioHorario.clonar();
-			//parPuntoDivision.sumar(p);
-			if (!desvioHorario.equals(p) && !desviosAntihorarios.contains(p) 
-					&& !puntosDivisionVisitados.contains(p)){
+			if (!desvioHorario.equals(p) && !puntosDivisionVisitados.contains(p)){
 				
 				Pixel anteriorDAH =  getAnterior(p, contornoObjeto);
 				double lado = Pixel.lado(anteriorDH, desvioHorario, p);
@@ -512,20 +511,19 @@ public class SepararObjetos extends AbstractImageCommand {
 	 * @param cantObjetos
 	 * @return
 	 */
-	private List<Objeto> separarObjetosImagenBordes(Objeto obj, List<Pixel> puntosDivisionVisitados, int nivel) {
-		List<Pixel> contornoObjeto = obj.getContorno();
+	private List<Objeto> separarObjetosImagenBordes(Objeto obj, List<Pixel> puntosDivisionVisitados, int nivel, Map<Pixel, Pixel> puntoConflictoOpuestos) {
 		List<Pixel> puntosDivision = obtenerPuntosDeConflicto(obj);
+		puntosDivision.remove(puntosDivisionVisitados);
+		agregarPuntosConflictoOpuestos(obj, puntosDivision, puntosDivisionVisitados, puntoConflictoOpuestos);
 		List<Objeto> objetosResult = new ArrayList<Objeto>();
 		if (puntosDivision.size() > 1){
 			initVisitados();
 			List<Division> divisionesPosibles = new ArrayList<Division>();
 			List<DivisionObjeto> divisiones = new ArrayList<DivisionObjeto>();
-			List<Pixel> posiblesVisitados = new ArrayList<Pixel>(puntosDivisionVisitados); 
 			for(int i = 0; i < puntosDivision.size() ; i++){
 				Pixel desvioHorario = puntosDivision.get(i);
-				List<Pixel> desviosAntihorarios = getPosiblesDesviosAntihorarios(obj, desvioHorario , puntosDivision, posiblesVisitados, contornoObjeto);
-				for(int j = 0; j < desviosAntihorarios.size(); j++){
-					Pixel desvioAntihorario = desviosAntihorarios.get(j);
+				Pixel desvioAntihorario = puntoConflictoOpuestos.get(desvioHorario);
+				if (desvioAntihorario != null){
 					Division division = new Division(desvioHorario, desvioAntihorario, null);
 					if (!divisionesPosibles.contains(division)){
 						Pixel desvioHorarioAux = getBoundingBoxObjetoInicial().getPixelRelativo(desvioHorario);
@@ -598,8 +596,6 @@ public class SepararObjetos extends AbstractImageCommand {
 					DivisionObjeto mejorDivision = divisiones.get(i);
 					Objeto obj1 = mejorDivision.getObjeto1();
 					Objeto obj2 = mejorDivision.getObjeto2();
-					completarObjeto(obj1);
-					completarObjeto(obj2);
 
 					obj1.setName(obj.getName());
 					int cantObjetos = getClasificador().getCantidadObjetos() + 1;
@@ -617,17 +613,19 @@ public class SepararObjetos extends AbstractImageCommand {
 					puntosDivisionVisitados.add(mejorDivision.getFin());
 					List<Objeto> nuevosObjetos = new ArrayList<Objeto>();
 					if (!necesitaDivision(obj1) && mejorDivision.isCircularObjeto1() && obj1.getPuntos().size() > 0){
+						completarObjeto(obj1);
 						nuevos.add(obj1);
 					}
 					else{
-						nuevosObjetos = separarObjetosImagenBordes(obj1, puntosDivisionVisitados, nivel + 1);
+						nuevosObjetos = separarObjetosImagenBordes(obj1, puntosDivisionVisitados, nivel + 1, puntoConflictoOpuestos);
 						nuevos.addAll(nuevosObjetos);
 					}
 					if (!necesitaDivision(obj2) && mejorDivision.isCircularObjeto2() && obj2.getPuntos().size() > 0){
+						completarObjeto(obj2);
 						nuevos.add(obj2);
 					}
 					else{
-						nuevosObjetos = separarObjetosImagenBordes(obj2, puntosDivisionVisitados, nivel + 1);
+						nuevosObjetos = separarObjetosImagenBordes(obj2, puntosDivisionVisitados, nivel + 1, puntoConflictoOpuestos);
 						nuevos.addAll(nuevosObjetos);
 					}
 					objetosResult.addAll(nuevos);
@@ -641,12 +639,47 @@ public class SepararObjetos extends AbstractImageCommand {
 				}
 			}
 		}
-		if (objetosResult.size() == 0 && obj.getPuntos().size() > 0){
-			objetosResult.add(obj);
+		if (objetosResult.size() == 0){
+			if (nivel > 0 && obj.getPuntos().size() == 0){
+				completarObjeto(obj);
+			}
+			if (obj.getPuntos().size() > 0){
+				objetosResult.add(obj);
+			}
 		}
 		return objetosResult;
 	}
 	
+	/**
+	 * Calculos los puntos de conflicto opuestos de cada puntos de division si ya no fue calculado antes
+	 * @param puntosDivision Nuevos posibles puntos de division del objeto 
+	 * @param puntosDivisionVisitados Puntos de division por los cuales ya se realizo una division
+	 * @param puntoConflictoOpuestos Mapa que contiene para cada punto de division del objeto el punto de conflicto opuesto
+	 */
+	private void agregarPuntosConflictoOpuestos(Objeto obj, List<Pixel> puntosDivision, List<Pixel> puntosDivisionVisitados, Map<Pixel, Pixel> puntoConflictoOpuestos) {
+		for (Pixel p:puntosDivision){
+			if (puntoConflictoOpuestos.containsKey(p)){
+				Pixel opuesto = puntoConflictoOpuestos.get(p);
+				if (puntosDivisionVisitados.contains(opuesto)){
+					Pixel nuevoOpuesto = null;
+					List<Pixel> opuestos = getPosiblesDesviosAntihorarios(obj, p, puntosDivision, puntosDivisionVisitados, obj.getContorno());
+					if (opuestos.size() > 0)
+						nuevoOpuesto = opuestos.get(0);
+					puntoConflictoOpuestos.put(p, nuevoOpuesto);
+				}
+			}
+			else{
+				Pixel nuevoOpuesto = null;
+				List<Pixel> opuestos = getPosiblesDesviosAntihorarios(obj, p, puntosDivision, puntosDivisionVisitados, obj.getContorno());
+				if (opuestos.size() > 0)
+					nuevoOpuesto = opuestos.get(0);
+				puntoConflictoOpuestos.put(p, nuevoOpuesto);
+			}
+		}
+		
+	}
+
+
 	/**
 	 * Evalua si un objeto necesita ser dividido
 	 * @param obj1
