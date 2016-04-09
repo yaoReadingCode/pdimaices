@@ -1,0 +1,1 @@
+Proyecto de clasificador de granos de maíz utilizando técnicas de procesamiento de imágenes
